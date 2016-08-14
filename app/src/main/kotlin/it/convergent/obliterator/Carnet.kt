@@ -191,7 +191,7 @@ class Carnet(data: ByteArray): Constants() {
     }
 
     private fun validateExpiredOrNew(): Carnet {
-        var data = data.clone()
+        val data = data.clone()
 
         val updatedPage = currentTimeToMinutesFromGttEpoch()
                 .shl(bitCount = 8)
@@ -208,7 +208,7 @@ class Carnet(data: ByteArray): Constants() {
     }
 
     private fun refreshValidation(): Carnet {
-        var data = data.clone()
+        val data = data.clone()
 
         val updatedPageC = currentTimeToMinutesFromGttEpoch()
                                     .shl(bitCount = 8)

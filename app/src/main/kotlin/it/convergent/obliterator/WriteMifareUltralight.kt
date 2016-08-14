@@ -7,10 +7,8 @@ import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
 /**
  * Created by altamic on 02/06/16.
  */
-class WriteMifareUltralight(listener: OnReadyToUpdateGui):
+class WriteMifareUltralight(val listener: OnReadyToUpdateGui):
         AsyncTask<MifareUltralight, Int, Void>() {
-
-    val listener = listener
 
     override fun doInBackground(vararg params: MifareUltralight?): Void? {
         val mifareUltralight = params.first()
