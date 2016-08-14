@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    tools:context="it.convergent.obliterator.MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/grabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/gttTimeHex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:text="@string/gtt_hex_date"
+            android:fontFamily="sans-serif-thin"
+            android:textSize="@dimen/big_big_text" />
+
+        <TextView
+            android:id="@+id/gttTimeBinary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gttTimeHex"
+            android:layout_centerInParent="true"
+            android:text="@string/gtt_hex_binary"
+            android:textColor="@android:color/black"
+            android:padding="2dp"
+            android:fontFamily="monospace"
+            android:background="@android:color/holo_green_dark"
+            android:textSize="@dimen/smaller_text" />
+
+        <TextView
+            android:id="@+id/dateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date_time"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/gttTimeBinary"
+            android:textColor="@android:color/white"
+            android:padding="@dimen/lower_margin"
+            android:textSize="@dimen/bigger_text" />
+
+        <ToggleButton
+            android:id="@+id/toggleChangeDateTime"
+            android:textOff="🔒"
+            android:textOn="🔓"
+            android:background="@null"
+            android:textSize="@dimen/big_text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/dateTime"
+            android:layout_centerInParent="true" />
+
+        <Button
+            android:id="@+id/decrementDateTime"
+            android:text="‒"
+            android:textColor="@android:color/white"
+            android:background="@null"
+            android:enabled="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/big_text2"
+            android:layout_below="@id/dateTime"
+            android:layout_toLeftOf="@id/toggleChangeDateTime"
+            android:layout_toStartOf="@id/toggleChangeDateTime"
+            android:layout_marginRight="@dimen/big_margin"
+            android:layout_marginEnd="@dimen/big_margin"
+            android:padding="@dimen/half_margin" />
+
+        <Button
+            android:id="@+id/incrementDateTime"
+            android:text="+"
+            android:textColor="@android:color/white"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:textSize="@dimen/big_text2"
+            android:layout_below="@id/dateTime"
+            android:layout_toRightOf="@id/toggleChangeDateTime"
+            android:layout_toEndOf="@id/toggleChangeDateTime"
+            android:layout_marginLeft="@dimen/big_margin"
+            android:layout_marginStart="@dimen/big_margin"
+            android:padding="@dimen/half_margin" />
+
+        <TextView
+            android:id="@+id/carnetRead"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toggleChangeDateTime"
+            android:fontFamily="monospace"
+            android:textSize="@dimen/bigger_text"
+            android:layout_centerInParent="true"
+            android:text="@string/default_carnet"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/obliterator"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/obliterator_background"
+        android:layout_above="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/buttonTopLeft"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/triangle_left"
+            android:textColor="@android:color/black"
+            android:minHeight="32dp"
+            android:minWidth="32dp"
+            android:background="@drawable/lateral_button"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_marginRight="@dimen/half_margin"
+            android:layout_marginEnd="@dimen/half_margin"
+            android:layout_alignTop="@+id/displayFrame"
+            android:layout_toLeftOf="@+id/displayFrame"
+            android:layout_toStartOf="@+id/displayFrame"
+            tools:ignore="RelativeOverlap" />
+
+        <Button
+            android:id="@+id/buttonBottomLeft"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/triangle_left"
+            android:textColor="@android:color/black"
+            android:minHeight="32dp"
+            android:minWidth="32dp"
+            android:background="@drawable/lateral_button"
+            android:layout_below="@+id/buttonTopLeft"
+            android:layout_alignLeft="@+id/buttonTopLeft"
+            android:layout_alignStart="@+id/buttonTopLeft" />
+
+        <FrameLayout
+            android:id="@+id/displayFrame"
+            android:layout_width="180dp"
+            android:layout_height="72dp"
+            android:layout_marginTop="32dp"
+            android:width="180dp"
+            android:height="72dp"
+            android:maxLines="2"
+            android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textColor="@color/displayText"
+                    android:textSize="@dimen/normal_text"
+                    android:lineSpacingMultiplier="0.85"
+                    android:padding="@dimen/half_margin"
+                    android:gravity="center|top"
+                    android:background="@drawable/obliterator_display"
+                    tools:targetApi="jelly_bean" />
+            </FrameLayout>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/triangle_right"
+            android:textColor="@android:color/black"
+            android:minHeight="32dp"
+            android:minWidth="32dp"
+            android:id="@+id/buttonTopRight"
+            android:layout_marginLeft="@dimen/half_margin"
+            android:layout_marginStart="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:background="@drawable/lateral_button"
+            android:layout_alignTop="@+id/displayFrame"
+            android:layout_toRightOf="@+id/displayFrame"
+            android:layout_toEndOf="@+id/displayFrame" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/triangle_right"
+            android:textColor="@android:color/black"
+            android:minHeight="32dp"
+            android:minWidth="32dp"
+            android:id="@+id/buttonBottomRight"
+            android:background="@drawable/lateral_button"
+            android:layout_below="@+id/buttonTopRight"
+            android:layout_alignLeft="@+id/buttonTopRight"
+            android:layout_alignStart="@+id/buttonTopRight" />
+
+        <RelativeLayout
+            android:id="@+id/leds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/low_margin"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/displayFrame">
+
+            <View
+                android:layout_width="56dp"
+                android:layout_height="12dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginStart="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/normal_margin"
+                android:background="@drawable/led_red" />
+
+            <View
+                android:id="@+id/ledCenter"
+                android:layout_width="56dp"
+                android:layout_height="12dp"
+                android:layout_gravity="center"
+                android:layout_centerInParent="true"
+                android:background="@drawable/led_green" />
+
+            <View
+                android:layout_width="56dp"
+                android:layout_height="12dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="@dimen/normal_margin"
+                android:layout_marginRight="@dimen/normal_margin"
+                android:background="@drawable/led_yellow" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/validateHere"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:background="@drawable/obliterator_validate_here"
+            android:layout_width="256dp"
+            android:layout_height="144dp"
+            android:layout_below="@+id/leds"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:id="@+id/validate_here_ita"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/validate_here_ita"
+                android:textColor="@color/validateHereForeground"
+                android:textSize="24sp"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:layout_marginLeft="@dimen/low_margin"
+                android:layout_marginStart="@dimen/low_margin"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/validate_here_eng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/validate_here_ita"
+                android:textColor="@color/validateHereForeground"
+                android:text="@string/validate_here_eng"
+                android:layout_marginLeft="@dimen/big_margin"
+                android:layout_marginStart="@dimen/big_margin"
+                android:textSize="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentBottom="true"
+                android:textSize="@dimen/big_text"
+                android:gravity="center"
+                android:textScaleX="8.0"
+                android:textColor="@color/validateHereForeground"
+                android:text="@string/triangle_down" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/approachTicket"
+            android:layout_below="@id/validateHere"
+            android:layout_width="256dp"
+            android:layout_height="144dp"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/obliterator_approach_ticket">
+
+        </RelativeLayout>
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

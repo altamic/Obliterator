@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="displayBorder">#A5B2FD</color>
+    <color name="displayText">#82B1FF</color>
+    <color name="displayBackground">#4F5AC7</color>
+
+    <color name="lateralButtonText">@android:color/black</color>
+    <color name="lateralButtonBorder">#9BBBB1</color>
+    <color name="lateralButtonBackground">#E2E2DF</color>
+
+    <color name="obliteratorBackground">#2979ff</color>
+    <color name="obliteratorBorder">#194b9e</color>
+
+    <color name="validateHereBackground">#F9FD5A</color>
+    <color name="validateHereForeground">#49427A</color>
+
+    <color name="approachTicketBackground">#3655EF</color>
+    <color name="yellow">#FFEE58</color>
+</resources>

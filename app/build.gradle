@@ -1,0 +1,59 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.1"
+    defaultConfig {
+        applicationId "it.convergent.obliterator"
+        minSdkVersion 14
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+
+//        vectorDrawables.useSupportLibrary = true
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'androidDebugKey'
+            keyPassword 'android'
+            storeFile file("${System.getProperty('user.home')}/.android/debug.keystore")
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "POST_CARNET_COLLECTION_API",
+                    "\"https://carnet-backend.herokuapp.com/carnets/add\""
+        }
+        release {
+            buildConfigField "String", "POST_CARNET_COLLECTION_API",
+                    "\"https://carnet-backend.herokuapp.com/carnets/add\""
+
+            minifyEnabled true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+//    compile 'io.reactivex:rxkotlin:0.60.0'
+    compile 'io.reactivex:rxjava:1.1.6'
+    compile 'com.artemzin.rxjava:proguard-rules:1.1.0.0'
+
+    // we don't need them
+    //    compile fileTree(include: ['*.jar'], dir: 'libs')
+    //    compile 'com.android.support:appcompat-v7:23.4.0'
+    //    compile 'com.android.support:support-v13:23.4.0'
+    //    compile 'com.android.support:design:23.4.0'
+    //    compile 'com.android.support:preference-v14:23.4.0'
+
+    testCompile 'junit:junit:4.12'
+}

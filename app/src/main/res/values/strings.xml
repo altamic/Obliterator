@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Obliterator</string>
+    <string name="validate_here_ita">validare qui</string>
+    <string name="validate_here_eng">Validate here</string>
+    <string name="triangle_right">◀</string>
+    <string name="triangle_left">▶</string>
+    <string name="triangle_down">▼</string>
+
+    <string name="preference_file_key">preference_file_key</string>
+    <string name="json_carnet_set_key">json_carnet_set_key</string>
+    <string name="activate_nfc_request">Please activate NFC and press Back to return to the application!</string>
+    <string name="gtt_hex_date">------</string>
+    <string name="gtt_hex_binary">000000000000000000000000</string>
+    <string name="date_time">00-00-00 00:00</string>
+    <string name="carnets_sent_success">SUCCESS: carnets sent</string>
+    <string name="carnets_sent_failure">FAILURE: carnets not sent</string>
+    <string name="empty" />
+
+    <string name="default_carnet">04D1560B\n32882880\n1248F203\n00018000\n01050000\n020102BD\n5C5F4400\n00AE10A6\nB8005304\nFDE7184B\n00000000\n00000000\n00000000\n00000000\n00000000\n00020000</string>
+</resources>
