@@ -11,12 +11,8 @@ import it.convergent.obliterator.Maybe.None
 /**
  * Created by altamic on 02/06/16.
  */
-class ReadMifareUltralight(guiListener: OnReadyToUpdateGui, carnetListener: OnDataReceived):
+class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListener: OnDataReceived):
         AsyncTask<MifareUltralight, Int, Carnet>() {
-
-    val guiListener = guiListener
-    val carnetListener = carnetListener
-
 
     override fun doInBackground(vararg params: MifareUltralight?): Carnet? {
         val mifareUltralight = params.first()
