@@ -16,7 +16,7 @@ object flow {
         val timer = Observable.interval(initialDelayInMinutes,
                                         periodInMinutes, TimeUnit.MINUTES)
 
-        calendar.add(Calendar.MINUTE , -1)
+        calendar.add(Calendar.MINUTE, -1)
 
         return Observable
                 .just(calendar)

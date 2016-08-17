@@ -18,10 +18,7 @@ import android.os.Vibrator
 import android.provider.Settings
 import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.ToggleButton
+import android.widget.*
 import it.convergent.obliterator.Maybe.*
 import java.io.BufferedOutputStream
 import java.io.InputStream
@@ -80,8 +77,8 @@ open class MainActivity: Activity() {
     val gttTimeBinary by lazy { findViewById(R.id.gttTimeBinary) as TextView }
     val dateTime by lazy { findViewById(R.id.dateTime) as TextView }
     val toggleChangeDateTime by lazy { findViewById(R.id.toggleChangeDateTime) as ToggleButton }
-    val decrementDateTime by lazy { findViewById(R.id.decrementDateTime) }
-    val incrementDateTime by lazy { findViewById(R.id.incrementDateTime) }
+    val decrementDateTime by lazy { findViewById(R.id.decrementDateTime) as Button }
+    val incrementDateTime by lazy { findViewById(R.id.incrementDateTime) as Button }
     val carnetRead  by lazy { findViewById(R.id.carnetRead) as TextView }
     val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
 
