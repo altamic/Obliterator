@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by altamic on 02/07/16.
  */
+
 object flow {
     fun generateFrom(calendar: Calendar): Observable<Calendar> {
         val initialDelayInMinutes: Long = 0

@@ -109,7 +109,7 @@ fun String.toJsonCarnetSet(): Set<Carnet> {
 fun hexStringToByteArray(hex: String): ByteArray {
     val size = hex.length
 
-    if (size % 2 == 1) {
+    if (size.isOdd()) {
         throw IllegalArgumentException("Hex string must have even number of characters")
     }
 

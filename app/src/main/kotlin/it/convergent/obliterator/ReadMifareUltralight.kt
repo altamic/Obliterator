@@ -11,6 +11,7 @@ import it.convergent.obliterator.Maybe.None
 /**
  * Created by altamic on 02/06/16.
  */
+
 class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListener: OnDataReceived):
         AsyncTask<MifareUltralight, Int, Carnet>() {
 

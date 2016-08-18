@@ -7,6 +7,7 @@ import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
 /**
  * Created by altamic on 02/06/16.
  */
+
 class WriteMifareUltralight(val listener: OnReadyToUpdateGui):
         AsyncTask<MifareUltralight, Int, Void>() {
 
