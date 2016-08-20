@@ -10,8 +10,8 @@ import java.util.*
 
 sealed class Maybe<out T> {
     object None: Maybe<Nothing>()
-    object Unknown: Maybe<Nothing>()
-    object Invalid: Maybe<Nothing>()
+//    object Unknown: Maybe<Nothing>()
+//    object Invalid: Maybe<Nothing>()
     class Just<T>(val value: T): Maybe<T>()
 }
 
