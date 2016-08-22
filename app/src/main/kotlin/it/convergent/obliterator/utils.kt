@@ -87,25 +87,6 @@ fun ByteArray.toHexString(): String {
             .toString()
 }
 
-fun Set<Carnet>.toJson(): String {
-    return this.map { carnet -> "\"${carnet.toString()}\"" }
-                .joinToString(separator = ", ", prefix = "[", postfix = "]")
-}
-
-fun String.toJsonCarnetSet(): Set<Carnet> {
-    val regex = "\\A\\[\\s*((\"[0-9A-F]{128}\")(,\\s(\"[0-9A-F]{128}\"))*)+\\]\\z".toRegex()
-
-    return if (this.matches(regex)) {
-        this.removeSurrounding(prefix = "[", suffix = "]")
-            .split(", ")
-            .map { it.removeSurrounding(delimiter = "\"")}
-            .map { Carnet(hexStringToByteArray(it))}
-            .toSet()
-    } else {
-        emptySet<Carnet>()
-    }
-}
-
 fun hexStringToByteArray(hex: String): ByteArray {
     val size = hex.length
 
@@ -130,6 +111,25 @@ fun hexStringToByteArray(hex: String): ByteArray {
     }
 
     return data
+}
+
+fun Set<Carnet>.toJson(): String {
+    return this.map { carnet -> "\"${carnet.toString()}\"" }
+            .joinToString(separator = ", ", prefix = "[", postfix = "]")
+}
+
+fun String.toCarnetSet(): Set<Carnet> {
+    val regex = "\\A\\[\\s*((\"[0-9A-F]{128}\")(,\\s(\"[0-9A-F]{128}\"))*)+\\]\\z".toRegex()
+
+    return if (this.matches(regex)) {
+        this.removeSurrounding(prefix = "[", suffix = "]")
+                .split(", ")
+                .map { it.removeSurrounding(delimiter = "\"")}
+                .map { Carnet(hexStringToByteArray(it))}
+                .toSet()
+    } else {
+        emptySet<Carnet>()
+    }
 }
 
 fun rot13(input: String): String {

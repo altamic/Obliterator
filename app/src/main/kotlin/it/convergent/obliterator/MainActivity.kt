@@ -285,7 +285,7 @@ open class MainActivity: Activity() {
         val jsonCarnetList = sharedPrefs
                 .getString(carnetJsonSetKey, jsonEmptyArrayDefault)
 
-        return jsonCarnetList.toJsonCarnetSet()
+        return jsonCarnetList.toCarnetSet()
     }
 
     fun httpPostJson(carnetsToBeSent: LinkedBlockingQueue<Carnet>) {
