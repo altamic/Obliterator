@@ -57,22 +57,26 @@ class CarnetTests {
     fun rightZeroes() {
         val carnet = newCarnet
 
-        assertEquals(0x0F, carnet.getRightZeroes(otp = _15_rides_minus_00.toByteArray()))
-        assertEquals(0x0E, carnet.getRightZeroes(otp = _15_rides_minus_01.toByteArray()))
-        assertEquals(0x0D, carnet.getRightZeroes(otp = _15_rides_minus_02.toByteArray()))
-        assertEquals(0x0C, carnet.getRightZeroes(otp = _15_rides_minus_03.toByteArray()))
-        assertEquals(0x0B, carnet.getRightZeroes(otp = _15_rides_minus_04.toByteArray()))
-        assertEquals(0x0A, carnet.getRightZeroes(otp = _15_rides_minus_05.toByteArray()))
-        assertEquals(0x09, carnet.getRightZeroes(otp = _15_rides_minus_06.toByteArray()))
-        assertEquals(0x08, carnet.getRightZeroes(otp = _15_rides_minus_07.toByteArray()))
-        assertEquals(0x07, carnet.getRightZeroes(otp = _15_rides_minus_08.toByteArray()))
-        assertEquals(0x06, carnet.getRightZeroes(otp = _15_rides_minus_09.toByteArray()))
-        assertEquals(0x05, carnet.getRightZeroes(otp = _15_rides_minus_10.toByteArray()))
-        assertEquals(0x04, carnet.getRightZeroes(otp = _15_rides_minus_11.toByteArray()))
-        assertEquals(0x03, carnet.getRightZeroes(otp = _15_rides_minus_12.toByteArray()))
-        assertEquals(0x02, carnet.getRightZeroes(otp = _15_rides_minus_13.toByteArray()))
-        assertEquals(0x01, carnet.getRightZeroes(otp = _15_rides_minus_14.toByteArray()))
-        assertEquals(0x00, carnet.getRightZeroes(otp = _15_rides_minus_15.toByteArray()))
+        val map = mapOf(0x0F to _15_rides_minus_00,
+                        0x0E to _15_rides_minus_01,
+                        0x0D to _15_rides_minus_02,
+                        0x0C to _15_rides_minus_03,
+                        0x0B to _15_rides_minus_04,
+                        0x0A to _15_rides_minus_05,
+                        0x09 to _15_rides_minus_06,
+                        0x08 to _15_rides_minus_07,
+                        0x07 to _15_rides_minus_08,
+                        0x06 to _15_rides_minus_09,
+                        0x05 to _15_rides_minus_10,
+                        0x04 to _15_rides_minus_11,
+                        0x03 to _15_rides_minus_12,
+                        0x02 to _15_rides_minus_13,
+                        0x01 to _15_rides_minus_14,
+                        0x00 to _15_rides_minus_15)
+
+        map.forEach { item ->
+            assertEquals(item.key, carnet.getRightZeroes(otp = item.value.toByteArray()))
+        }
     }
 
     @Test
