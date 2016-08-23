@@ -1,7 +1,6 @@
 package it.convergent.obliterator
 
 import it.convergent.obliterator.Maybe.Just
-import it.convergent.obliterator.Maybe.None
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.text.SimpleDateFormat
@@ -20,7 +19,6 @@ class UtilsTests {
         val maybeString  = Just(string)
         val maybeInteger = Just(integer)
         val maybeClass   = Just(clazz)
-        val none         = None
 
         assertEquals(string, maybeString.value)
         assertEquals(integer, maybeInteger.value)
@@ -94,9 +92,9 @@ class UtilsTests {
 
     @Test
     fun byteArrayGetLong() {
-        val bytes = arrayOf<Byte>(0x01, 0x23, 0x45, 0x67,
-                                    0x89.toByte(), 0xAB.toByte(),
-                                    0xCD.toByte(), 0xEF.toByte())
+        val bytes = arrayOf(0x01, 0x23, 0x45, 0x67,
+                            0x89.toByte(), 0xAB.toByte(),
+                            0xCD.toByte(), 0xEF.toByte())
 
         assertEquals(0x67452301, bytes.toByteArray().getLong(index = 0))
         assertEquals(0x89674523, bytes.toByteArray().getLong(index = 1))
@@ -112,16 +110,21 @@ class UtilsTests {
 
         assertEquals("12345678", bytes.toHexString())
 
-        val bytes2 = arrayOf<Byte>(0xFF.toByte(), 0xEE.toByte(), 0xDD.toByte())
+        val bytes2 = arrayOf(0xFF.toByte(), 0xEE.toByte(), 0xDD.toByte())
                                     .toByteArray()
 
         assertEquals("FFEEDD", bytes2.toHexString())
     }
 
-    @Test
-    @Throws(IllegalArgumentException::class)
+    @Test(expected = IllegalArgumentException::class)
     fun hexStringToByteArray() {
+        val bytes = arrayOf<Byte>(0x12, 0x34, 0x56, 0x78).toByteArray()
 
+        for (i in 0..bytes.size - 1)
+            assertEquals(bytes[i], hexStringToByteArray("12345678")[i])
+
+        val illegal = "ABCDEFGH"
+        hexStringToByteArray(illegal)
     }
 
     @Test
@@ -129,9 +132,9 @@ class UtilsTests {
         val obliteratedFirstTimeCarnet = Carnet(data = hexStringToByteArray("048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EA00003C0004F8AE10795C129EB3"))
         val obliteratedSecondTimeCarnet = Carnet(data = hexStringToByteArray("048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EF00003C0004F8AE10795C1225F9"))
 
-        val json = "[\"048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EA00003C0004F8AE10795C129EB3\", \"048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EF00003C0004F8AE10795C1225F9\"]"
+        val carnets = setOf(obliteratedFirstTimeCarnet, obliteratedSecondTimeCarnet)
 
-        val carnets = setOf<Carnet>(obliteratedFirstTimeCarnet, obliteratedSecondTimeCarnet)
+        val json = "[\"048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EA00003C0004F8AE10795C129EB3\", \"048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EF00003C0004F8AE10795C1225F9\"]"
 
         assertEquals(json, carnets.toJson())
     }
