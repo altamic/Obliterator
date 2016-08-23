@@ -62,8 +62,8 @@ fun ByteArray.getInt(index: Int): Int {
     val lsbMask = 0x000000FF
     val msbMask = 0x0000FF00
 
-    val lsb = this[index + 0].toInt().shl(bitCount = 0)
-    val msb = this[index + 1].toInt().shl(bitCount = 8)
+    val lsb = this[index + 0].toInt().shl(bitCount =  0)
+    val msb = this[index + 1].toInt().shl(bitCount =  8)
 
     return ((lsb and lsbMask) or (msb and msbMask))
 }
@@ -178,8 +178,7 @@ object GttEpoch {
         val minutesSinceGttEpoch = ((unixEpochCalendar.timeInMillis -
                 gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
 
-        return minutesSinceGttEpoch.toByteArray()
-                                    .getInt(index = 0)
+        return minutesSinceGttEpoch
     }
 
     fun currentTimeFrom(calendar: Calendar): Int {

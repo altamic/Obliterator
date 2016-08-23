@@ -210,9 +210,10 @@ data class Carnet(val data: ByteArray) {
 
         if (firstValidation.toHexString().equals("00000000")) return None
 
-        val minutes = firstValidation.sliceArray(0..3).getInt(0)
-        val unixTimestamp = calendarFromGttEpoch(minutesSinceGttEpoch = minutes)
+        val minutes = ByteBuffer.wrap(firstValidation, 0, 4).int.shr(bitCount = 8)
+        val unixTimestamp = GttEpoch.calendar(minutesSinceGttEpoch = minutes)
                              .timeInMillis / 1000
+
         return Just(unixTimestamp.toInt())
     }
 
@@ -221,8 +222,10 @@ data class Carnet(val data: ByteArray) {
 
         if (lastValidationBeforeExpiration.toHexString().equals("00000000")) return None
 
-        val minutes = lastValidationBeforeExpiration.sliceArray(0..3).getInt(0)
-        val unixTimestamp = calendarFromGttEpoch(minutes).timeInMillis / 1000
+        val minutes = ByteBuffer.wrap(lastValidationBeforeExpiration, 0, 4).int.shr(bitCount = 8)
+        val unixTimestamp = GttEpoch.calendar(minutesSinceGttEpoch = minutes)
+                              .timeInMillis / 1000
+
         return Just(unixTimestamp.toInt())
     }
 
@@ -234,15 +237,14 @@ data class Carnet(val data: ByteArray) {
     }
 
     fun isValidationExpired(): Boolean {
-        val validationTimeGttEpoch = firstValidationTime()
+        val validationUnixTimestamp = firstValidationTime()
 
         val currentTime = System.currentTimeMillis() / 1000
 
-        return when(validationTimeGttEpoch) {
+        return when(validationUnixTimestamp) {
             is None -> true
             is Just<Int> -> {
-                val validationTime = calendarFromGttEpoch(validationTimeGttEpoch.value).timeInMillis / 1000
-                currentTime <= validationTime + MAX_REMAINING_MINUTES * 60
+                currentTime > validationUnixTimestamp.value + MAX_REMAINING_MINUTES * 60
             }
             else -> true
         }
