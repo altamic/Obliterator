@@ -211,18 +211,19 @@ data class Carnet(val data: ByteArray) {
         if (firstValidation.toHexString().equals("00000000")) return None
 
         val minutes = firstValidation.sliceArray(0..3).getInt(0)
-        val unixTimestamp = calendarFromGttEpoch(minutes).timeInMillis / 1000
+        val unixTimestamp = calendarFromGttEpoch(minutesSinceGttEpoch = minutes)
+                             .timeInMillis / 1000
         return Just(unixTimestamp.toInt())
     }
 
-    fun lastValidationBeforeExpirationTime(): Maybe<Long> {
+    fun lastValidationBeforeExpirationTime(): Maybe<Int> {
         val lastValidationBeforeExpiration = page(index = DATE_TIME_BEFORE_EXPIRY_OFFSET)
 
         if (lastValidationBeforeExpiration.toHexString().equals("00000000")) return None
 
         val minutes = lastValidationBeforeExpiration.sliceArray(0..3).getInt(0)
         val unixTimestamp = calendarFromGttEpoch(minutes).timeInMillis / 1000
-        return Just(unixTimestamp)
+        return Just(unixTimestamp.toInt())
     }
 
     fun validate(): Carnet {

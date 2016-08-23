@@ -1,7 +1,10 @@
 package it.convergent.obliterator
 
+import it.convergent.obliterator.Maybe.Just
+import it.convergent.obliterator.Maybe.None
 import org.junit.Assert.assertEquals
 import org.junit.Test
+
 /**
  * Created by altamic on 20/08/16.
  */
@@ -74,7 +77,19 @@ class CarnetTests {
 
     @Test
     fun firstValidationTime() {
+        val carnets = listOf(emptyCarnet, fourteenRidesRemainingCarnet,
+                        sevenRidesRemainingCarnet, lastRideRemainingCarnet,
+                        obliteratedFirstTimeCarnet, obliteratedSecondTimeCarnet)
 
+        carnets.forEach { carnet ->
+            assert(carnet.firstValidationTime() is Just<Int>)
+            val timestamp = carnet.firstValidationTime() as Just<Int>
+            val minutesSinceGttEpoch = carnet.page(index = 0x0A).sliceArray(0..2).getInt(index = 0)
+            val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
+            assertEquals(obtainedTimestamp, timestamp.value)
+        }
+
+        assertEquals(None, newCarnet.firstValidationTime())
     }
 
     @Test

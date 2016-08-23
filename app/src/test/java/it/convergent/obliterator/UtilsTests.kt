@@ -171,6 +171,18 @@ class UtilsTests {
     }
 
     @Test
+    fun gttEpochCalendarFromMinutesSinceGttEpoch() {
+        val gttMinutes = 0x5D7000
+        val actualMinutes = "23/08/2016 11:40"
+        val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
+        val calendar = Calendar.getInstance()
+
+        calendar.time = formatter.parse(actualMinutes)
+
+        assertEquals(calendar, GttEpoch.calendar(minutesSinceGttEpoch = gttMinutes))
+}
+
+    @Test
     fun gttEpochCurrentTime() {
         val GTT_EPOCH = "01/01/2005 00:00"
         val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)

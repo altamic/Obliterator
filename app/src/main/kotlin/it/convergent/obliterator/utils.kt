@@ -159,7 +159,7 @@ fun rot13(input: String): String {
 }
 
 object GttEpoch {
-    private fun calendar(minutesSinceGttEpoch: Int): Calendar {
+    fun calendar(minutesSinceGttEpoch: Int): Calendar {
         val GTT_EPOCH = "01/01/2005 00:00"
         val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALY)
         val calendar = Calendar.getInstance()
