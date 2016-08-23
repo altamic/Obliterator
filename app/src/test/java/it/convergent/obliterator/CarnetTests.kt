@@ -98,12 +98,30 @@ class CarnetTests {
 
     @Test
     fun lastValidationBeforeExpirationTime(){
+        val obliteratedOneTime = obliteratedFirstTimeCarnet
+        val minutesSinceGttEpoch = obliteratedOneTime.page(index = 0x0A).sliceArray(0..2).getInt(index = 0)
+        val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
+
+        assert(obliteratedOneTime.firstValidationTime() is Just<Int>)
+        val timestamp = obliteratedOneTime.firstValidationTime() as Just<Int>
+        assertEquals(obtainedTimestamp, timestamp.value)
+
+        val obliteratedSecondTime = obliteratedSecondTimeCarnet
+        val minutesSinceGttEpoch2 = obliteratedSecondTime.page(index = 0x0C).sliceArray(0..2).getInt(index = 0)
+        val obtainedTimestamp2 = (GttEpoch.calendar(minutesSinceGttEpoch2).timeInMillis / 1000).toInt()
+
+        assert(obliteratedOneTime.firstValidationTime() is Just<Int>)
+        val timestamp2 = obliteratedOneTime.firstValidationTime() as Just<Int>
+        assertEquals(obtainedTimestamp2, timestamp2.value)
+
+
+        assertEquals(None, newCarnet.firstValidationTime())
 
     }
 
     @Test
     fun isValidationExpired() {
-
+        
     }
 
     @Test
