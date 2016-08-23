@@ -81,6 +81,17 @@ class UtilsTests {
     }
 
     @Test
+    fun longToByteArray() {
+        val number = 0xB8004BD3
+        val bytes = arrayOf<Byte>(0x00, 0x00, 0x00, 0x00,
+                            0xB8.toByte(), 0x00, 0x4B, 0xD3.toByte())
+
+        for (i in 0..bytes.size - 1) {
+            assertEquals(bytes[i], number.toByteArray()[i])
+        }
+    }
+
+    @Test
     fun byteArrayGetInt() {
         val bytes = arrayOf<Byte>(0x12, 0x34, 0x56, 0x78)
 
@@ -110,8 +121,8 @@ class UtilsTests {
 
         assertEquals("12345678", bytes.toHexString())
 
-        val bytes2 = arrayOf(0xFF.toByte(), 0xEE.toByte(), 0xDD.toByte())
-                                    .toByteArray()
+        val bytes2 = arrayOf(0xFF.toByte(), 0xEE.toByte(),
+                            0xDD.toByte()).toByteArray()
 
         assertEquals("FFEEDD", bytes2.toHexString())
     }

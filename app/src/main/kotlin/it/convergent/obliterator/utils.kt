@@ -45,6 +45,19 @@ fun Int.toByteArray(): ByteArray {
     return byteArray
 }
 
+fun Long.toByteArray(): ByteArray {
+    val byteArray = ByteArray(size = 8)
+    val byteBits  = 8
+    val mask      = 0x000000FF
+
+    byteArray.size.times { index ->
+        val offset = byteBits * byteArray.size.minus(1).minus(index)
+        byteArray[index] = this.ushr(bitCount = offset).and(mask.toLong()).toByte()
+    }
+
+    return byteArray
+}
+
 fun ByteArray.getInt(index: Int): Int {
     val lsbMask = 0x000000FF
     val msbMask = 0x0000FF00
