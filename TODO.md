@@ -38,21 +38,21 @@ MIFARE Ultralight
 State Machine
 -------------
 
-States:    { POR, IDLE, HALT, READY_1, READY_2, ACTIVE } 
-Events:    { INIT, REQA, WUPA, ANTICOLLISION, 
-             SELECT_CL1, SELECT_CL2, HALT,
-             READ(a), WRITE(a), C_WRITE(a) | a ∈ Addresses,
-             UNEXPECTED }
-Edges:     { INIT(POR, IDLE), REQA(IDLE -> READY_1), WUPA(IDLE -> READY_1), 
-             WUPA(HALT -> READY_1), ANTICOLLISION(READY_1 -> READY_1),
-             READ(0)(READY_1 -> ACTIVE), SELECT_CL1(READY_1 -> READY_2), 
-             ANTICOLLISION(READY_2 -> READY_2), SELECT_CL2(READY_2 -> ACTIVE),
-             WRITE(ACTIVE -> ACTIVE), READ(a)(ACTIVE -> ACTIVE),
-             HALT(ACTIVE -> HALT),
-             UNEXPECTED(x -> IDLE) a ∈ States / { HALT }, 
-             UNEXPECTED(HALT -> HALT) }
-
-Addresses: { 0x0, ..., 0xF }
+    States:    { POR, IDLE, HALT, READY_1, READY_2, ACTIVE } 
+    Events:    { INIT, REQA, WUPA, ANTICOLLISION, 
+                 SELECT_CL1, SELECT_CL2, HALT,
+                 READ(a), WRITE(a), C_WRITE(a) | a ∈ Addresses,
+                 UNEXPECTED }
+    Edges:     { INIT(POR, IDLE), REQA(IDLE -> READY_1), WUPA(IDLE -> READY_1), 
+                 WUPA(HALT -> READY_1), ANTICOLLISION(READY_1 -> READY_1),
+                 READ(0)(READY_1 -> ACTIVE), SELECT_CL1(READY_1 -> READY_2), 
+                 ANTICOLLISION(READY_2 -> READY_2), SELECT_CL2(READY_2 -> ACTIVE),
+                 WRITE(ACTIVE -> ACTIVE), READ(a)(ACTIVE -> ACTIVE),
+                 HALT(ACTIVE -> HALT),
+                 UNEXPECTED(x -> IDLE) a ∈ States / { HALT }, 
+                 UNEXPECTED(HALT -> HALT) }
+    
+    Addresses: { 0x0, ..., 0xF }
 
 In all states, the command interpreter will return to the idle state on receipt 
 of an unexpected command. If the IC was previously in the halt state, it will 
