@@ -195,10 +195,7 @@ class UtilsTests {
         val minutesSinceGttEpoch = ((unixEpochCalendar.timeInMillis -
                 gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
 
-        val minutes = minutesSinceGttEpoch.toByteArray()
-                        .getInt(index = 0)
-
-        assertEquals(minutes, GttEpoch.currentTime())
+        assertEquals(minutesSinceGttEpoch, GttEpoch.currentTime())
 
     }
 
