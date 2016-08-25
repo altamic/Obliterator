@@ -246,7 +246,6 @@ class Carnet(val data: ByteArray) {
             is Just<Int> -> {
                 currentTime > validationUnixTimestamp.value + MAX_REMAINING_MINUTES * 60
             }
-            else -> true
         }
     }
 

@@ -161,11 +161,15 @@ class UtilsTests {
                    "\"048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EF00003C0004F8AE10795C1225F9\"]"
 
         assertEquals(carnets, json.toCarnetSet())
+
+        val empty  = "[]"
+
+        assertEquals(emptySet<Carnet>(), empty.toCarnetSet())
     }
 
     @Test
     fun rot13() {
-        val hello = "hello"
+        val hello = "hello world"
 
         assertEquals(hello, rot13(rot13(hello)))
     }
