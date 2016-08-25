@@ -38,6 +38,32 @@ class CarnetTests {
     val _15_rides_minus_14 = 0b00111111111111111111111111111110 // 0x3FFFFFFE
     val _15_rides_minus_15 = 0b01111111111111111111111111111111 // 0x7FFFFFFF
 
+    fun currentlyValidCarnet(): Carnet {
+        val currentGttMinutes = GttEpoch.currentTime()
+                .toByteArray()
+                .toHexString()
+                .removePrefix(prefix = "00")
+
+        return Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001C00001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7${currentGttMinutes}0004F80000${currentGttMinutes}00003C0004F8AE1074C8128394"))
+    }
+
+    fun currentlyValidCarnetMinus30Minutes(): Carnet {
+        val millisToMinutesFactor = (1000 * 60)
+        val gttCalendar = GttEpoch.calendar(minutesSinceGttEpoch = 0) // gtt epoch
+        val unixEpochCalendar = Calendar.getInstance()
+        unixEpochCalendar.add(Calendar.MINUTE, -30)
+
+        val minutesSinceGttEpochMinus30Minutes = ((unixEpochCalendar.timeInMillis -
+                gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
+
+        val gttMinutes = minutesSinceGttEpochMinus30Minutes
+                .toByteArray()
+                .toHexString()
+                .removePrefix(prefix = "00")
+
+        return Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001C00001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7${gttMinutes}0004F80000${gttMinutes}00003C0004F8AE1074C8128394"))
+    }
+
     @Test
     fun page() {
         val carnet = newCarnet
@@ -88,14 +114,14 @@ class CarnetTests {
                         obliteratedFirstTimeCarnet, obliteratedSecondTimeCarnet)
 
         carnets.forEach { carnet ->
-            assert(carnet.firstValidationTime() is Just<Int>)
-            val timestamp = carnet.firstValidationTime() as Just<Int>
+            assert(carnet.firstObliterationTime() is Just<Int>)
+            val timestamp = carnet.firstObliterationTime() as Just<Int>
             val minutesSinceGttEpoch = ByteBuffer.wrap(carnet.page(index = 0x0A), 0, 4).int.shr(bitCount = 8)
             val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
             assertEquals(obtainedTimestamp, timestamp.value)
         }
 
-        assertEquals(None, newCarnet.firstValidationTime())
+        assertEquals(None, newCarnet.firstObliterationTime())
     }
 
     @Test
@@ -104,20 +130,20 @@ class CarnetTests {
         val minutesSinceGttEpoch = ByteBuffer.wrap(obliteratedOneTime.page(index = 0x0A), 0, 4).int.shr(bitCount = 8)
         val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
 
-        assert(obliteratedOneTime.firstValidationTime() is Just<Int>)
-        val timestamp = obliteratedOneTime.firstValidationTime() as Just<Int>
+        assert(obliteratedOneTime.firstObliterationTime() is Just<Int>)
+        val timestamp = obliteratedOneTime.firstObliterationTime() as Just<Int>
         assertEquals(obtainedTimestamp, timestamp.value)
 
         val obliteratedSecondTime = obliteratedSecondTimeCarnet
         val minutesSinceGttEpoch2 = ByteBuffer.wrap(obliteratedSecondTime.page(index = 0x0C), 0, 4).int.shr(bitCount = 8)
         val obtainedTimestamp2 = (GttEpoch.calendar(minutesSinceGttEpoch2).timeInMillis / 1000).toInt()
 
-        assert(obliteratedOneTime.lastValidationBeforeExpirationTime() is Just<Int>)
-        val timestamp2 = obliteratedSecondTimeCarnet.lastValidationBeforeExpirationTime() as Just<Int>
+        assert(obliteratedOneTime.lastObliterationBeforeExpirationTime() is Just<Int>)
+        val timestamp2 = obliteratedSecondTimeCarnet.lastObliterationBeforeExpirationTime() as Just<Int>
         assertEquals(obtainedTimestamp2, timestamp2.value)
 
 
-        assertEquals(None, newCarnet.firstValidationTime())
+        assertEquals(None, newCarnet.firstObliterationTime())
     }
 
     @Test
@@ -134,27 +160,60 @@ class CarnetTests {
 
     @Test
     fun isValidationExpired() {
-        assert(newCarnet.isValidationExpired())
+        assert(newCarnet.isObliterationExpired())
 
-        assert(emptyCarnet.isValidationExpired())
+        assert(emptyCarnet.isObliterationExpired())
 
-        val currentGttMinutes = GttEpoch.currentTime()
-                                        .toByteArray()
-                                        .toHexString()
-                                        .removePrefix(prefix = "00")
+        val currentlyValid = currentlyValidCarnet()
 
-        val currentlyValid = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001C00001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7${currentGttMinutes}0004F80000${currentGttMinutes}00003C0004F8AE1074C8128394"))
-
-//        assert(!currentlyValid.isValidationExpired())
+        assert(!currentlyValid.isObliterationExpired())
     }
 
     @Test
-    fun validate() {
+    fun obliterate() {
+        // never validated
+        assertEquals(None, newCarnet.firstObliterationTime())
+        val obliterated = newCarnet.obliterate()
+        val obliterationDateTime = obliterated.firstObliterationTime()
 
+        val currentMinute = (Calendar.getInstance().timeInMillis / 1000) / 60 * 60
+
+        assert(obliterationDateTime is Just<Int>)
+        val timestamp = obliterationDateTime as Just<Int>
+        assertEquals(currentMinute, timestamp.value.toLong())
+
+        // expired validation
+        assert(emptyCarnet.isObliterationExpired())
+        val obliterated2 = emptyCarnet.obliterate()
+        val obliterationDateTime2 = obliterated2.firstObliterationTime()
+
+        val currentMinute2 = (Calendar.getInstance().timeInMillis / 1000) / 60 * 60
+
+        assert(obliterationDateTime2 is Just<Int>)
+        val timestamp2 = obliterationDateTime2 as Just<Int>
+        assertEquals(currentMinute2, timestamp2.value.toLong())
+
+        // refresh validation with a still valid carnet
+        val currentlyValid = currentlyValidCarnetMinus30Minutes()
+        val originalValidationPage = currentlyValid.page(index = 0x0A)
+
+        val refreshedObliteration = currentlyValid.obliterate()
+
+        // page 0x0A should be invariant
+        assertEquals(originalValidationPage.toHexString(),
+                        refreshedObliteration.page(index = 0x0A).toHexString())
+
+        // page 0x0C should be updated
+        val currentMinute3 = (Calendar.getInstance().timeInMillis / 1000) / 60 * 60
+        val refreshedObliterationDateTime = refreshedObliteration.lastObliterationBeforeExpirationTime()
+        assert(refreshedObliterationDateTime is Just<Int>)
+        val timestamp3 = refreshedObliterationDateTime as Just<Int>
+
+        assertEquals(currentMinute3, timestamp3.value.toLong())
     }
 
     @Test
-    fun freshValidationTime() {
+    fun freshObliterationTime() {
 
     }
 
@@ -170,6 +229,9 @@ class CarnetTests {
 
     @Test
     fun toStringRepresentation() {
+        val hex = "046825C12A3C3C84AE48F2033FFFFFFE01050000020102BD5B02840000AE10A6B8004BD38B1AE1F75B44E20004F800005B44E200003C0004F8AE1070C912FDE6"
+        val carnet = Carnet(data = hexStringToByteArray(hex))
 
+        assertEquals(hex, carnet.toString())
     }
 }

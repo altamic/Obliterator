@@ -205,7 +205,7 @@ data class Carnet(val data: ByteArray) {
 //        }
 //    }
 
-    fun firstValidationTime(): Maybe<Int> {
+    fun firstObliterationTime(): Maybe<Int> {
         val firstValidation = page(index = DATE_TIME_OFFSET)
 
         if (firstValidation.toHexString().equals("00000000")) return None
@@ -217,7 +217,7 @@ data class Carnet(val data: ByteArray) {
         return Just(unixTimestamp.toInt())
     }
 
-    fun lastValidationBeforeExpirationTime(): Maybe<Int> {
+    fun lastObliterationBeforeExpirationTime(): Maybe<Int> {
         val lastValidationBeforeExpiration = page(index = DATE_TIME_BEFORE_EXPIRY_OFFSET)
 
         if (lastValidationBeforeExpiration.toHexString().equals("00000000")) return None
@@ -229,15 +229,15 @@ data class Carnet(val data: ByteArray) {
         return Just(unixTimestamp.toInt())
     }
 
-    fun validate(): Carnet {
-        return  if (firstValidationTime() is None || isValidationExpired())
-            validateExpiredOrNew()
+    fun obliterate(): Carnet {
+        return  if (firstObliterationTime() is None || isObliterationExpired())
+            obliterateExpiredOrNew()
         else
-            refreshValidation()
+            refreshObliteration()
     }
 
-    fun isValidationExpired(): Boolean {
-        val validationUnixTimestamp = firstValidationTime()
+    fun isObliterationExpired(): Boolean {
+        val validationUnixTimestamp = firstObliterationTime()
 
         val currentTime = System.currentTimeMillis() / 1000
 
@@ -250,7 +250,7 @@ data class Carnet(val data: ByteArray) {
         }
     }
 
-    private fun validateExpiredOrNew(): Carnet {
+    private fun obliterateExpiredOrNew(): Carnet {
         val data = data.clone()
 
         val updatedPage = currentTimeToMinutesFromGttEpoch()
@@ -267,7 +267,7 @@ data class Carnet(val data: ByteArray) {
         return Carnet(data)
     }
 
-    private fun refreshValidation(): Carnet {
+    private fun refreshObliteration(): Carnet {
         val data = data.clone()
 
         val updatedPageC = currentTimeToMinutesFromGttEpoch()
@@ -282,7 +282,7 @@ data class Carnet(val data: ByteArray) {
         return Carnet(data)
     }
 
-    fun freshValidationTime(): ByteArray {
+    fun freshObliterationTime(): ByteArray {
         return currentTimeToMinutesFromGttEpoch()
                         .shl(bitCount = 8)
                         .toByteArray()
