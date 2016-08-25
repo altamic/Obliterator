@@ -11,7 +11,7 @@ import java.util.*
  * Created by altamic on 08/04/16.
  */
 
-data class Carnet(val data: ByteArray) {
+class Carnet(val data: ByteArray) {
 
     /*   Carnet Structure
      *   ================
