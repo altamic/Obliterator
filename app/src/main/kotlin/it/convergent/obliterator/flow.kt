@@ -1,9 +1,9 @@
 package it.convergent.obliterator
 
-import java.util.*
+import it.convergent.obliterator.MainActivity.OnCalendarUpdated
 import rx.Observable
 import rx.Subscriber
-import it.convergent.obliterator.MainActivity.OnCalendarUpdated
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -11,12 +11,16 @@ import java.util.concurrent.TimeUnit
  */
 
 object flow {
-    fun generateFrom(calendar: Calendar): Observable<Calendar> {
+    private fun timer(): Observable<Long> {
         val initialDelayInMinutes: Long = 0
         val periodInMinutes: Long = 1
-        val timer = Observable.interval(initialDelayInMinutes,
-                                        periodInMinutes, TimeUnit.MINUTES)
 
+        return Observable.interval(initialDelayInMinutes,
+                periodInMinutes, TimeUnit.MINUTES)
+    }
+
+    fun generateFrom(calendar: Calendar,
+                        timer: Observable<Long> = timer()): Observable<Calendar> {
         calendar.add(Calendar.MINUTE, -1)
 
         return Observable
