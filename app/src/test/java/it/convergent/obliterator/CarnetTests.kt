@@ -108,7 +108,7 @@ class CarnetTests {
     }
 
     @Test
-    fun firstValidationTime() {
+    fun firstObliterationTime() {
         val carnets = listOf(emptyCarnet, fourteenRidesRemainingCarnet,
                         sevenRidesRemainingCarnet, lastRideRemainingCarnet,
                         obliteratedFirstTimeCarnet, obliteratedSecondTimeCarnet)
@@ -125,7 +125,7 @@ class CarnetTests {
     }
 
     @Test
-    fun lastValidationBeforeExpirationTime(){
+    fun lastObliterationBeforeExpirationTime(){
         val obliteratedOneTime = obliteratedFirstTimeCarnet
         val minutesSinceGttEpoch = ByteBuffer.wrap(obliteratedOneTime.page(index = 0x0A), 0, 4).int.shr(bitCount = 8)
         val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
@@ -144,18 +144,6 @@ class CarnetTests {
 
 
         assertEquals(None, newCarnet.firstObliterationTime())
-    }
-
-    @Test
-    fun currentTimeToMinutesFromGttEpoch() {
-        val millisToMinutesFactor = (1000 * 60)
-        val gttCalendar = GttEpoch.calendar(minutesSinceGttEpoch =  0) // gtt epoch
-        val unixEpochCalendar = Calendar.getInstance() // now
-
-        val minutesSinceGttEpoch = (unixEpochCalendar.timeInMillis -
-                gttCalendar.timeInMillis) /
-                millisToMinutesFactor
-
     }
 
     @Test
@@ -218,13 +206,33 @@ class CarnetTests {
     }
 
     @Test
+    fun minutesFromGttEpoch() {
+        assertEquals(0, newCarnet.minutesSinceGttEpoch(0x0A))
+        assertEquals(0, newCarnet.minutesSinceGttEpoch(0x0C))
+
+        assertEquals(0x5A02EA, obliteratedFirstTimeCarnet.minutesSinceGttEpoch(0x0A))
+        assertEquals(0x5A02EA, obliteratedFirstTimeCarnet.minutesSinceGttEpoch(0x0C))
+
+        assertEquals(0x5A02EA, obliteratedSecondTimeCarnet.minutesSinceGttEpoch(0x0A))
+        assertEquals(0x5A02EF, obliteratedSecondTimeCarnet.minutesSinceGttEpoch(0x0C))
+    }
+
+
+    @Test
     fun gttTime() {
+        val pageA = lastRideRemainingCarnet.page(index = 0x0A)
+        assertEquals("5B44E200", pageA.toHexString()) // 2016-05-16T19:10:00 (Monday) +1h
+
+        assertEquals("19:10", lastRideRemainingCarnet.gttTime())
 
     }
 
     @Test
     fun gttDate() {
+        val pageA = lastRideRemainingCarnet.page(index = 0x0A)
+        assertEquals("5B44E200", pageA.toHexString()) // 2016-05-16T19:10:00 (Monday) +1h
 
+        assertEquals("16 mag 2016", lastRideRemainingCarnet.gttDate())
     }
 
     @Test

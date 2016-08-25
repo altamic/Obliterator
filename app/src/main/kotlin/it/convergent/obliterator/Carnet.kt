@@ -304,8 +304,9 @@ data class Carnet(val data: ByteArray) {
         return dateFormatter.format(calendar.time)
     }
 
-    private fun minutesSinceGttEpoch(fromPageIndex: Int): Int {
-        return page(index = fromPageIndex).sliceArray(indices = 0..3).getInt(0)
+    fun minutesSinceGttEpoch(fromPageIndex: Int): Int {
+        val page = page(index = fromPageIndex)
+        return ByteBuffer.wrap(page, 0, 4).int.shr(bitCount = 8)
     }
 
     private fun calendarFromGttEpoch(minutesSinceGttEpoch: Int): Calendar {

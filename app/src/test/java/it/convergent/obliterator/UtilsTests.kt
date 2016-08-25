@@ -180,7 +180,7 @@ class UtilsTests {
         calendar.time = formatter.parse(actualMinutes)
 
         assertEquals(calendar, GttEpoch.calendar(minutesSinceGttEpoch = gttMinutes))
-}
+    }
 
     @Test
     fun gttEpochCurrentTime() {
@@ -196,7 +196,6 @@ class UtilsTests {
                 gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
 
         assertEquals(minutesSinceGttEpoch, GttEpoch.currentTime())
-
     }
 
     @Test
