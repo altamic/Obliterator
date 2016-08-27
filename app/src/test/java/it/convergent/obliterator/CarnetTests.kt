@@ -40,9 +40,9 @@ class CarnetTests {
 
     fun currentlyValidCarnet(): Carnet {
         val currentGttMinutes = GttEpoch.currentTime()
-                .toByteArray()
-                .toHexString()
-                .removePrefix(prefix = "00")
+                                        .toByteArray()
+                                        .toHexString()
+                                        .removePrefix(prefix = "00")
 
         return Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001C00001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7${currentGttMinutes}0004F80000${currentGttMinutes}00003C0004F8AE1074C8128394"))
     }
@@ -139,13 +139,14 @@ class CarnetTests {
         assertEquals(obtainedTimestamp, timestamp.value)
 
         val obliteratedSecondTime = obliteratedSecondTimeCarnet
-        val minutesSinceGttEpoch2 = ByteBuffer.wrap(obliteratedSecondTime.page(index = 0x0C), 0, 4).int.shr(bitCount = 8)
+        val minutesSinceGttEpoch2 = ByteBuffer.wrap(obliteratedSecondTime.page(index = 0x0C), 0, 4)
+                                              .int
+                                              .shr(bitCount = 8)
         val obtainedTimestamp2 = (GttEpoch.calendar(minutesSinceGttEpoch2).timeInMillis / 1000).toInt()
 
         assert(obliteratedOneTime.lastObliterationBeforeExpirationTime() is Just<Int>)
         val timestamp2 = obliteratedSecondTimeCarnet.lastObliterationBeforeExpirationTime() as Just<Int>
         assertEquals(obtainedTimestamp2, timestamp2.value)
-
 
         assertEquals(None, newCarnet.firstObliterationTime())
     }
@@ -157,7 +158,6 @@ class CarnetTests {
         assert(emptyCarnet.isObliterationExpired())
 
         val currentlyValid = currentlyValidCarnet()
-
         assert(!currentlyValid.isObliterationExpired())
     }
 
