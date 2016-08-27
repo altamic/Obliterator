@@ -2,7 +2,9 @@ package it.convergent.obliterator
 
 import it.convergent.obliterator.MainActivity.OnCalendarUpdated
 import rx.Observable
+import rx.Scheduler
 import rx.Subscriber
+import rx.schedulers.Schedulers
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -11,12 +13,12 @@ import java.util.concurrent.TimeUnit
  */
 
 object flow {
-    private fun timer(): Observable<Long> {
+    fun timer(scheduler: Scheduler = Schedulers.computation()): Observable<Long> {
         val initialDelayInMinutes: Long = 0
         val periodInMinutes: Long = 1
 
         return Observable.interval(initialDelayInMinutes,
-                periodInMinutes, TimeUnit.MINUTES)
+                                    periodInMinutes, TimeUnit.MINUTES, scheduler)
     }
 
     fun generateFrom(calendar: Calendar,

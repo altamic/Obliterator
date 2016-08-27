@@ -13,28 +13,60 @@ import java.util.concurrent.TimeUnit
  */
 
 class FlowTests {
-
-    private val testScheduler = TestScheduler()
-
-    private val mockTimer     = {
-        val initialDelayInMinutes: Long = 0
-        val periodInMinutes: Long = 1
-
-        Observable.interval(initialDelayInMinutes,
-                periodInMinutes,
-                TimeUnit.MINUTES,
-                testScheduler)
-    }.invoke()
-
-
-    @Test
+    @Test(expected = Throwable::class)
     fun generateFromCalendar() {
+        val testScheduler = TestScheduler()
+
+        val mockTimer     = {
+            val initialDelayInMinutes: Long = 0
+            val periodInMinutes: Long = 1
+
+            Observable.interval(initialDelayInMinutes,
+                    periodInMinutes,
+                    TimeUnit.MINUTES,
+                    testScheduler)
+        }.invoke()
+
         val calendar = Calendar.getInstance()
-        val flow = flow.generateFrom(calendar, timer = mockTimer)
+        val flowObservable = flow.generateFrom(calendar, timer = mockTimer)
+
         val result = ArrayList<Calendar>()
 
-        val subscriber = object: Subscriber<Calendar>() {
-            override fun onNext(t: Calendar?) {
+        val listener = object: MainActivity.OnCalendarUpdated {
+            override fun onCalendarUpdated(calendar: Calendar?) {
+                result.add(calendar!!)
+            }
+
+            override fun onCalendarUpdateError(e: Throwable?) {
+                throw e!!
+            }
+        }
+
+        val subscriber = flow.calendarSubscriber(listener = listener)
+
+        val eventsNumber = 100
+        flowObservable.take(eventsNumber + 1).subscribe(subscriber)
+
+        eventsNumber.times { index ->
+            testScheduler.advanceTimeBy(1, TimeUnit.MINUTES)
+            calendar.add(Calendar.MINUTE, 1)
+
+            assertEquals(calendar, result[index])
+
+        }
+
+        subscriber.onError(Throwable())
+    }
+
+    @Test
+    fun timer() {
+        val testScheduler = TestScheduler()
+        val timer  = flow.timer(scheduler = testScheduler)
+
+        val result = ArrayList<Long>()
+
+        val subscriber = object: Subscriber<Long>() {
+            override fun onNext(t: Long?) {
                 result.add(t!!)
             }
 
@@ -48,19 +80,11 @@ class FlowTests {
         }
 
         val eventsNumber = 100
-        flow.take(eventsNumber).subscribe(subscriber)
+        timer.take(eventsNumber).subscribe(subscriber)
 
         eventsNumber.times { index ->
             testScheduler.advanceTimeBy(1, TimeUnit.MINUTES)
-            calendar.add(Calendar.MINUTE, 1)
-
-            assertEquals(calendar, result[index])
-
+            assertEquals(index.toLong(), result[index])
         }
-    }
-
-    @Test
-    fun calendarSubscriberListener() {
-
     }
 }

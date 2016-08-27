@@ -57,9 +57,9 @@ class CarnetTests {
                 gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
 
         val gttMinutes = minutesSinceGttEpochMinus30Minutes
-                .toByteArray()
-                .toHexString()
-                .removePrefix(prefix = "00")
+                            .toByteArray()
+                            .toHexString()
+                            .removePrefix(prefix = "00")
 
         return Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001C00001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7${gttMinutes}0004F80000${gttMinutes}00003C0004F8AE1074C8128394"))
     }
