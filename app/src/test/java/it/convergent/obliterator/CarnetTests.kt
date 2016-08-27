@@ -66,11 +66,11 @@ class CarnetTests {
 
     @Test
     fun page() {
-        val carnet = newCarnet
-        val pages = listOf(0x046825C1, 0x2A3C3C84, 0xAE48F203, 0x00018000,
-                            0x01050000, 0x020102BD, 0x5B028400, 0x00AE10A6,
-                            0xB8004BD3, 0x8B1AE1F7, 0x00000000, 0x00000000,
-                            0x00000000, 0x00000000, 0x00000000, 0x00020000)
+        val carnet = fourteenRidesRemainingCarnet
+        val pages = listOf(0x046825C1, 0x2A3C3C84, 0xAE48F203, 0x0001C000,
+                           0x01050000, 0x020102BD, 0x5B028400, 0x00AE10A6,
+                           0xB8004BD3, 0x8B1AE1F7, 0x5B0C8900, 0x04F80000,
+                           0x5B0C8900, 0x003C0004, 0xF8AE1074, 0xC8128394)
 
         0x0F.times { pageIndex ->
             4.times { index ->
@@ -116,7 +116,9 @@ class CarnetTests {
         carnets.forEach { carnet ->
             assert(carnet.firstObliterationTime() is Just<Int>)
             val timestamp = carnet.firstObliterationTime() as Just<Int>
-            val minutesSinceGttEpoch = ByteBuffer.wrap(carnet.page(index = 0x0A), 0, 4).int.shr(bitCount = 8)
+            val minutesSinceGttEpoch = ByteBuffer.wrap(carnet.page(index = 0x0A), 0, 4)
+                                                 .int
+                                                 .shr(bitCount = 8)
             val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
             assertEquals(obtainedTimestamp, timestamp.value)
         }
@@ -127,7 +129,9 @@ class CarnetTests {
     @Test
     fun lastObliterationBeforeExpirationTime(){
         val obliteratedOneTime = obliteratedFirstTimeCarnet
-        val minutesSinceGttEpoch = ByteBuffer.wrap(obliteratedOneTime.page(index = 0x0A), 0, 4).int.shr(bitCount = 8)
+        val minutesSinceGttEpoch = ByteBuffer.wrap(obliteratedOneTime.page(index = 0x0A), 0, 4)
+                                             .int
+                                             .shr(bitCount = 8)
         val obtainedTimestamp = (GttEpoch.calendar(minutesSinceGttEpoch).timeInMillis / 1000).toInt()
 
         assert(obliteratedOneTime.firstObliterationTime() is Just<Int>)

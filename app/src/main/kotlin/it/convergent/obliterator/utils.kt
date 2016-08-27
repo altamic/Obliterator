@@ -58,26 +58,26 @@ fun Long.toByteArray(): ByteArray {
     return byteArray
 }
 
-fun ByteArray.getInt(index: Int): Int {
-    val lsbMask = 0x000000FF
-    val msbMask = 0x0000FF00
+fun ByteArray.getShort(index: Int): Int {
+    val byte1Mask = 0x000000FF
+    val byte0Mask = 0x0000FF00
 
-    val lsb = this[index + 0].toInt().shl(bitCount =  0)
-    val msb = this[index + 1].toInt().shl(bitCount =  8)
+    val byte1 = this[index + 1].toInt().shl(bitCount =  0)
+    val byte0 = this[index + 0].toInt().shl(bitCount =  8)
 
-    return ((lsb and lsbMask) or (msb and msbMask))
+    return ((byte0 and byte0Mask) or (byte1 and byte1Mask))
 }
 
-fun ByteArray.getLong(index: Int): Long {
-    val byte0Mask: Long = 0x000000FF
-    val byte1Mask: Long = 0x0000FF00
-    val byte2Mask: Long = 0x00FF0000
-    val byte3Mask: Long = 0xFF000000
+fun ByteArray.getInt(index: Int): Long {
+    val byte3Mask: Long = 0x000000FF
+    val byte2Mask: Long = 0x0000FF00
+    val byte1Mask: Long = 0x00FF0000
+    val byte0Mask: Long = 0xFF000000
 
-    val byte0: Long = this[index + 0].toLong().shl(bitCount =  0)
-    val byte1: Long = this[index + 1].toLong().shl(bitCount =  8)
-    val byte2: Long = this[index + 2].toLong().shl(bitCount = 16)
-    val byte3: Long = this[index + 3].toLong().shl(bitCount = 24)
+    val byte3: Long = this[index + 3].toLong().shl(bitCount =  0)
+    val byte2: Long = this[index + 2].toLong().shl(bitCount =  8)
+    val byte1: Long = this[index + 1].toLong().shl(bitCount = 16)
+    val byte0: Long = this[index + 0].toLong().shl(bitCount = 24)
 
     return ((byte0 and byte0Mask) or
             (byte1 and byte1Mask ) or

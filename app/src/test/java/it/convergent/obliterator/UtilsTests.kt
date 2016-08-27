@@ -83,7 +83,7 @@ class UtilsTests {
     @Test
     fun longToByteArray() {
         val number = 0xB8004BD3
-        val bytes = arrayOf<Byte>(0x00, 0x00, 0x00, 0x00,
+        val bytes = arrayOf(0x00, 0x00, 0x00, 0x00,
                             0xB8.toByte(), 0x00, 0x4B, 0xD3.toByte())
 
         for (i in 0..bytes.size - 1) {
@@ -92,27 +92,28 @@ class UtilsTests {
     }
 
     @Test
-    fun byteArrayGetInt() {
-        val bytes = arrayOf<Byte>(0x12, 0x34, 0x56, 0x78)
+    fun byteArrayGetShort() {
+        val bytes = arrayOf<Byte>(0x12, 0x34, 0x56, 0x78,
+                                  0x9A.toByte(), 0xBC.toByte())
 
-        assertEquals(0x3412, bytes.toByteArray().getInt(index = 0))
-        assertEquals(0x5634, bytes.toByteArray().getInt(index = 1))
-        assertEquals(0x7856, bytes.toByteArray().getInt(index = 2))
-
+        assertEquals(0x1234, bytes.toByteArray().getShort(index = 0))
+        assertEquals(0x3456, bytes.toByteArray().getShort(index = 1))
+        assertEquals(0x5678, bytes.toByteArray().getShort(index = 2))
+        assertEquals(0x789A, bytes.toByteArray().getShort(index = 3))
+        assertEquals(0x9ABC, bytes.toByteArray().getShort(index = 4))
     }
 
     @Test
-    fun byteArrayGetLong() {
+    fun byteArrayGetInt() {
         val bytes = arrayOf(0x01, 0x23, 0x45, 0x67,
                             0x89.toByte(), 0xAB.toByte(),
                             0xCD.toByte(), 0xEF.toByte())
 
-        assertEquals(0x67452301, bytes.toByteArray().getLong(index = 0))
-        assertEquals(0x89674523, bytes.toByteArray().getLong(index = 1))
-        assertEquals(0xAB896745, bytes.toByteArray().getLong(index = 2))
-        assertEquals(0xCDAB8967, bytes.toByteArray().getLong(index = 3))
-        assertEquals(0xEFCDAB89, bytes.toByteArray().getLong(index = 4))
-
+        assertEquals(0x01234567, bytes.toByteArray().getInt(index = 0))
+        assertEquals(0x23456789, bytes.toByteArray().getInt(index = 1))
+        assertEquals(0x456789AB, bytes.toByteArray().getInt(index = 2))
+        assertEquals(0x6789ABCD, bytes.toByteArray().getInt(index = 3))
+        assertEquals(0x89ABCDEF, bytes.toByteArray().getInt(index = 4))
     }
 
     @Test
@@ -136,6 +137,9 @@ class UtilsTests {
 
         val illegal = "ABCDEFGH"
         hexStringToByteArray(illegal)
+
+        val illegal2 = "1234567"
+        hexStringToByteArray(illegal2)
     }
 
     @Test
