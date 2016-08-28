@@ -61,7 +61,7 @@ class Carnet(val data: ByteArray) {
     val DATE_TIME_BEFORE_EXPIRY_OFFSET = 0x0C
     val MAX_REMAINING_MINUTES = 90
 
-    val metroStopArray: Array<String> = arrayOf(
+    val metroStopArray = listOf(
             "Fermi", "Paradiso", "Marche", "Massaua",
             "Pozzo Strada", "Monte Grappa", "Rivoli",
             "Racconigi", "Bernini", "Principi d'Acaja",
@@ -176,7 +176,7 @@ class Carnet(val data: ByteArray) {
     val isBus by lazy { !isMetro }
 
     val bus by lazy {
-        val bus = page(index = 0xD)[1].toInt()
+        val bus = page(index = 0x0D)[1].toInt()
 
         when (bus) {
             0 -> "None"
@@ -185,12 +185,12 @@ class Carnet(val data: ByteArray) {
     }
 
     val isMetro by lazy {
-        val bytes = page(index = 0xD).sliceArray(0..1)
+        val bytes = page(index = 0x0D).sliceArray(0..1)
         bytes.toHexString().equals("0321")
     }
 
     val metroStop by lazy {
-        val metroStop = page(index = 0xB)[1].toInt()
+        val metroStop = page(index = 0x0B)[1].toInt()
 
         when (metroStop) {
             in 0.rangeTo(metroStopArray.size) -> { metroStopArray[metroStop.dec()] }
@@ -210,7 +210,9 @@ class Carnet(val data: ByteArray) {
 
         if (firstValidation.toHexString().equals("00000000")) return None
 
-        val minutes = ByteBuffer.wrap(firstValidation, 0, 4).int.shr(bitCount = 8)
+        val minutes = ByteBuffer.wrap(firstValidation, 0, 4)
+                                .int
+                                .shr(bitCount = 8)
         val unixTimestamp = GttEpoch.calendar(minutesSinceGttEpoch = minutes)
                              .timeInMillis / 1000
 
@@ -222,7 +224,9 @@ class Carnet(val data: ByteArray) {
 
         if (lastValidationBeforeExpiration.toHexString().equals("00000000")) return None
 
-        val minutes = ByteBuffer.wrap(lastValidationBeforeExpiration, 0, 4).int.shr(bitCount = 8)
+        val minutes = ByteBuffer.wrap(lastValidationBeforeExpiration, 0, 4)
+                                .int
+                                .shr(bitCount = 8)
         val unixTimestamp = GttEpoch.calendar(minutesSinceGttEpoch = minutes)
                               .timeInMillis / 1000
 
@@ -305,7 +309,9 @@ class Carnet(val data: ByteArray) {
 
     fun minutesSinceGttEpoch(fromPageIndex: Int): Int {
         val page = page(index = fromPageIndex)
-        return ByteBuffer.wrap(page, 0, 4).int.shr(bitCount = 8)
+        return ByteBuffer.wrap(page, 0, 4)
+                         .int
+                         .shr(bitCount = 8)
     }
 
     private fun calendarFromGttEpoch(minutesSinceGttEpoch: Int): Calendar {

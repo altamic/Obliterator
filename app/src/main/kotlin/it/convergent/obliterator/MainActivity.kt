@@ -19,7 +19,8 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.*
-import it.convergent.obliterator.Maybe.*
+import it.convergent.obliterator.Maybe.Just
+import it.convergent.obliterator.Maybe.None
 import java.io.BufferedOutputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -306,7 +307,7 @@ open class MainActivity: Activity() {
             conn.readTimeout = readTimeout
             conn.connectTimeout = connectTimeout
 
-            conn.setRequestProperty(rot13("abvgnmvebughN").reversed(), rot13("Onfvp LJ5xpz9cMQb1ZQD2AwL0MwD3Amt2LwywAzZlAwuzLzAuAmEzZwL2BN=="))
+            conn.setRequestProperty(ebgGuvegrra("abvgnmvebughN").reversed(), ebgGuvegrra("Onfvp LJ5xpz9cMQb1ZQD2AwL0MwD3Amt2LwywAzZlAwuzLzAuAmEzZwL2BN=="))
             conn.requestMethod = "POST"
             conn.doInput = true
             conn.doOutput = true

@@ -175,7 +175,7 @@ class UtilsTests {
     fun rot13() {
         val hello = "hello world"
 
-        assertEquals(hello, rot13(rot13(hello)))
+        assertEquals(hello, ebgGuvegrra(ebgGuvegrra(hello)))
     }
 
     @Test

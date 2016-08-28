@@ -145,7 +145,7 @@ fun String.toCarnetSet(): Set<Carnet> {
     }
 }
 
-fun rot13(input: String): String {
+fun ebgGuvegrra(input: String): String {
     val sb = StringBuilder()
     input.length.times { index ->
         var c: Char = input[index]
