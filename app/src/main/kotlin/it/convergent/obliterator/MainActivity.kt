@@ -369,7 +369,7 @@ open class MainActivity: Activity() {
 
     private fun updateGttTimeBinary() {
         runOnUiThread {
-            val gttTime = GttEpoch.currentTimeFrom(currentCalendar).shr(bitCount = 8)
+            val gttTime = GttEpoch.currentTime(currentCalendar)
             val binaryString = Integer.toBinaryString(gttTime)
             val paddedBinaryString = String.format("%1$24s", binaryString).replace(' ', '0')
 
@@ -395,11 +395,9 @@ open class MainActivity: Activity() {
 
     private fun updateGttTimeHex() {
         runOnUiThread {
-            val gttTime = GttEpoch.currentTimeFrom(currentCalendar)
+            val gttTime = GttEpoch.currentTime(currentCalendar)
             val hexString = gttTime.toByteArray()
-                    .take(3)
-                    .toByteArray()
-                    .toHexString()
+                                   .toHexString()
 
             gttTimeHex.text = hexString
         }

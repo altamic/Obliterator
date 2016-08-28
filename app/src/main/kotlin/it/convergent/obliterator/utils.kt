@@ -170,24 +170,13 @@ object GttEpoch {
         return calendar
     }
 
-    fun currentTime(): Int {
+    fun currentTime(fromCalendar: Calendar = Calendar.getInstance()): Int {
         val millisToMinutesFactor = (1000 * 60)
         val gttCalendar = calendar(minutesSinceGttEpoch = 0) // gtt epoch
-        val unixEpochCalendar = Calendar.getInstance() // now
 
-        val minutesSinceGttEpoch = ((unixEpochCalendar.timeInMillis -
+        val minutesSinceGttEpoch = ((fromCalendar.timeInMillis -
                 gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
 
         return minutesSinceGttEpoch
-    }
-
-    fun currentTimeFrom(calendar: Calendar): Int {
-        val millisToMinutesFactor = (1000 * 60)
-        val gttCalendar = calendar(minutesSinceGttEpoch = 0) // gtt epoch
-
-        val minutesSinceGttEpoch = ((calendar.timeInMillis -
-                gttCalendar.timeInMillis) / millisToMinutesFactor).toInt()
-
-        return minutesSinceGttEpoch.shl(bitCount = 8)
     }
 }

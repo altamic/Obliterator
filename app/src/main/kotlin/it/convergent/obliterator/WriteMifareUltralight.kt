@@ -13,7 +13,7 @@ class WriteMifareUltralight(val listener: OnReadyToUpdateGui):
 
     override fun doInBackground(vararg params: MifareUltralight?): Void? {
         val mifareUltralight = params.first()
-        val currentTime      = GttEpoch.currentTime()
+        val currentTime      = GttEpoch.currentTime().shl(bitCount = 8)
 
         val pageA = currentTime
         val pageB = 0x00100000

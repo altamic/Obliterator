@@ -40,6 +40,7 @@ class CarnetTests {
 
     fun currentlyValidCarnet(): Carnet {
         val currentGttMinutes = GttEpoch.currentTime()
+                                        .shl(bitCount = 8)
                                         .toByteArray()
                                         .toHexString()
                                         .removePrefix(prefix = "00")
