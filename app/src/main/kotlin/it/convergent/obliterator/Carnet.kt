@@ -94,10 +94,7 @@ class Carnet(val data: ByteArray) {
 //    }
 
     val isDetected by lazy {
-        val cardTypeIndex = (4 * PAGE_SIZE) + 1
-        val cardType = data[cardTypeIndex]
-
-        when (cardType.toInt()) {
+        when (layout.toInt()) {
             1, 2, 3, 4, 5, 100 -> true
             else -> false
         }

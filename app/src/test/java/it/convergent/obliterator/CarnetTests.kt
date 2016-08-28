@@ -13,10 +13,15 @@ import java.util.*
 
 class CarnetTests {
     val newCarnet = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001800001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7000000000000000000000000000000000000000000020000"))
+    val new5Carnet = Carnet(data = hexStringToByteArray("046DDD3C2A753380EC48F20307FFFFE001040000020102BE584EE00000AE10FE20008E3716E55964000000000000000000000000000000000000000000020000"))
     val fourteenRidesRemainingCarnet = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2030001C00001050000020102BD5B02840000AE10A6B8004BD38B1AE1F75B0C890004F800005B0C8900003C0004F8AE1074C8128394"))
     val sevenRidesRemainingCarnet = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F20300FFFF8001050000020102BD5B02840000AE10A6B8004BD38B1AE1F75B2C060004F800005B2C0600003C0004F8AE1078FB126906"))
     val lastRideRemainingCarnet = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2033FFFFFFE01050000020102BD5B02840000AE10A6B8004BD38B1AE1F75B44E20004F800005B44E200003C0004F8AE1070C912FDE6"))
     val emptyCarnet = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2037FFFFFFF01050000020102BD5B02840000AE10A6B8004BD38B1AE1F75B47DE0004F800005B47DE00003C0004F8AE107B6112086C"))
+
+    val empty15Carnet = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48F2037FFFFFFF01050000020102BD5B02840000AE10A6B8004BD38B1AE1F75B47DE0004F800005B47DE00003C0004F8AE107B6112086C"))
+    val empty5Carnet  = Carnet(data = hexStringToByteArray("046201EF5A7533849848F2037FFFFFFF01040000020102BE58D0400000AE10A6B8003F6795C7D8C65A46D10004F800005A46D10000380004F8AE107B2812D04A"))
+    val empty1Carnet  = Carnet(data = hexStringToByteArray("046201EF5A7533849848F2037FFFFFFF01010000020102BE58D0400000AE10A6B8003F6795C7D8C65A46D10004F800005A46D10000380004F8AE107B2812D04A"))
 
     val obliteratedFirstTimeCarnet = Carnet(data = hexStringToByteArray("048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EA00003C0004F8AE10795C129EB3"))
     val obliteratedSecondTimeCarnet = Carnet(data = hexStringToByteArray("048A828462753380A448F2031FFFFFFC01050000020102BD59C2200000AE10A6B80044F3705BE1355A02EA0004F800005A02EF00003C0004F8AE10795C1225F9"))
@@ -66,6 +71,73 @@ class CarnetTests {
     }
 
     @Test
+    fun pageSize() {
+        val PAGE_SIZE = 4
+        assertEquals(PAGE_SIZE, newCarnet.PAGE_SIZE)
+    }
+
+    @Test
+    fun totalPages() {
+        val TOTAL_PAGES = 16
+        assertEquals(TOTAL_PAGES, newCarnet.TOTAL_PAGES)
+    }
+
+    @Test
+    fun isDetected() {
+        val cardTypesTrue = listOf(1, 2, 3, 4, 5, 100)
+        val cardTypesFalse = listOf(7, 9, 11, 101)
+        val cardTypeIndex = (4 * 4) + 1
+
+        cardTypesTrue.forEach { cardType ->
+            val data = hexStringToByteArray("046825C12A3C3C84AE48F20300018000FF050000020102BD5B02840000AE10A6B8004BD38B1AE1F7000000000000000000000000000000000000000000020000")
+            data[cardTypeIndex] = cardType.toByte()
+            val carnet = Carnet(data = data)
+            assert(carnet.isDetected)
+        }
+
+        cardTypesFalse.forEach { cardType ->
+            val data = hexStringToByteArray("046825C12A3C3C84AE48F20300018000FF050000020102BD5B02840000AE10A6B8004BD38B1AE1F7000000000000000000000000000000000000000000020000")
+            data[cardTypeIndex] = cardType.toByte()
+            val carnet = Carnet(data = data)
+            assert(!carnet.isDetected)
+        }
+    }
+
+    @Test
+    fun isValid() {
+        assert(newCarnet.isValid)
+
+        val invalid = Carnet(data = hexStringToByteArray("046825C12A3C3C84AE48FA030001800001050000020102BD5B02840000AE10A6B8004BD38B1AE1F7000000000000000000000000000000000000000000020000"))
+        assert(!invalid.isValid)
+    }
+
+    @Test
+    fun totalRides() {
+        assertEquals("15", empty15Carnet.totalRides)
+        assertEquals( "5", empty5Carnet.totalRides)
+        assertEquals( "1", empty1Carnet.totalRides)
+
+        assertEquals("15", sevenRidesRemainingCarnet.totalRides)
+        assertEquals( "5", new5Carnet.totalRides)
+
+        val unknown  = Carnet(data = hexStringToByteArray("046201EF5A7533849848F2037FFFFFFF01AE0000020102BE58D0400000AE10A6B8003F6795C7D8C65A46D10004F800005A46D10000380004F8AE107B2812D04A"))
+        assertEquals( "Unknown", unknown.totalRides)
+    }
+
+    @Test
+    fun remainingRides() {
+        assertEquals(15, newCarnet.remainingRides)
+        assertEquals( 5, new5Carnet.remainingRides)
+        assertEquals(14, fourteenRidesRemainingCarnet.remainingRides)
+        assertEquals( 7, sevenRidesRemainingCarnet.remainingRides)
+        assertEquals( 1, lastRideRemainingCarnet.remainingRides)
+        assertEquals( 1, lastRideRemainingCarnet.remainingRides)
+        assertEquals( 0, emptyCarnet.remainingRides)
+        assertEquals( 0, empty15Carnet.remainingRides)
+        assertEquals( 0, empty1Carnet.remainingRides)
+    }
+
+    @Test
     fun page() {
         val carnet = fourteenRidesRemainingCarnet
         val pages = listOf(0x046825C1, 0x2A3C3C84, 0xAE48F203, 0x0001C000,
@@ -79,6 +151,17 @@ class CarnetTests {
                                 carnet.page(index = pageIndex)[index])
             }
         }
+
+    }
+
+
+    @Test
+    fun mask() {
+
+    }
+
+    @Test
+    fun tariff() {
 
     }
 
