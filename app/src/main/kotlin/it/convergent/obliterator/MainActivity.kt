@@ -397,6 +397,8 @@ open class MainActivity: Activity() {
         runOnUiThread {
             val gttTime = GttEpoch.currentTime(currentCalendar)
             val hexString = gttTime.toByteArray()
+                                   .takeLast(3)
+                                   .toByteArray()
                                    .toHexString()
 
             gttTimeHex.text = hexString
