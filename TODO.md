@@ -49,7 +49,7 @@ State Machine
                  ANTICOLLISION(READY_2 -> READY_2), SELECT_CL2(READY_2 -> ACTIVE),
                  WRITE(ACTIVE -> ACTIVE), READ(a)(ACTIVE -> ACTIVE),
                  HALT(ACTIVE -> HALT),
-                 UNEXPECTED(x -> IDLE) a ∈ States / { HALT }, 
+                 UNEXPECTED(x -> IDLE) x ∈ States / { HALT }, 
                  UNEXPECTED(HALT -> HALT) }
     
     Addresses: { 0x0, ..., 0xF }
