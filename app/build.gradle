@@ -3,14 +3,14 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    buildToolsVersion '24.0.2'
     defaultConfig {
-        applicationId "it.convergent.obliterator"
+        applicationId 'it.convergent.obliterator'
         minSdkVersion 14
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        versionName '1.0'
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
 //        vectorDrawables.useSupportLibrary = true
     }
@@ -48,6 +48,9 @@ dependencies {
 //    compile 'io.reactivex:rxkotlin:0.60.0'
     compile 'io.reactivex:rxjava:1.1.9'
     compile 'com.artemzin.rxjava:proguard-rules:1.1.0.0'
+
+    // Xposed framework API
+    provided 'de.robv.android.xposed:api:82'
 
     // we don't need them
 //    compile fileTree(include: ['*.jar'], dir: 'libs')
