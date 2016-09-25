@@ -1,0 +1,41 @@
+# Sets the minimum version of CMake required to build your native library.
+# This ensures that a certain set of CMake features is available to
+# your build.
+
+cmake_minimum_required(VERSION 3.6.0)
+
+# Specifies a library name, specifies whether the library is STATIC or
+# SHARED, and provides relative paths to the source code. You can
+# define multiple libraries by adding multiple add.library() commands,
+# and CMake builds them for you. When you build your app, Gradle
+# automatically packages shared libraries with your APK.
+
+add_library( # Specifies the name of the library.
+             nfc-native
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/chip.cpp
+             src/main/cpp/javainterface.cpp
+             src/main/cpp/main.cpp
+             src/main/cpp/nfcd.h
+             src/main/cpp/vendor/adbi/hook.cpp
+             src/main/cpp/vendor/adbi/hook.h
+             src/main/cpp/vendor/libnfc.h )
+
+find_library( # Defines the name of the path variable that stores the
+              # location of the NDK library.
+              log-lib
+
+              # Specifies the name of the NDK library that
+              # CMake needs to locate.
+              log )
+
+# Links your native library against one or more other native libraries.
+target_link_libraries( # Specifies the target library.
+                       nfc-native
+
+                       # Links the log library to the target library.
+                       ${log-lib} )

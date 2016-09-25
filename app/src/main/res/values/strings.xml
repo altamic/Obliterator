@@ -17,4 +17,7 @@
     <string name="empty" />
 
     <string name="default_carnet">04D1560B\n32882880\n1248F203\n00018000\n01050000\n020102BD\n5C5F4400\n00AE10A6\nB8005304\nFDE7184B\n00000000\n00000000\n00000000\n00000000\n00000000\n00020000</string>
+
+    <string name="servicedesc">HostApdu</string>
+    <string name="aiddescription">HostApdu Service</string>
 </resources>
