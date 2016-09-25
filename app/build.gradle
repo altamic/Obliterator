@@ -13,6 +13,12 @@ android {
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
 //        vectorDrawables.useSupportLibrary = true
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_VAR1=VALUE"
+            }
+        }
     }
 
     signingConfigs {
@@ -38,8 +44,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    externalNativeBuild {
+        cmake {
+
+        }
     }
 }
 
