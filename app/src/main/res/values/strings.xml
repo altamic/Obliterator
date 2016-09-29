@@ -20,4 +20,6 @@
 
     <string name="servicedesc">HostApdu</string>
     <string name="aiddescription">HostApdu Service</string>
+    <string name="bus">Bus</string>
+    <string name="metro">Metro</string>
 </resources>

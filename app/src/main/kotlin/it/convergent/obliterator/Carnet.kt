@@ -123,7 +123,7 @@ class Carnet(val data: ByteArray) {
         }
     }
 
-    val remainingRides: Int by lazy {
+    val remainingBusRides: Int by lazy {
         val otp = page(index = OTP_OFFSET)
         val rides = getRightZeroes(otp)
         rides
@@ -236,6 +236,9 @@ class Carnet(val data: ByteArray) {
         else
             refreshObliteration()
     }
+
+    // fun decrementBusRides(): Carnet {}
+    // fun decrementMetroRides(): Carnet {}
 
     fun isObliterationExpired(): Boolean {
         val validationUnixTimestamp = firstObliterationTime()
