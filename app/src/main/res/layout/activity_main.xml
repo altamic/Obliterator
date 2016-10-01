@@ -30,10 +30,8 @@
             android:minWidth="32dp"
             android:background="@drawable/lateral_button"
             android:layout_marginBottom="@dimen/half_margin"
-            android:layout_marginRight="@dimen/half_margin"
             android:layout_marginEnd="@dimen/half_margin"
             android:layout_alignTop="@+id/displayFrame"
-            android:layout_toLeftOf="@+id/displayFrame"
             android:layout_toStartOf="@+id/displayFrame"
             tools:ignore="RelativeOverlap" />
 
@@ -48,7 +46,6 @@
             android:minWidth="32dp"
             android:background="@drawable/lateral_button"
             android:layout_below="@+id/buttonTopLeft"
-            android:layout_alignLeft="@+id/buttonTopLeft"
             android:layout_alignStart="@+id/buttonTopLeft" />
 
         <Button
@@ -60,12 +57,10 @@
             android:minHeight="32dp"
             android:minWidth="32dp"
             android:id="@+id/buttonTopRight"
-            android:layout_marginLeft="@dimen/half_margin"
             android:layout_marginStart="@dimen/half_margin"
             android:layout_marginBottom="@dimen/half_margin"
             android:background="@drawable/lateral_button"
             android:layout_alignTop="@+id/displayFrame"
-            android:layout_toRightOf="@+id/displayFrame"
             android:layout_toEndOf="@+id/displayFrame" />
 
         <Button
@@ -79,7 +74,6 @@
             android:id="@+id/buttonBottomRight"
             android:background="@drawable/lateral_button"
             android:layout_below="@+id/buttonTopRight"
-            android:layout_alignLeft="@+id/buttonTopRight"
             android:layout_alignStart="@+id/buttonTopRight" />
 
         <RelativeLayout
@@ -94,9 +88,7 @@
                 android:layout_width="56dp"
                 android:layout_height="12dp"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
                 android:layout_marginStart="@dimen/normal_margin"
-                android:layout_marginLeft="@dimen/normal_margin"
                 android:background="@drawable/led_red" />
 
             <View
@@ -111,9 +103,7 @@
                 android:layout_width="56dp"
                 android:layout_height="12dp"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_marginEnd="@dimen/normal_margin"
-                android:layout_marginRight="@dimen/normal_margin"
                 android:background="@drawable/led_yellow" />
         </RelativeLayout>
 
@@ -135,7 +125,6 @@
                 android:textColor="@color/validateHereForeground"
                 android:textSize="24sp"
                 android:layout_marginTop="@dimen/normal_margin"
-                android:layout_marginLeft="@dimen/low_margin"
                 android:layout_marginStart="@dimen/low_margin"
                 android:textAllCaps="true" />
 
@@ -146,7 +135,6 @@
                 android:layout_below="@+id/validate_here_ita"
                 android:textColor="@color/validateHereForeground"
                 android:text="@string/validate_here_eng"
-                android:layout_marginLeft="@dimen/big_margin"
                 android:layout_marginStart="@dimen/big_margin"
                 android:textSize="20sp" />
 
