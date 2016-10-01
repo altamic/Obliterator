@@ -102,6 +102,9 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
                     loghex("NfcSetConfig Read: UID", valbp, len);
                 }
             break;
+
+            default:
+                break;
         }
     }
 
