@@ -89,7 +89,6 @@ class Carnet(val data: ByteArray) {
     val layout by lazy {
         val layoutTypeIndex = (4 * PAGE_SIZE) + 1
         val layoutType = data[layoutTypeIndex]
-
         layoutType
     }
 
@@ -251,7 +250,16 @@ class Carnet(val data: ByteArray) {
             refreshObliteration()
     }
 
-    // fun decrementBusRides(): Carnet {}
+//     fun decrementBusRides(): Carnet {
+//         val data = data.clone()
+//
+//         val otp = page(index = OTP_OFFSET)
+//
+//
+//
+//         return Carnet(data)
+//     }
+
     // fun decrementMetroRides(): Carnet {}
 
     fun isObliterationExpired(): Boolean {
