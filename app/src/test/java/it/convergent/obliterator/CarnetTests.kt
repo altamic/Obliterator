@@ -71,6 +71,19 @@ class CarnetTests {
     }
 
     @Test
+    fun uid() {
+        assertEquals("046825C12A3C3C84AE", newCarnet.uid.toHexString())
+        assertEquals("046DDD3C2A753380EC", new5Carnet.uid.toHexString())
+        assertEquals("046825C12A3C3C84AE", fourteenRidesRemainingCarnet.uid.toHexString())
+        assertEquals("046825C12A3C3C84AE", sevenRidesRemainingCarnet.uid.toHexString())
+        assertEquals("046825C12A3C3C84AE", lastRideRemainingCarnet.uid.toHexString())
+        assertEquals("046825C12A3C3C84AE", emptyCarnet.uid.toHexString())
+        assertEquals("046825C12A3C3C84AE", empty15Carnet.uid.toHexString())
+        assertEquals("046201EF5A75338498", empty5Carnet.uid.toHexString())
+        assertEquals("046201EF5A75338498", empty1Carnet.uid.toHexString())
+    }
+
+    @Test
     fun pageSize() {
         val PAGE_SIZE = 4
         assertEquals(PAGE_SIZE, newCarnet.PAGE_SIZE)

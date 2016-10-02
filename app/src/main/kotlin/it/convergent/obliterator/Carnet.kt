@@ -70,30 +70,7 @@ class Carnet(val data: ByteArray) {
             "Nizza", "Dante", "Carducci-Molinette",
             "Spezia", "Lingotto")
 
-//    val uid by lazy {
-//        val sn0 = data.elementAt(0).toInt()
-//        val sn1 = data.elementAt(1).toInt()
-//        val sn2 = data.elementAt(2).toInt()
-//        val cb0 = data.elementAt(3).toInt()
-//        val sn3 = data.elementAt(4).toInt()
-//        val sn4 = data.elementAt(5).toInt()
-//        val sn5 = data.elementAt(6).toInt()
-//        val sn6 = data.elementAt(7).toInt()
-//        val cb1 = data.elementAt(8).toInt()
-//
-//        val isValid = ((0x88 xor sn0 xor sn1 xor sn2).equals(cb0)) and
-//                      ((sn3 xor sn4 xor sn5 xor sn6).equals(cb1))
-//
-//        val uid: Long = ((sn6) or (sn5 shl 8) or (sn4 shl 16) or (sn3 shl 24) or
-//                        (sn2 shl 32) or (sn1 shl 40) or (sn0 shl 48)).toLong()
-//
-//        if (isValid)
-//            Just(uid)
-//        else
-//            Invalid
-//    }
-
-    val uid = data.take(2 * PAGE_SIZE).toByteArray()
+    val uid = data.take(2 * PAGE_SIZE + 1).toByteArray()
 
     val isDetected by lazy {
         when (layout.toInt()) {
