@@ -125,16 +125,27 @@ class CarnetTests {
     }
 
     @Test
-    fun remainingRides() {
-        assertEquals(15, newCarnet.remainingRides)
-        assertEquals( 5, new5Carnet.remainingRides)
-        assertEquals(14, fourteenRidesRemainingCarnet.remainingRides)
-        assertEquals( 7, sevenRidesRemainingCarnet.remainingRides)
-        assertEquals( 1, lastRideRemainingCarnet.remainingRides)
-        assertEquals( 1, lastRideRemainingCarnet.remainingRides)
-        assertEquals( 0, emptyCarnet.remainingRides)
-        assertEquals( 0, empty15Carnet.remainingRides)
-        assertEquals( 0, empty1Carnet.remainingRides)
+    fun remainingBusRides() {
+        assertEquals(15, newCarnet.remainingBusRides)
+        assertEquals( 5, new5Carnet.remainingBusRides)
+        assertEquals(14, fourteenRidesRemainingCarnet.remainingBusRides)
+        assertEquals( 7, sevenRidesRemainingCarnet.remainingBusRides)
+        assertEquals( 1, lastRideRemainingCarnet.remainingBusRides)
+        assertEquals( 0, emptyCarnet.remainingBusRides)
+        assertEquals( 0, empty15Carnet.remainingBusRides)
+        assertEquals( 0, empty1Carnet.remainingBusRides)
+    }
+
+    @Test
+    fun remainingMetroRides() {
+        assertEquals(15, newCarnet.remainingMetroRides)
+        assertEquals( 5, new5Carnet.remainingMetroRides)
+        assertEquals(15, fourteenRidesRemainingCarnet.remainingMetroRides) // 15 metro when 14 bus?!
+        assertEquals( 8, sevenRidesRemainingCarnet.remainingMetroRides)
+        assertEquals( 2, lastRideRemainingCarnet.remainingMetroRides)
+        assertEquals( 1, emptyCarnet.remainingMetroRides)
+        assertEquals( 1, empty15Carnet.remainingMetroRides)
+        assertEquals( 1, empty1Carnet.remainingMetroRides)
     }
 
     @Test

@@ -59,6 +59,7 @@ class MainActivity: Activity() {
     val failVibration: Long    =  50
 
     // Models
+    var isBus = true
     var originalCarnet: Maybe<Carnet>  = None
     var cookedCarnet: Maybe<Carnet> = None
 
@@ -118,7 +119,6 @@ class MainActivity: Activity() {
                     getString(R.string.activate_nfc_request),
                     Toast.LENGTH_LONG).show()
         }
-
     }
 
     override fun onResume() {

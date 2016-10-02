@@ -93,6 +93,8 @@ class Carnet(val data: ByteArray) {
 //            Invalid
 //    }
 
+    val uid = data.take(2 * PAGE_SIZE).toByteArray()
+
     val isDetected by lazy {
         when (layout.toInt()) {
             1, 2, 3, 4, 5, 100 -> true
@@ -123,9 +125,22 @@ class Carnet(val data: ByteArray) {
         }
     }
 
+    val remainingRides: Int by lazy {
+        if (isValid)
+            Math.max(remainingBusRides, remainingMetroRides)
+        else
+            Math.min(remainingBusRides, remainingMetroRides)
+    }
+
     val remainingBusRides: Int by lazy {
         val otp = page(index = OTP_OFFSET)
         val rides = getRightZeroes(otp)
+        rides
+    }
+
+    val remainingMetroRides: Int by lazy {
+        val otp = page(index = OTP_OFFSET)
+        val rides = getLeftZeroes(otp)
         rides
     }
 
@@ -159,8 +174,30 @@ class Carnet(val data: ByteArray) {
             }
 
             3 -> {
-                val lastTwoBytes = otp.sliceArray(0..3)
-                val bits = BitSet.valueOf(lastTwoBytes)
+                val fourBytes = otp.sliceArray(0..3)
+                val bits = BitSet.valueOf(fourBytes)
+                bits.flip(0, 16)
+                val zeroes = bits
+                zeroes.cardinality()
+            }
+
+            else -> { 0 }
+        }
+    }
+
+    fun getLeftZeroes(otp: ByteArray): Int {
+        return when (mask.toInt()) {
+            1, 2 -> {
+                val firstTwoBytes = otp.sliceArray(0..1)
+                val bits = BitSet.valueOf(firstTwoBytes)
+                bits.flip(0, 16)
+                val zeroes = bits
+                zeroes.cardinality()
+            }
+
+            3 -> {
+                val fourBytes = otp.sliceArray(0..3)
+                val bits = BitSet.valueOf(fourBytes)
                 bits.flip(0, 16)
                 val zeroes = bits
                 zeroes.cardinality()
