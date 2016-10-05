@@ -3,7 +3,7 @@ package it.convergent.obliterator.state_machines
 /**
  * Created by altamic on 02/10/16.
  */
-class AcquireCarnetFlow(actions: Actions, callbacks: Callbacks) {
+class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
 
     // internal actions
     interface Actions {
@@ -53,8 +53,6 @@ class AcquireCarnetFlow(actions: Actions, callbacks: Callbacks) {
 
     var currentState = State.START
 
-    private val callbacks = callbacks
-
     private fun go(current:State, next:State) {
         if (transitions[current]!!.contains(next))
             transaction(next)
@@ -84,3 +82,49 @@ class AcquireCarnetFlow(actions: Actions, callbacks: Callbacks) {
     }
 }
 
+class AcquireCarnetHandler(val callbacks: AcquireCarnetFlow.Callbacks): AcquireCarnetFlow.Actions {
+    val flow = AcquireCarnetFlow(this, this.callbacks)
+
+    override fun activatePcdModeAction() {
+
+    }
+
+    override fun carnetInRangeAction() {
+
+    }
+
+    override fun readCarnetAction() {
+
+    }
+
+    override fun deactivatePcdModeAction() {
+
+    }
+}
+
+
+class AcquireCarnetHelper: AcquireCarnetFlow.Callbacks {
+    val handler = AcquireCarnetHandler(this)
+    val flow    = AcquireCarnetFlow(handler, this)
+
+    override fun start() {
+
+        flow.start()
+    }
+
+    override fun predecessorNotFoundCallback() {
+
+    }
+
+    override fun predecessorFoundCallback() {
+        
+    }
+
+    override fun completed() {
+
+    }
+
+    override fun error() {
+
+    }
+}
