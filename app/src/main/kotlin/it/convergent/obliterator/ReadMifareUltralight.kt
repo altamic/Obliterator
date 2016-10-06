@@ -2,11 +2,9 @@ package it.convergent.obliterator
 
 import android.nfc.tech.MifareUltralight
 import android.os.AsyncTask
-import java.io.ByteArrayOutputStream
-import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
 import it.convergent.obliterator.MainActivity.OnDataReceived
-import it.convergent.obliterator.Maybe.Just
-import it.convergent.obliterator.Maybe.None
+import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
+import java.io.ByteArrayOutputStream
 
 /**
  * Created by altamic on 02/06/16.
@@ -61,9 +59,6 @@ class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListen
 
     override fun onPostExecute(carnet: Carnet?) {
         super.onPostExecute(carnet)
-        if (carnet == null)
-            carnetListener.onDataReceived(None)
-        else
-            carnetListener.onDataReceived(Just(carnet))
+        carnetListener.onDataReceived(carnet)
     }
 }

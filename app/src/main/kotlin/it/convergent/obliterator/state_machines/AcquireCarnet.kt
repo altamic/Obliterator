@@ -11,6 +11,7 @@ import android.nfc.Tag
 import android.nfc.tech.MifareUltralight
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import it.convergent.obliterator.R
 import java.lang.ref.WeakReference
@@ -20,17 +21,19 @@ import java.lang.ref.WeakReference
  */
 class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
 
+    val TAG: String = this.javaClass.simpleName
+
     // internal actions
     interface Actions {
         fun activatePcdModeAction()
         fun carnetInRangeAction()
-        fun readCarnetAction()
         fun deactivatePcdModeAction()
     }
 
     // can be triggered externally (or trigger external behaviour)
     interface Callbacks {
         fun start()
+        fun readCarnetCallback()
         fun predecessorNotFoundCallback()
         fun predecessorFoundCallback()
         fun completed()
@@ -59,7 +62,7 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
     private val behaviour = mapOf(
             Pair(State.START,             State.WAIT_FOR_CARNET)    to { actions.activatePcdModeAction() },
             Pair(State.WAIT_FOR_CARNET,   State.CARNET_IN_RANGE)    to { actions.carnetInRangeAction() },
-            Pair(State.CARNET_IN_RANGE,   State.CARNET_READ)        to { actions.readCarnetAction() },
+            Pair(State.CARNET_IN_RANGE,   State.CARNET_READ)        to { callbacks.readCarnetCallback() },
             Pair(State.CARNET_READ,       State.PREDECESSOR_FOUND)  to { callbacks.predecessorFoundCallback() },
             Pair(State.CARNET_READ,       State.WAIT_FOR_CARNET)    to { callbacks.predecessorNotFoundCallback() },
             Pair(State.PREDECESSOR_FOUND, State.PCD_DEACTIVATED)    to { actions.deactivatePcdModeAction() },
@@ -76,10 +79,10 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
     }
 
     private fun transaction(next:State) {
-        println("Trying to go from $currentState to $next")
+        Log.d(TAG, "Trying to go from $currentState to $next")
         val oldState = currentState
         currentState = next
-        println("current state: $currentState")
+        Log.d(TAG, "current state: $currentState")
         behaviour[Pair(oldState, currentState)]!!.invoke()
     }
 
@@ -135,27 +138,26 @@ class AcquireCarnetHandler(val context: Context, val callbacks: AcquireCarnetFlo
 
     }
 
-    override fun readCarnetAction() {
-
-    }
-
     fun enableForegroundDispatch(weakRefActivity: WeakReference<Activity>) {
         adapter.enableForegroundDispatch(weakRefActivity.get(), pendingIntent, filters, techlist)
+        activatePcdModeAction()
     }
 
     fun disableForegroundDispatch(weakRefActivity: WeakReference<Activity>) {
         adapter.disableForegroundDispatch(weakRefActivity.get())
+        deactivatePcdModeAction()
     }
 
     fun isNfcDiscovered(intent: Intent): Boolean {
         val action = intent.action
-        return action == NFC_TECH_DISCOVERED
+        return (action == NFC_TECH_DISCOVERED)
     }
 
     fun getTag(intent: Intent): MifareUltralight? {
         val tag: Tag = intent.getParcelableExtra(EXTRA_TAG)
         val techList = tag.techList
         if (techList.any { tech -> tech.equals(MifareUltralight::class.java.name) }) {
+            carnetInRangeAction()
             return MifareUltralight.get(tag)
         }
         return null
@@ -165,7 +167,14 @@ class AcquireCarnetHandler(val context: Context, val callbacks: AcquireCarnetFlo
         return adapter.isEnabled
     }
 
-    fun goToNfcSettings() {
+    fun activateNfcRequest() {
+        goToNfcSettings()
+        Toast.makeText(this.context, this.context
+                .getString(R.string.activate_nfc_request),
+                Toast.LENGTH_LONG).show()
+    }
+
+    private fun goToNfcSettings() {
         var intent: Intent
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -175,12 +184,5 @@ class AcquireCarnetHandler(val context: Context, val callbacks: AcquireCarnetFlo
         }
 
         this.context.startActivity(intent)
-    }
-
-    fun activateNfcRequest() {
-        goToNfcSettings()
-        Toast.makeText(this.context, this.context
-                .getString(R.string.activate_nfc_request),
-                Toast.LENGTH_LONG).show()
     }
 }

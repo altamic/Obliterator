@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.Vibrator
 import android.widget.ProgressBar
 import android.widget.Toast
-import it.convergent.obliterator.Maybe.None
 import it.convergent.obliterator.state_machines.AcquireCarnetFlow
 import it.convergent.obliterator.state_machines.AcquireCarnetHandler
 import java.lang.ref.WeakReference
@@ -48,9 +47,8 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     val failVibration: Long    =  50
 
     // Models
-    var isBus = true
-    var originalCarnet: Maybe<Carnet>  = None
-    var cookedCarnet: Maybe<Carnet> = None
+    var carnet: Carnet?  = null
+    var predecessor: Carnet?  = null
 
     val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
 
@@ -62,7 +60,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     }
 
     interface OnDataReceived {
-        fun onDataReceived(maybeCarnet: Maybe<Carnet>)
+        fun onDataReceived(maybeCarnet: Carnet?)
     }
 
     // Listeners
@@ -84,8 +82,8 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     }
 
     private val carnetListener by lazy { object: OnDataReceived {
-                override fun onDataReceived(maybeCarnet: Maybe<Carnet>) {
-                    originalCarnet = maybeCarnet
+                override fun onDataReceived(maybeCarnet: Carnet?) {
+                    carnet = maybeCarnet
                 }
         }
     }
@@ -95,16 +93,21 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        start()
     }
 
     override fun onResume() {
         super.onResume()
-        handler.enableForegroundDispatch(WeakReference(this))
+        if (handler.isNfcEnabled())
+            handler.enableForegroundDispatch(WeakReference(this))
+        else
+            handler.activateNfcRequest()
     }
 
     override fun onPause() {
         super.onPause()
-        handler.disableForegroundDispatch(WeakReference(this))
+        if (handler.isNfcEnabled())
+            handler.disableForegroundDispatch(WeakReference(this))
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -122,9 +125,12 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     // flows callback
     override fun start() {
-
+        flow.start();
     }
 
+    override fun readCarnetCallback() {
+
+    }
 
     override fun predecessorNotFoundCallback() {
 
