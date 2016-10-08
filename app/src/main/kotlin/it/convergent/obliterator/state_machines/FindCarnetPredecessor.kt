@@ -1,6 +1,6 @@
 package it.convergent.obliterator.state_machines
 
-import it.convergent.obliterator.Carnet
+import it.convergent.obliterator.models.Carnet
 
 /**
  * Created by altamic on 02/10/16.

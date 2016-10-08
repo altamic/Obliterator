@@ -33,7 +33,7 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
     // can be triggered externally (or trigger external behaviour)
     interface Callbacks {
         fun startAcquireCarnet()
-        fun readCarnetCallback()
+        fun carnetReadCallback()
         fun predecessorCarnetNotFoundCallback()
         fun predecessorCarnetFoundCallback()
         fun acquireCarnetCompleted()
@@ -62,7 +62,7 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
     private val behaviour = mapOf(
             Pair(State.START,             State.WAIT_FOR_CARNET)    to { actions.activatePcdModeAction() },
             Pair(State.WAIT_FOR_CARNET,   State.CARNET_IN_RANGE)    to { actions.carnetInRangeAction() },
-            Pair(State.CARNET_IN_RANGE,   State.CARNET_READ)        to { callbacks.readCarnetCallback() },
+            Pair(State.CARNET_IN_RANGE,   State.CARNET_READ)        to { callbacks.carnetReadCallback() },
             Pair(State.CARNET_READ,       State.PREDECESSOR_FOUND)  to { callbacks.predecessorCarnetFoundCallback() },
             Pair(State.CARNET_READ,       State.WAIT_FOR_CARNET)    to { callbacks.predecessorCarnetNotFoundCallback() },
             Pair(State.PREDECESSOR_FOUND, State.PCD_DEACTIVATED)    to { actions.deactivatePcdModeAction() },
@@ -82,8 +82,10 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
         Log.d(TAG, "Trying to go from $currentState to $next")
         val oldState = currentState
         currentState = next
-        Log.d(TAG, "current state: $currentState")
-        behaviour[Pair(oldState, currentState)]!!.invoke()
+        val transition = behaviour[Pair(oldState, currentState)]!!
+        Log.d(TAG, "invoking: $transition")
+        transition.invoke()
+        Log.d(TAG, "current state now is: $currentState")
     }
 
     private fun next(state:State) {
@@ -104,9 +106,10 @@ class AcquireCarnetHandler(val context: Context, val callbacks: AcquireCarnetFlo
 
     val flow = AcquireCarnetFlow(this, this.callbacks)
 
+    var isPcdModeActive = false
+
     private val EXTRA_TAG = "android.nfc.extra.TAG"
     private val NFC_TECH_DISCOVERED = "android.nfc.action.TECH_DISCOVERED"
-
 
     private val mfUltralight: String = MifareUltralight::class.java.name
 
@@ -126,17 +129,15 @@ class AcquireCarnetHandler(val context: Context, val callbacks: AcquireCarnetFlo
     }
 
     override fun activatePcdModeAction() {
-
+        isPcdModeActive = true
     }
 
 
     override fun deactivatePcdModeAction() {
-
+        isPcdModeActive = false
     }
 
-    override fun carnetInRangeAction() {
-
-    }
+    override fun carnetInRangeAction() { }
 
     fun enableForegroundDispatch(weakRefActivity: WeakReference<Activity>) {
         adapter.enableForegroundDispatch(weakRefActivity.get(), pendingIntent, filters, techlist)

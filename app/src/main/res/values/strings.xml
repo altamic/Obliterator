@@ -22,4 +22,7 @@
     <string name="aiddescription">HostApdu Service</string>
     <string name="bus">Bus</string>
     <string name="metro">Metro</string>
+
+    <string name="acquire_carnet_error">Error encountered while acquiring carnet</string>
+    <string name="carnet_predecessor_not_found">Carnet predecessor not found</string>
 </resources>

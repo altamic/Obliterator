@@ -1,6 +1,7 @@
 package it.convergent.obliterator
 
 import it.convergent.obliterator.Maybe.Just
+import it.convergent.obliterator.models.Carnet
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.text.SimpleDateFormat

@@ -1,5 +1,6 @@
-package it.convergent.obliterator
+package it.convergent.obliterator.models
 
+import it.convergent.obliterator.*
 import it.convergent.obliterator.Maybe.Just
 import it.convergent.obliterator.Maybe.None
 import java.nio.ByteBuffer

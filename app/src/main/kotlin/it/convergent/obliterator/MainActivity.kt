@@ -10,8 +10,10 @@ import android.os.Bundle
 import android.os.Vibrator
 import android.widget.ProgressBar
 import android.widget.Toast
+import it.convergent.obliterator.models.Carnet
+import it.convergent.obliterator.models.CarnetsManager.isPredecessorAvailable
+import it.convergent.obliterator.models.CarnetsManager.predecessor
 import it.convergent.obliterator.state_machines.AcquireCarnetFlow
-import it.convergent.obliterator.state_machines.AcquireCarnetFlow.State
 import it.convergent.obliterator.state_machines.AcquireCarnetHandler
 import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
@@ -86,7 +88,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     private val carnetListener by lazy { object: OnDataReceived {
                 override fun onDataReceived(maybeCarnet: Carnet?) {
                     carnet = maybeCarnet
-                    readCarnetCallback()
+                    carnetReadCallback()
                 }
         }
     }
@@ -105,8 +107,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     override fun onPause() {
         super.onPause()
-        if (acquireCarnet.flow.currentState == State.WAIT_FOR_CARNET )
-            disableForegroundDispatchIfNeeeded()
+        disableForegroundDispatchIfNeeeded()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -119,7 +120,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     // utils
     private fun enableForegroundDispatchOrActivateNfcIfNeeded() {
-        if (acquireCarnet.flow.currentState == State.WAIT_FOR_CARNET )
+        if (acquireCarnet.isPcdModeActive)
             if (acquireCarnet.isNfcEnabled())
                 acquireCarnet.enableForegroundDispatch(WeakReference(this))
             else
@@ -127,7 +128,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     }
 
     private fun disableForegroundDispatchIfNeeeded() {
-        if (acquireCarnet.flow.currentState == State.WAIT_FOR_CARNET )
+        if (!acquireCarnet.isPcdModeActive)
             if (acquireCarnet.isNfcEnabled())
                 acquireCarnet.disableForegroundDispatch(WeakReference(this))
     }
@@ -150,13 +151,36 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     // flows callback
     override fun startAcquireCarnet() { acquireCarnet.flow.start() }
 
-    override fun readCarnetCallback() { }
+    override fun carnetReadCallback() {
+        if (carnet != null && isPredecessorAvailable(carnet!!)) {
+            predecessor = predecessor(carnet!!)
+            predecessorCarnetFoundCallback()
+        } else {
+            predecessorCarnetNotFoundCallback()
+        }
+    }
 
-    override fun predecessorCarnetNotFoundCallback() { }
+    override fun predecessorCarnetNotFoundCallback() {
+        Toast.makeText(this@MainActivity,
+                R.string.carnet_predecessor_not_found,
+                Toast.LENGTH_LONG).show()
+//        vibrator.vibrate(failVibration)
+//        flash red light led for a couple of times
+    }
 
-    override fun predecessorCarnetFoundCallback() { }
+    override fun predecessorCarnetFoundCallback() {
+//        flash green light led for a couple of times
+    }
 
-    override fun acquireCarnetCompleted() { }
+    override fun acquireCarnetCompleted() {
+//        showCarnetLayout()
+//        startHceMode(predecessor)
+    }
 
-    override fun acquireCarnetError() { }
+    override fun acquireCarnetError() {
+        Toast.makeText(this@MainActivity,
+                            R.string.acquire_carnet_error,
+                            Toast.LENGTH_LONG).show()
+        vibrator.vibrate(failVibration)
+    }
 }

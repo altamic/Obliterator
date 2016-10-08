@@ -1,5 +1,6 @@
 package it.convergent.obliterator
 
+import it.convergent.obliterator.models.Carnet
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -138,7 +139,7 @@ fun String.toCarnetSet(): Set<Carnet> {
         this.removeSurrounding(prefix = "[", suffix = "]")
                 .split(", ")
                 .map { it.removeSurrounding(delimiter = "\"")}
-                .map { Carnet(hexStringToByteArray(it))}
+                .map { Carnet(hexStringToByteArray(it)) }
                 .toSet()
     } else {
         emptySet<Carnet>()
