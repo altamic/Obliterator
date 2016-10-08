@@ -165,11 +165,11 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
                 R.string.carnet_predecessor_not_found,
                 Toast.LENGTH_LONG).show()
 //        vibrator.vibrate(failVibration)
-//        flash red light led for a couple of times
+//        flash red light led 3 times
     }
 
     override fun predecessorCarnetFoundCallback() {
-//        flash green light led for a couple of times
+//        flash green light led 3 of times
     }
 
     override fun acquireCarnetCompleted() {

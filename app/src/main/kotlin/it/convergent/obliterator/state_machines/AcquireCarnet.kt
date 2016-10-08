@@ -46,6 +46,7 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
         CARNET_IN_RANGE,
         CARNET_READ,
         PREDECESSOR_FOUND,
+        PREDECESSOR_NOT_FOUND,
         PCD_DEACTIVATED,
         END,
         ERROR
@@ -64,7 +65,7 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
             Pair(State.WAIT_FOR_CARNET,   State.CARNET_IN_RANGE)    to { actions.carnetInRangeAction() },
             Pair(State.CARNET_IN_RANGE,   State.CARNET_READ)        to { callbacks.carnetReadCallback() },
             Pair(State.CARNET_READ,       State.PREDECESSOR_FOUND)  to { callbacks.predecessorCarnetFoundCallback() },
-            Pair(State.CARNET_READ,       State.WAIT_FOR_CARNET)    to { callbacks.predecessorCarnetNotFoundCallback() },
+            Pair(State.PREDECESSOR_NOT_FOUND, State.WAIT_FOR_CARNET)    to { callbacks.predecessorCarnetNotFoundCallback() },
             Pair(State.PREDECESSOR_FOUND, State.PCD_DEACTIVATED)    to { actions.deactivatePcdModeAction() },
             Pair(State.PCD_DEACTIVATED,   State.END)                to { callbacks.acquireCarnetCompleted() }
     )
@@ -131,7 +132,6 @@ class AcquireCarnetHandler(val context: Context, val callbacks: AcquireCarnetFlo
     override fun activatePcdModeAction() {
         isPcdModeActive = true
     }
-
 
     override fun deactivatePcdModeAction() {
         isPcdModeActive = false

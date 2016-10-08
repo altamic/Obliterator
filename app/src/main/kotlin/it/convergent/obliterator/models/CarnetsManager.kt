@@ -14,4 +14,9 @@ object CarnetsManager {
         return Carnet(data = hexStringToByteArray("0404"))
     }
 
+    fun store(carnet: Carnet) {
+//        calculate bucket from uid
+//
+    }
+
 }

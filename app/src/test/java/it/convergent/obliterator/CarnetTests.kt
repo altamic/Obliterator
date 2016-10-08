@@ -73,15 +73,8 @@ class CarnetTests {
 
     @Test
     fun uid() {
-        assertEquals("046825C12A3C3C84AE", newCarnet.uid.toHexString())
-        assertEquals("046DDD3C2A753380EC", new5Carnet.uid.toHexString())
-        assertEquals("046825C12A3C3C84AE", fourteenRidesRemainingCarnet.uid.toHexString())
-        assertEquals("046825C12A3C3C84AE", sevenRidesRemainingCarnet.uid.toHexString())
-        assertEquals("046825C12A3C3C84AE", lastRideRemainingCarnet.uid.toHexString())
-        assertEquals("046825C12A3C3C84AE", emptyCarnet.uid.toHexString())
-        assertEquals("046825C12A3C3C84AE", empty15Carnet.uid.toHexString())
-        assertEquals("046201EF5A75338498", empty5Carnet.uid.toHexString())
-        assertEquals("046201EF5A75338498", empty1Carnet.uid.toHexString())
+        assertEquals("0468252A3C3C84", newCarnet.uid)
+        assertEquals("046DDD2A753380", new5Carnet.uid)
     }
 
     @Test

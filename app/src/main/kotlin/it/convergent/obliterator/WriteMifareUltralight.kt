@@ -29,15 +29,15 @@ class WriteMifareUltralight(val listener: OnReadyToUpdateGui):
             publishProgress(20)
 
             mifareUltralight?.writePage(0xA, pageA.toByteArray())
-            mifareUltralight?.writePage(0xB, pageB.toByteArray())
+//            mifareUltralight?.writePage(0xB, pageB.toByteArray())
             publishProgress(60)
 
             mifareUltralight?.writePage(0xC, pageC.toByteArray())
-            mifareUltralight?.writePage(0xD, pageD.toByteArray())
+//            mifareUltralight?.writePage(0xD, pageD.toByteArray())
             publishProgress(40)
 
-            mifareUltralight?.writePage(0xE, pageE.toByteArray())
-            mifareUltralight?.writePage(0xF, pageF.toByteArray())
+//            mifareUltralight?.writePage(0xE, pageE.toByteArray())
+//            mifareUltralight?.writePage(0xF, pageF.toByteArray())
             publishProgress(80)
 
         } catch(e: Exception) {

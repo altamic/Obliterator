@@ -71,7 +71,14 @@ class Carnet(val data: ByteArray) {
             "Nizza", "Dante", "Carducci-Molinette",
             "Spezia", "Lingotto")
 
-    val uid = data.take(2 * PAGE_SIZE + 1).toByteArray()
+    val uid by lazy {
+        var result = byteArrayOf(0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
+        val cascadeLevel1 = data.take(3).toByteArray()
+        val cascadeLevel2 = page(index = 0x01)
+        System.arraycopy(cascadeLevel1, 0, result, 0, cascadeLevel1.size)
+        System.arraycopy(cascadeLevel2, 0, result, cascadeLevel1.size, cascadeLevel2.size)
+        result.toHexString()
+    }
 
     val isDetected by lazy {
         when (layout.toInt()) {
