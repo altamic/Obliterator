@@ -32,12 +32,12 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
 
     // can be triggered externally (or trigger external behaviour)
     interface Callbacks {
-        fun start()
+        fun startAcquireCarnet()
         fun readCarnetCallback()
-        fun predecessorNotFoundCallback()
-        fun predecessorFoundCallback()
-        fun completed()
-        fun error()
+        fun predecessorCarnetNotFoundCallback()
+        fun predecessorCarnetFoundCallback()
+        fun acquireCarnetCompleted()
+        fun acquireCarnetError()
     }
 
     enum class State {
@@ -63,13 +63,13 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
             Pair(State.START,             State.WAIT_FOR_CARNET)    to { actions.activatePcdModeAction() },
             Pair(State.WAIT_FOR_CARNET,   State.CARNET_IN_RANGE)    to { actions.carnetInRangeAction() },
             Pair(State.CARNET_IN_RANGE,   State.CARNET_READ)        to { callbacks.readCarnetCallback() },
-            Pair(State.CARNET_READ,       State.PREDECESSOR_FOUND)  to { callbacks.predecessorFoundCallback() },
-            Pair(State.CARNET_READ,       State.WAIT_FOR_CARNET)    to { callbacks.predecessorNotFoundCallback() },
+            Pair(State.CARNET_READ,       State.PREDECESSOR_FOUND)  to { callbacks.predecessorCarnetFoundCallback() },
+            Pair(State.CARNET_READ,       State.WAIT_FOR_CARNET)    to { callbacks.predecessorCarnetNotFoundCallback() },
             Pair(State.PREDECESSOR_FOUND, State.PCD_DEACTIVATED)    to { actions.deactivatePcdModeAction() },
-            Pair(State.PCD_DEACTIVATED,   State.END)                to { callbacks.completed() }
+            Pair(State.PCD_DEACTIVATED,   State.END)                to { callbacks.acquireCarnetCompleted() }
     )
 
-    private var currentState = State.START
+    var currentState = State.START
 
     private fun go(current:State, next:State) {
         if (transitions[current]!!.contains(next))
@@ -96,7 +96,7 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
 
     fun error() {
         currentState = State.ERROR
-        callbacks.error()
+        callbacks.acquireCarnetError()
     }
 }
 

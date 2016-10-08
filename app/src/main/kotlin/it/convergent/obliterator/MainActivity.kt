@@ -11,17 +11,18 @@ import android.os.Vibrator
 import android.widget.ProgressBar
 import android.widget.Toast
 import it.convergent.obliterator.state_machines.AcquireCarnetFlow
+import it.convergent.obliterator.state_machines.AcquireCarnetFlow.State
 import it.convergent.obliterator.state_machines.AcquireCarnetHandler
 import java.lang.ref.WeakReference
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+
 class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     val TAG: String = this.javaClass.simpleName
 
-    private val handler by lazy { AcquireCarnetHandler(this.baseContext, this) }
-    private val flow    by lazy { AcquireCarnetFlow(handler, this) }
+    private val acquireCarnet by lazy { AcquireCarnetHandler(this.baseContext, this) }
 
     //  Preferences
     val sharedPrefs: SharedPreferences by lazy {
@@ -50,7 +51,6 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     var carnet: Carnet?  = null
     var predecessor: Carnet?  = null
 
-    val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
 
     // interfaces
     interface OnReadyToUpdateGui {
@@ -62,6 +62,8 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     interface OnDataReceived {
         fun onDataReceived(maybeCarnet: Carnet?)
     }
+
+    val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
 
     // Listeners
     private val guiListener by lazy { object: OnReadyToUpdateGui {
@@ -84,6 +86,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     private val carnetListener by lazy { object: OnDataReceived {
                 override fun onDataReceived(maybeCarnet: Carnet?) {
                     carnet = maybeCarnet
+                    readCarnetCallback()
                 }
         }
     }
@@ -92,30 +95,41 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        start()
+        startAcquireCarnet()
     }
 
     override fun onResume() {
         super.onResume()
-        if (handler.isNfcEnabled())
-            handler.enableForegroundDispatch(WeakReference(this))
-        else
-            handler.activateNfcRequest()
+        enableForegroundDispatchOrActivateNfcIfNeeded()
     }
 
     override fun onPause() {
         super.onPause()
-        if (handler.isNfcEnabled())
-            handler.disableForegroundDispatch(WeakReference(this))
+        if (acquireCarnet.flow.currentState == State.WAIT_FOR_CARNET )
+            disableForegroundDispatchIfNeeeded()
     }
 
     override fun onNewIntent(intent: Intent?) {
-        if (intent != null && handler.isNfcDiscovered(intent)) {
-            val mifareUltralight = handler.getTag(intent)
+        if (intent != null && acquireCarnet.isNfcDiscovered(intent)) {
+            val mifareUltralight = acquireCarnet.getTag(intent)
              if (mifareUltralight != null)
                  readTag(mifareUltralight)
         }
+    }
+
+    // utils
+    private fun enableForegroundDispatchOrActivateNfcIfNeeded() {
+        if (acquireCarnet.flow.currentState == State.WAIT_FOR_CARNET )
+            if (acquireCarnet.isNfcEnabled())
+                acquireCarnet.enableForegroundDispatch(WeakReference(this))
+            else
+                acquireCarnet.activateNfcRequest()
+    }
+
+    private fun disableForegroundDispatchIfNeeeded() {
+        if (acquireCarnet.flow.currentState == State.WAIT_FOR_CARNET )
+            if (acquireCarnet.isNfcEnabled())
+                acquireCarnet.disableForegroundDispatch(WeakReference(this))
     }
 
     private fun readTag(mifareUltralight: MifareUltralight) {
@@ -123,38 +137,26 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
                 .execute(mifareUltralight)
     }
 
-    // flows callback
-    override fun start() {
-        flow.start();
-    }
-
-    override fun readCarnetCallback() {
-
-    }
-
-    override fun predecessorNotFoundCallback() {
-
-    }
-
-    override fun predecessorFoundCallback() {
-
-    }
-
-    override fun completed() {
-
-    }
-
-    override fun error() {
-
-    }
-
     private fun obliterateTag(mifareUltralight: MifareUltralight) {
         WriteMifareUltralight(guiListener)
-                            .execute(mifareUltralight)
+                .execute(mifareUltralight)
     }
 
     private fun isNetworkAvailable(): Boolean {
         val activeNetwork = connectivityManager.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting
     }
+
+    // flows callback
+    override fun startAcquireCarnet() { acquireCarnet.flow.start() }
+
+    override fun readCarnetCallback() { }
+
+    override fun predecessorCarnetNotFoundCallback() { }
+
+    override fun predecessorCarnetFoundCallback() { }
+
+    override fun acquireCarnetCompleted() { }
+
+    override fun acquireCarnetError() { }
 }
