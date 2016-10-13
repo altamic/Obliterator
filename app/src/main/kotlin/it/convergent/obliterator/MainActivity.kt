@@ -3,7 +3,6 @@ package it.convergent.obliterator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.nfc.tech.MifareUltralight
 import android.os.Bundle
@@ -11,8 +10,7 @@ import android.os.Vibrator
 import android.widget.ProgressBar
 import android.widget.Toast
 import it.convergent.obliterator.models.Carnet
-import it.convergent.obliterator.models.CarnetsManager.isPredecessorAvailable
-import it.convergent.obliterator.models.CarnetsManager.predecessor
+import it.convergent.obliterator.managers.Carnets
 import it.convergent.obliterator.state_machines.AcquireCarnetFlow
 import it.convergent.obliterator.state_machines.AcquireCarnetHandler
 import java.lang.ref.WeakReference
@@ -26,12 +24,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     private val acquireCarnet by lazy { AcquireCarnetHandler(this.baseContext, this) }
 
-    //  Preferences
-    val sharedPrefs: SharedPreferences by lazy {
-        baseContext
-            .getSharedPreferences(getString(R.string.preference_file_key),
-                                    Context.MODE_PRIVATE)
-    }
+    private val carnets by lazy { Carnets(this) }
 
     // Executor
     val singleThreadExecutor: ExecutorService by lazy { Executors.newSingleThreadExecutor() }
@@ -52,7 +45,6 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     // Models
     var carnet: Carnet?  = null
     var predecessor: Carnet?  = null
-
 
     // interfaces
     interface OnReadyToUpdateGui {
@@ -110,6 +102,10 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
         disableForegroundDispatchIfNeeeded()
     }
 
+    override fun onDestroy() {
+        carnets.persist()
+    }
+
     override fun onNewIntent(intent: Intent?) {
         if (intent != null && acquireCarnet.isNfcDiscovered(intent)) {
             val mifareUltralight = acquireCarnet.getTag(intent)
@@ -152,8 +148,8 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     override fun startAcquireCarnet() { acquireCarnet.flow.start() }
 
     override fun carnetReadCallback() {
-        if (carnet != null && isPredecessorAvailable(carnet!!)) {
-            predecessor = predecessor(carnet!!)
+        if (carnet != null && carnets.isPredecessorAvailable(carnet!!)) {
+            predecessor = carnets.predecessor(carnet!!)
             predecessorCarnetFoundCallback()
         } else {
             predecessorCarnetNotFoundCallback()

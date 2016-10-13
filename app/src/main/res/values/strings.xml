@@ -7,7 +7,7 @@
     <string name="triangle_down">▼</string>
 
     <string name="preference_file_key">preference_file_key</string>
-    <string name="json_carnet_set_key">json_carnet_set_key</string>
+    <string name="json_carnet_map_key">json_carnet_map_key</string>
     <string name="activate_nfc_request">Please activate NFC and press Back to return to the application!</string>
     <string name="gtt_hex_date">------</string>
     <string name="gtt_hex_binary">000000000000000000000000</string>

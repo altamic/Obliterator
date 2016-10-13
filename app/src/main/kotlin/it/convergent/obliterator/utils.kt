@@ -127,12 +127,17 @@ fun hexStringToByteArray(hex: String): ByteArray {
     return data
 }
 
-fun Set<Carnet>.toJson(): String {
+fun Array<Carnet>.toJson(): String {
     return this.map { carnet -> "\"${carnet.toString()}\"" }
             .joinToString(separator = ", ", prefix = "[", postfix = "]")
 }
 
-fun String.toCarnetSet(): Set<Carnet> {
+fun Map<String, Array<Carnet>>.toJson(): String {
+    return this.map { "\"${it.key}\": ${it.value.toJson()}" }
+            .joinToString(separator = ",\n", prefix = "{", postfix = "}")
+}
+
+fun String.toCarnetArray(): Array<Carnet> {
     val regex = "\\A\\[\\s*((\"[0-9A-F]{128}\")(,\\s(\"[0-9A-F]{128}\"))*)+\\]\\z".toRegex()
 
     return if (this.matches(regex)) {
@@ -140,10 +145,22 @@ fun String.toCarnetSet(): Set<Carnet> {
                 .split(", ")
                 .map { it.removeSurrounding(delimiter = "\"")}
                 .map { Carnet(hexStringToByteArray(it)) }
-                .toSet()
+                .toTypedArray()
     } else {
-        emptySet<Carnet>()
+        emptyArray<Carnet>()
     }
+}
+
+fun String.toMapStringWithCarnetArray(): Map<String, Array<Carnet>> {
+    val result = emptyMap<String, Array<Carnet>>()
+    this.removeSurrounding(prefix = "{", suffix = "}")
+               .split(",\n")
+               .map { it.split(": ") }
+               .forEach { result.entries
+                                .plusElement(mapOf(Pair(it.first(),
+                                                        it.last().toCarnetArray())))   }
+
+    return result
 }
 
 fun ebgGuvegrra(input: String): String {

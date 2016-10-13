@@ -1,12 +1,38 @@
-package it.convergent.obliterator.models
+package it.convergent.obliterator.managers
 
+import android.content.Context
+import android.content.SharedPreferences
+import it.convergent.obliterator.R
+import it.convergent.obliterator.models.Carnet
+import it.convergent.obliterator.toJson
+import it.convergent.obliterator.toMapStringWithCarnetArray
 import java.util.*
 
 /**
  * Created by altamic on 08/10/16.
  */
-object CarnetsManager {
-    private val carnets: Map<String, Array<Carnet>> = emptyMap()
+
+class Carnets(val context: Context) {
+    private val carnets: Map<String, Array<Carnet>> by lazy { load() }
+
+    //  Preferences
+    val sharedPrefs: SharedPreferences by lazy {
+        context.getSharedPreferences(context.getString(R.string.preference_file_key),
+                        Context.MODE_PRIVATE)
+    }
+
+    fun load(): Map<String, Array<Carnet>> {
+        return sharedPrefs.getString(context.getString(R.string.json_carnet_map_key), "{}")
+                          .toMapStringWithCarnetArray()
+    }
+
+    fun persist() {
+        val editor = sharedPrefs.edit()
+        val jsonCanetsMap = carnets.toJson()
+        editor.putString(context.getString(R.string.json_carnet_map_key),
+                        jsonCanetsMap)
+        editor.apply()
+    }
 
     fun isPredecessorAvailable(carnet: Carnet): Boolean {
         val uid = carnet.uid
@@ -21,7 +47,7 @@ object CarnetsManager {
         return find(uid, remainingRides)
     }
 
-    fun store(carnet: Carnet) {
+    fun save(carnet: Carnet) {
         val uid = carnet.uid
         val values = carnets.getOrElse(uid, defaultValue = { emptyArray<Carnet>() })
 
@@ -64,3 +90,5 @@ object CarnetsManager {
         }
     }
 }
+
+
