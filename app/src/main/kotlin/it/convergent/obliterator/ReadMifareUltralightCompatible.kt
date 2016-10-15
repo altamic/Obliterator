@@ -1,43 +1,43 @@
 package it.convergent.obliterator
 
-import android.nfc.tech.MifareUltralight
+import android.nfc.tech.NfcA
 import android.os.AsyncTask
-import java.io.ByteArrayOutputStream
-import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
 import it.convergent.obliterator.MainActivity.OnDataReceived
+import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
 import it.convergent.obliterator.Maybe.Just
 import it.convergent.obliterator.Maybe.None
+import java.io.ByteArrayOutputStream
 
 /**
  * Created by altamic on 02/06/16.
  */
 
-class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListener: OnDataReceived):
-        AsyncTask<MifareUltralight, Int, Carnet>() {
+class ReadMifareUltralightCompatible(val guiListener: OnReadyToUpdateGui, val carnetListener: OnDataReceived):
+        AsyncTask<NfcA, Int, Carnet>() {
 
-    override fun doInBackground(vararg params: MifareUltralight?): Carnet? {
-        val mifareUltralight = params.first()
+    override fun doInBackground(vararg params: NfcA?): Carnet? {
+        val mifareUltralightCompatible = params.first()
         var carnet: Carnet? = null
         val outputStream = ByteArrayOutputStream()
 
         publishProgress(0)
 
         try {
-            mifareUltralight?.connect()
+            mifareUltralightCompatible?.connect()
             publishProgress(20)
 
-            val page0to3 = mifareUltralight?.readPages(0)
+            val page0to3 = mifareUltralightCompatible?.readPages(0x00)
             outputStream.write(page0to3)
             publishProgress(40)
 
-            val page4to7 = mifareUltralight?.readPages(4)
+            val page4to7 = mifareUltralightCompatible?.readPages(0x04)
             outputStream.write(page4to7)
             publishProgress(60)
 
-            val page8to11 = mifareUltralight?.readPages(8)
+            val page8to11 = mifareUltralightCompatible?.readPages(0x08)
             outputStream.write(page8to11)
 
-            val page12to15 = mifareUltralight?.readPages(12)
+            val page12to15 = mifareUltralightCompatible?.readPages(0x0C)
             outputStream.write(page12to15)
             publishProgress(80)
 
@@ -45,7 +45,7 @@ class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListen
 
         } catch(e: Exception) {
             guiListener.onError(e.message.toString())
-        } finally { mifareUltralight?.close() }
+        } finally { mifareUltralightCompatible?.close() }
 
         publishProgress(100)
 

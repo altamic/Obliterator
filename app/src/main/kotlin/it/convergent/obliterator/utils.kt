@@ -1,5 +1,6 @@
 package it.convergent.obliterator
 
+import android.nfc.tech.NfcA
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -157,6 +158,22 @@ fun ebgGuvegrra(input: String): String {
     }
     return sb.toString()
 }
+
+fun NfcA.readPages(pageOffset: Int): ByteArray {
+    val cmd = byteArrayOf(0x30, pageOffset.toByte())
+
+    return transceive(cmd)
+}
+
+fun NfcA.writePage(pageOffset: Int, data: ByteArray) {
+    val cmd = ByteArray(data.size + 2)
+    cmd[0] = 0xA2.toByte()
+    cmd[1] = pageOffset.toByte()
+    System.arraycopy(data, 0, cmd, 2, data.size)
+
+    transceive(cmd)
+}
+
 
 object GttEpoch {
     fun calendar(minutesSinceGttEpoch: Int): Calendar {

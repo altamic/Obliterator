@@ -1,6 +1,6 @@
 package it.convergent.obliterator
 
-import android.nfc.tech.MifareUltralight
+import android.nfc.tech.NfcA
 import android.os.AsyncTask
 import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
 
@@ -8,12 +8,12 @@ import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
  * Created by altamic on 02/06/16.
  */
 
-class WriteMifareUltralight(val listener: OnReadyToUpdateGui):
-        AsyncTask<MifareUltralight, Int, Void>() {
+class WriteMifareUltralightCompatible(val listener: OnReadyToUpdateGui):
+        AsyncTask<NfcA, Int, Void>() {
 
-    override fun doInBackground(vararg params: MifareUltralight?): Void? {
-        val mifareUltralight = params.first()
-        val currentTime      = GttEpoch.currentTime().shl(bitCount = 8)
+    override fun doInBackground(vararg params: NfcA?): Void? {
+        val NfcA        = params.first()
+        val currentTime = GttEpoch.currentTime().shl(bitCount = 8)
 
         val pageA = currentTime
         val pageB = 0x00100000
@@ -25,24 +25,24 @@ class WriteMifareUltralight(val listener: OnReadyToUpdateGui):
         publishProgress(0)
 
         try {
-            mifareUltralight?.connect()
+            NfcA?.connect()
             publishProgress(20)
 
-            mifareUltralight?.writePage(0xA, pageA.toByteArray())
-            mifareUltralight?.writePage(0xB, pageB.toByteArray())
+            NfcA?.writePage(0xA, pageA.toByteArray())
+            NfcA?.writePage(0xB, pageB.toByteArray())
             publishProgress(60)
 
-            mifareUltralight?.writePage(0xC, pageC.toByteArray())
-            mifareUltralight?.writePage(0xD, pageD.toByteArray())
+            NfcA?.writePage(0xC, pageC.toByteArray())
+            NfcA?.writePage(0xD, pageD.toByteArray())
             publishProgress(40)
 
-            mifareUltralight?.writePage(0xE, pageE.toByteArray())
-            mifareUltralight?.writePage(0xF, pageF.toByteArray())
+            NfcA?.writePage(0xE, pageE.toByteArray())
+            NfcA?.writePage(0xF, pageF.toByteArray())
             publishProgress(80)
 
         } catch(e: Exception) {
             listener.onError(e.message.toString())
-        } finally { mifareUltralight?.close() }
+        } finally { NfcA?.close() }
 
         publishProgress(100)
 

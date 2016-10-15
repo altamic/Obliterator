@@ -11,7 +11,7 @@ import android.net.ConnectivityManager
 import android.nfc.NfcAdapter
 import android.nfc.NfcManager
 import android.nfc.Tag
-import android.nfc.tech.MifareUltralight
+import android.nfc.tech.NfcA
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
@@ -38,7 +38,7 @@ open class MainActivity: Activity() {
     val NFC_TECH_DISCOVERED = "android.nfc.action.TECH_DISCOVERED"
     val EXTRA_TAG = "android.nfc.extra.TAG"
 
-    val mfUltralight: String = MifareUltralight::class.java.name
+    val nfcA: String = NfcA::class.java.name
 
     //  Preferences
     val sharedPrefs: SharedPreferences by lazy {
@@ -207,7 +207,7 @@ open class MainActivity: Activity() {
     override fun onResume() {
         super.onResume()
         val filters = arrayOf(IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED))
-        val techlist = arrayOf(arrayOf(mfUltralight))
+        val techlist = arrayOf(arrayOf(nfcA))
         adapter.enableForegroundDispatch(this, pendingIntent, filters, techlist)
     }
 
@@ -237,20 +237,24 @@ open class MainActivity: Activity() {
 
         val techList = tag.techList
 
-        if (techList.any { tech -> tech.equals(MifareUltralight::class.java.name) }) {
-            val mifareUltralight = MifareUltralight.get(tag)
-            readTag(mifareUltralight)
+        if (techList.any { tech -> tech.equals(nfcA) }) {
+            val nfcA = NfcA.get(tag)
+            val atqa = nfcA.atqa.asList()
+            if (atqa.first().equals(0x44.toByte()) &&
+                    atqa.last().equals(0x00.toByte()) &&
+                    nfcA.sak == 0x00.toShort())
+                readTag(nfcA)
         }
     }
 
-    private fun readTag(mifareUltralight: MifareUltralight) {
-        ReadMifareUltralight(guiListener, carnetListener)
-                            .execute(mifareUltralight)
+    private fun readTag(mifareUltralightCompatible: NfcA) {
+        ReadMifareUltralightCompatible(guiListener, carnetListener)
+                            .execute(mifareUltralightCompatible)
     }
 
-    private fun obliterateTag(mifareUltralight: MifareUltralight) {
-        WriteMifareUltralight(guiListener)
-                            .execute(mifareUltralight)
+    private fun obliterateTag(mifareUltralightCompatible: NfcA) {
+        WriteMifareUltralightCompatible(guiListener)
+                            .execute(mifareUltralightCompatible)
     }
 
     private fun isNfcEnabled(): Boolean {
