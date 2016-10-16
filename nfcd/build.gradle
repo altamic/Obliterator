@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 24
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
 
@@ -24,8 +24,8 @@ android {
 
                 // Specifies the ABI configurations of your native
                 // libraries Gradle should build and package with your APK.
-                abiFilters 'armeabi'
-                //'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64',
+                abiFilters 'armeabi-v7a'
+                //'armeabi', 'arm64-v8a', 'x86', 'x86_64',
             }
 
         }
@@ -46,7 +46,7 @@ android {
 dependencies {
     // Xposed framework API
 //    provided 'de.robv.android.xposed:api:86'
-    provided files('libs/XposedBridge.jar')
+    provided files('libs/XposedBridgeApi-v86.jar')
 //    compile fileTree(dir: 'libs', include: ['*.jar'])
 
 //    compile 'com.android.support:appcompat-v7:24.2.1'
