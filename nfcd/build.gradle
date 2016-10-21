@@ -47,6 +47,7 @@ dependencies {
     // Xposed framework API
 //    provided 'de.robv.android.xposed:api:86'
     provided files('libs/XposedBridgeApi-v86.jar')
+    compile 'org.jetbrains.kotlin:kotlin-runtime:1.0.3'
 //    compile fileTree(dir: 'libs', include: ['*.jar'])
 
 //    compile 'com.android.support:appcompat-v7:24.2.1'

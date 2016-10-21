@@ -25,4 +25,8 @@
 
     <string name="acquire_carnet_error">Error encountered while acquiring carnet</string>
     <string name="carnet_predecessor_not_found">Carnet predecessor not found: emulating current carnet</string>
+
+    <string name="clone_mode_on">Clone Mode</string>
+    <string name="clone_mode_off">Reader Mode</string>
+
 </resources>

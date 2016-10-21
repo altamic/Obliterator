@@ -10,6 +10,7 @@
 
     <dimen name="big_big_text">72sp</dimen>
     <dimen name="big_text">48sp</dimen>
+    <dimen name="big_text1">40sp</dimen>
     <dimen name="big_text2">32sp</dimen>
     <dimen name="bigger_text">20sp</dimen>
     <dimen name="normal_text">18sp</dimen>

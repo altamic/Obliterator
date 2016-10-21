@@ -9,8 +9,9 @@ import android.os.Bundle
 import android.os.Vibrator
 import android.widget.ProgressBar
 import android.widget.Toast
-import it.convergent.obliterator.models.Carnet
+import android.widget.ToggleButton
 import it.convergent.obliterator.managers.Carnets
+import it.convergent.obliterator.models.Carnet
 import it.convergent.obliterator.state_machines.AcquireCarnetFlow
 import it.convergent.obliterator.state_machines.AcquireCarnetHandler
 import java.lang.ref.WeakReference
@@ -58,6 +59,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     }
 
     val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
+    val toggleCloneOrReader by lazy { findViewById(R.id.cloneMode) as ToggleButton }
 
     // Listeners
     private val guiListener by lazy { object: OnReadyToUpdateGui {
@@ -148,12 +150,16 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     override fun startAcquireCarnet() { acquireCarnet.flow.start() }
 
     override fun carnetReadCallback() {
-        if (carnet != null && carnets.isPredecessorAvailable(carnet!!)) {
-            predecessor = carnets.predecessor(carnet!!)
-            predecessorCarnetFoundCallback()
-        } else {
-            predecessorCarnetNotFoundCallback()
-        }
+//        if (carnet != null && carnets.isPredecessorAvailable(carnet!!)) {
+//            predecessor = carnets.predecessor(carnet!!)
+//            predecessorCarnetFoundCallback()
+//
+//        } else {
+//            predecessorCarnetNotFoundCallback()
+//        }
+
+        predecessor = carnet
+        predecessorCarnetFoundCallback()
     }
 
     override fun predecessorCarnetNotFoundCallback() {
