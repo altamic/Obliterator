@@ -87,6 +87,7 @@ class AcquireTagFlow(val actions: Actions, val callbacks: Callbacks) {
 }
 
 class AcquireTagHandler(val context: Context, val callbacks: AcquireTagFlow.Callbacks): AcquireTagFlow.Actions {
+    val TAG by lazy { flow.TAG }
     val flow = AcquireTagFlow(this, this.callbacks)
 
     fun start() { flow.start() }

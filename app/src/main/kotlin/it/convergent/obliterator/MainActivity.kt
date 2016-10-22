@@ -229,12 +229,12 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 
     override fun activateTagPollingCallback() {
         isTagPollingActive = true
-        Log.d(TAG, "activatePcdMode")
+        Log.d(acquireCarnet.TAG, "activatePcdMode")
     }
 
     override fun deactivateTagPollingCallback() {
         if (isTagPollingActive) {
-            Log.d(TAG, "deactivatePcdMode")
+            Log.d(acquireCarnet.TAG, "deactivatePcdMode")
             acquireCarnet.next(END)
         }
 
@@ -242,11 +242,11 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     override fun tagInRangeCallback() {
-        Log.d(TAG, "carnetInRange")
+        Log.d(acquireCarnet.TAG, "carnetInRange")
     }
 
     override fun tagReadCallback() {
-        Log.d(TAG, "carnetRead: $carnet")
+        Log.d(acquireCarnet.TAG, "carnetRead: $carnet")
 //        if (carnets.isPredecessorAvailable(carnet!!)) {
               //flash green light led 3 of times
 //            predecessor = carnets.predecessor(carnet!!)
@@ -264,7 +264,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     override fun acquireTagCompleted() {
-        Log.d(TAG, "acquireTagCompleted")
+        Log.d(acquireCarnet.TAG, "acquireTagCompleted")
 //        showCarnetLayout()
 //        startHceMode(predecessor)
     }
