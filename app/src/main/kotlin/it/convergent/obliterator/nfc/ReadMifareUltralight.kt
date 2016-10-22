@@ -4,7 +4,6 @@ import android.nfc.tech.MifareUltralight
 import android.os.AsyncTask
 import it.convergent.obliterator.MainActivity.OnDataReceived
 import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
-import it.convergent.obliterator.models.Carnet
 import java.io.ByteArrayOutputStream
 
 /**

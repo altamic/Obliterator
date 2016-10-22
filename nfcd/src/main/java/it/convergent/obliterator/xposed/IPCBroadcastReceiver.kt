@@ -29,11 +29,12 @@ class IPCBroadcastReceiver(ctx: Context) : BroadcastReceiver() {
                 "ENABLE"  -> { Native.Instance.setEnabled(true) }
                 "DISABLE" -> { Native.Instance.setEnabled(false) }
                 "UPLOAD"  -> {
-                    Native.Instance.uploadConfiguration(
-                        intent.getByteExtra("atqa", 0.toByte()),
-                        intent.getByteExtra("sak", 0.toByte()),
-                        intent.getByteArrayExtra("hist"),
-                        intent.getByteArrayExtra("uid"))
+                    val atqa = intent.getByteExtra("atqa", 0.toByte())
+                    val sak  = intent.getByteExtra("sak", 0.toByte())
+                    val uid  = intent.getByteArrayExtra("uid")
+                    val data = intent.getByteArrayExtra("data")
+                    Native.Instance
+                            .uploadConfiguration(atqa, sak, uid, data)
                 }
                 "REQSTATE" -> {
                     val status = if (Native.Instance.isEnabled()) "Active" else "Inactive"
