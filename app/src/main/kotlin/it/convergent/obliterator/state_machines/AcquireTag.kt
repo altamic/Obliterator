@@ -21,8 +21,6 @@ class AcquireTagFlow(val actions: Actions, val callbacks: Callbacks) {
         fun deactivateTagPollingCallback()
         fun tagInRangeCallback()
         fun tagReadCallback()
-        fun predecessorCarnetNotFoundCallback()
-        fun predecessorCarnetFoundCallback()
         fun acquireTagCompleted()
         fun acquireTagError()
     }
