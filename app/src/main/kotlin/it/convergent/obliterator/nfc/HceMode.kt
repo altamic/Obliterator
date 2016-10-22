@@ -1,4 +1,4 @@
-package it.convergent.obliterator.state_machines
+package it.convergent.obliterator.nfc
 
 import android.content.Context
 import android.content.Intent
@@ -9,7 +9,7 @@ import android.util.Log
  */
 
 object HceMode {
-    val TAG = HceMode.javaClass.simpleName
+    val TAG = javaClass.simpleName
 
     val actionName = "it.convergent.obliterator.daemoncall"
 

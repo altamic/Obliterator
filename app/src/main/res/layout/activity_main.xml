@@ -160,17 +160,17 @@
             android:layout_centerHorizontal="true"
             android:background="@drawable/obliterator_approach_ticket">
 
-            <ToggleButton
-                android:id="@+id/cloneMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textOn="@string/clone_mode_on"
-                android:textOff="@string/clone_mode_off"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/big_text1"
-                android:background="@null"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+            <!--<ToggleButton-->
+                <!--android:id="@+id/cloneMode"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textOn="@string/clone_mode_on"-->
+                <!--android:textOff="@string/clone_mode_off"-->
+                <!--android:textColor="@android:color/white"-->
+                <!--android:textSize="@dimen/big_text1"-->
+                <!--android:background="@null"-->
+                <!--android:layout_alignParentTop="true"-->
+                <!--android:layout_centerHorizontal="true" />-->
         </RelativeLayout>
 
         <Switch

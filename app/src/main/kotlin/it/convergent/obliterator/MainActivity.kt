@@ -17,7 +17,6 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.ProgressBar
 import android.widget.Toast
-import android.widget.ToggleButton
 import it.convergent.obliterator.managers.Carnets
 import it.convergent.obliterator.models.Carnet
 import it.convergent.obliterator.state_machines.AcquireTagFlow
@@ -90,7 +89,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
-    val toggleCloneOrReader by lazy { findViewById(R.id.cloneMode) as ToggleButton }
+//    val toggleCloneOrReader by lazy { findViewById(R.id.cloneMode) as ToggleButton }
 
     // Listeners
     private val guiListener by lazy { object: OnReadyToUpdateGui {
