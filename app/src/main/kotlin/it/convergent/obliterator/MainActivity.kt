@@ -33,7 +33,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 
     private val acquireCarnet by lazy { AcquireTagHandler(this.baseContext, this) }
 
-    private val carnets by lazy { Carnets(this) }
+    private val carnets by lazy { Carnets(this) } // move to object
 
     var isTagPollingActive = true
 
@@ -73,6 +73,8 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     val failVibration: Long    =  50
 
     // Models
+    var uid = byteArrayOf()
+    var data = byteArrayOf()
     var carnet: Carnet?  = null
     var predecessor: Carnet?  = null
 
@@ -84,7 +86,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     interface OnDataReceived {
-        fun onDataReceived(maybeCarnet: Carnet?)
+        fun onDataReceived(data: ByteArray?)
     }
 
     val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
@@ -110,11 +112,11 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     private val carnetListener by lazy { object: OnDataReceived {
-                override fun onDataReceived(maybeCarnet: Carnet?) {
-                    if (maybeCarnet == null) {
+                override fun onDataReceived(data: ByteArray?) {
+                    if (data == null) {
                         startAcquireCarnet()  // start over again
                     } else {
-                        carnet = maybeCarnet
+                        carnet = Carnet(data)
                         acquireCarnet.flow.next(TAG_READ)
                     }
                 }
@@ -201,6 +203,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         val tag: Tag = intent.getParcelableExtra(EXTRA_TAG)
         val techList = tag.techList
         if (techList.any { tech -> tech.equals(MifareUltralight::class.java.name) }) {
+            uid = tag.id
             return MifareUltralight.get(tag)
         }
         return null

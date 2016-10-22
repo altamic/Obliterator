@@ -12,11 +12,11 @@ import java.io.ByteArrayOutputStream
  */
 
 class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListener: OnDataReceived):
-        AsyncTask<MifareUltralight, Int, Carnet>() {
+        AsyncTask<MifareUltralight, Int, ByteArray>() {
 
-    override fun doInBackground(vararg params: MifareUltralight?): Carnet? {
+    override fun doInBackground(vararg params: MifareUltralight?): ByteArray? {
         val mifareUltralight = params.first()
-        var carnet: Carnet? = null
+        var data: ByteArray? = null
         val outputStream = ByteArrayOutputStream()
 
         publishProgress(0)
@@ -40,7 +40,7 @@ class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListen
             outputStream.write(page12to15)
             publishProgress(80)
 
-            carnet = Carnet(outputStream.toByteArray())
+            data = outputStream.toByteArray()
 
         } catch(e: Exception) {
             guiListener.onError(e.message.toString())
@@ -50,7 +50,7 @@ class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListen
 
         guiListener.onCompleted()
 
-        return carnet
+        return data
     }
 
     override fun onProgressUpdate(vararg values: Int?) {
@@ -58,8 +58,8 @@ class ReadMifareUltralight(val guiListener: OnReadyToUpdateGui, val carnetListen
         guiListener.onPublishProgress(values.first()!!)
     }
 
-    override fun onPostExecute(carnet: Carnet?) {
-        super.onPostExecute(carnet)
-        carnetListener.onDataReceived(carnet)
+    override fun onPostExecute(data: ByteArray?) {
+        super.onPostExecute(data)
+        carnetListener.onDataReceived(data)
     }
 }
