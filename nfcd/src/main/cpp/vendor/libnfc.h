@@ -164,27 +164,27 @@ typedef tNFC_STATUS NFC_SetConfig (UINT8     tlv_size, UINT8    *p_param_tlvs);
 /***************************************************/
 
 #define T3T_MSG_SERVICE_LIST_MAX                    16
-#define NCI_NFCID2_LEN              8
-#define NCI_T3T_PMM_LEN             8
-#define NCI_RF_F_UID_LEN            NCI_NFCID2_LEN
-#define NCI_MAX_AID_LEN     16
-#define NFC_MAX_AID_LEN     NCI_MAX_AID_LEN     /* 16 */
-#define CE_T4T_MAX_REG_AID         4
-#define T4T_FC_TLV_OFFSET_IN_CC           0x07
-#define T4T_FILE_CONTROL_TLV_SIZE       0x08
+#define NCI_NFCID2_LEN                               8
+#define NCI_T3T_PMM_LEN                              8
+#define NCI_RF_F_UID_LEN                NCI_NFCID2_LEN
+#define NCI_MAX_AID_LEN                             16
+#define NFC_MAX_AID_LEN                NCI_MAX_AID_LEN     /* 16 */
+#define CE_T4T_MAX_REG_AID                           4
+#define T4T_FC_TLV_OFFSET_IN_CC                   0x07
+#define T4T_FILE_CONTROL_TLV_SIZE                 0x08
 
 typedef struct _tle {
-    struct _tle  *p_next;
-    struct _tle  *p_prev;
-    void  *p_cback;
+    struct _tle     *p_next;
+    struct _tle     *p_prev;
+    void            *p_cback;
     uint32_t         ticks;
-    uint32_t   param;
-    uint16_t        event;
-    uint8_t         in_use;
+    uint32_t         param;
+    uint16_t         event;
+    uint8_t          in_use;
 } TIMER_LIST_ENT;
 
 typedef struct {
-    unsigned char         initialized;
+    unsigned char     initialized;
     uint8_t           version;        /* Ver: peer version */
     uint8_t           nbr;            /* NBr: number of blocks that can be read using one Check command */
     uint8_t           nbw;            /* Nbw: number of blocks that can be written using one Update command */
@@ -216,10 +216,10 @@ typedef struct {
     tCE_T3T_NDEF_INFO   ndef_info;
     tCE_T3T_CUR_CMD     cur_cmd;
 } tCE_T3T_MEM;
-typedef struct
-{
-    uint8_t               aid_len;
-    uint8_t               aid[NFC_MAX_AID_LEN];
+
+typedef struct {
+    uint8_t             aid_len;
+    uint8_t             aid[NFC_MAX_AID_LEN];
     tCE_CBACK          *p_cback;
 } tCE_T4T_REG_AID;      /* registered AID table */
 

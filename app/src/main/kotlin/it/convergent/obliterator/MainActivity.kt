@@ -2,6 +2,7 @@ package it.convergent.obliterator
 
 import android.app.Activity
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -19,6 +20,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import it.convergent.obliterator.managers.Carnets
 import it.convergent.obliterator.models.Carnet
+import it.convergent.obliterator.nfc.HceMode
 import it.convergent.obliterator.nfc.ReadMifareUltralight
 import it.convergent.obliterator.nfc.WriteMifareUltralight
 import it.convergent.obliterator.state_machines.AcquireTagFlow
@@ -33,8 +35,8 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     val TAG: String = this.javaClass.simpleName
 
     private val acquireCarnet by lazy { AcquireTagHandler(this.baseContext, this) }
-
     private val carnets by lazy { Carnets(this) } // move to object
+    private val hceMode by lazy { HceMode.initialize(this) }
 
     var isTagPollingActive = true
 
@@ -128,6 +130,14 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     // Activity life cycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                Toast.makeText(context, intent.getStringExtra("text"),
+                                Toast.LENGTH_LONG).show()
+            }
+        }, IntentFilter("it.convergent.obliterator.toaster"))
+
         setContentView(R.layout.activity_main)
         startAcquireCarnet()
     }
@@ -271,7 +281,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     override fun acquireTagCompleted() {
         Log.d(acquireCarnet.TAG, "acquireTagCompleted")
 //        showCarnetLayout()
-//        startHceMode(predecessor)
+        hceMode.requestStatus()
     }
 
     override fun acquireTagError() {

@@ -18,8 +18,9 @@ object HceMode {
     private val atqa = byteArrayOf(0x44, 0x00)
     private val sak  = byteArrayOf(0x00)
 
-    fun initialize(context: Context) {
+    fun initialize(context: Context): HceMode {
         HceMode.context = context
+        return this
     }
 
     fun enable(uid: ByteArray, data: ByteArray) {
@@ -58,15 +59,15 @@ object HceMode {
         return context == null
     }
 
-    private fun setActionAnSend(intent: Intent) {
-        intent.action = actionName
-        context?.sendBroadcast(intent)
-    }
-
     private fun setExtraActionAndSend(extraAction: String) {
         val intent = Intent()
         intent.putExtra("action", extraAction)
         setActionAnSend(intent)
+    }
+
+    private fun setActionAnSend(intent: Intent) {
+        intent.action = actionName
+        context?.sendBroadcast(intent)
     }
 
     private fun showWarning() {
