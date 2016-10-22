@@ -227,14 +227,12 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     override fun activateTagPollingCallback() {
         Log.d(TAG, "activatePcdMode")
         isTagPollingActive = true
-        enableForegroundDispatchOrActivateNfcIfNeeded()
     }
 
     override fun deactivateTagPollingCallback() {
         Log.d(TAG, "deactivatePcdMode")
         isTagPollingActive = false
-        disableForegroundDispatchIfNeeeded()
-        acquireCarnet.next(DEACTIVATE_POLLING)
+        acquireCarnet.next(END)
     }
 
     override fun tagInRangeCallback() {
@@ -244,20 +242,19 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     override fun tagReadCallback() {
         Log.d(TAG, "carnetRead: $carnet")
 //        if (carnets.isPredecessorAvailable(carnet!!)) {
-//        //flash green light led 3 of times
+              //flash green light led 3 of times
 //            predecessor = carnets.predecessor(carnet!!)
+//            acquireTagCompleted()
 //            acquireCarnet.next(DEACTIVATE_POLLING)
 //        } else {
 //            vibrator.vibrate(failVibration)
 //           // flash red light led 3 times
-//            Toast.makeText(this@MainActivity,
-//                R.string.carnet_predecessor_not_found,
-//                Toast.LENGTH_LONG).show()
-//
+//            acquireTagError()
 //            startAcquireCarnet() // start over again
 //        }
 
         predecessor = carnet
+        acquireTagCompleted()
         acquireCarnet.next(DEACTIVATE_POLLING)
     }
 
