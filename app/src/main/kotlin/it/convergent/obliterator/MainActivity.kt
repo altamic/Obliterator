@@ -179,7 +179,6 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         if (isTagPollingActive)
             if (isNfcEnabled()) {
                 adapter.enableForegroundDispatch(this, pendingIntent, filters, techlist)
-                activateTagPollingCallback()
             } else {
                 activateNfcRequest()
             }
@@ -189,7 +188,6 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         if (!isTagPollingActive)
             if (isNfcEnabled()) {
                 adapter.disableForegroundDispatch(this)
-                deactivateTagPollingCallback()
             }
     }
 
@@ -226,14 +224,17 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     override fun startAcquireCarnet() { acquireCarnet.start() }
 
     override fun activateTagPollingCallback() {
-        Log.d(TAG, "activatePcdMode")
         isTagPollingActive = true
+        Log.d(TAG, "activatePcdMode")
     }
 
     override fun deactivateTagPollingCallback() {
-        Log.d(TAG, "deactivatePcdMode")
+        if (isTagPollingActive) {
+            Log.d(TAG, "deactivatePcdMode")
+            acquireCarnet.next(END)
+        }
+        
         isTagPollingActive = false
-        acquireCarnet.next(END)
     }
 
     override fun tagInRangeCallback() {
