@@ -1,4 +1,4 @@
-package it.convergent.obliterator
+package it.convergent.obliterator.nfc
 
 import android.nfc.tech.MifareUltralight
 import android.os.AsyncTask

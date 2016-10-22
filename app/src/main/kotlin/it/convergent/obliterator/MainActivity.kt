@@ -19,6 +19,8 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import it.convergent.obliterator.managers.Carnets
 import it.convergent.obliterator.models.Carnet
+import it.convergent.obliterator.nfc.ReadMifareUltralight
+import it.convergent.obliterator.nfc.WriteMifareUltralight
 import it.convergent.obliterator.state_machines.AcquireTagFlow
 import it.convergent.obliterator.state_machines.AcquireTagFlow.State.*
 import it.convergent.obliterator.state_machines.AcquireTagHandler

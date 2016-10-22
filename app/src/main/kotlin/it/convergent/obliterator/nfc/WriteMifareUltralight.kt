@@ -1,8 +1,10 @@
-package it.convergent.obliterator
+package it.convergent.obliterator.nfc
 
 import android.nfc.tech.MifareUltralight
 import android.os.AsyncTask
+import it.convergent.obliterator.GttEpoch
 import it.convergent.obliterator.MainActivity.OnReadyToUpdateGui
+import it.convergent.obliterator.toByteArray
 
 /**
  * Created by altamic on 02/06/16.
