@@ -73,7 +73,6 @@ class AcquireCarnetFlow(val actions: Actions, val callbacks: Callbacks) {
         val oldState = currentState
         currentState = next
         val transition = behaviour[Pair(oldState, currentState)]!!
-        Log.d(TAG, "invoking: $transition")
         transition.invoke()
         Log.d(TAG, "current state now is: $currentState")
     }

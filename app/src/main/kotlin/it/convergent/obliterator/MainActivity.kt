@@ -111,7 +111,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     private val carnetListener by lazy { object: OnDataReceived {
                 override fun onDataReceived(maybeCarnet: Carnet?) {
-                    if (carnet == null) {
+                    if (maybeCarnet == null) {
                         acquireCarnet.flow.start() // start over again
                     } else {
                         carnet = maybeCarnet
