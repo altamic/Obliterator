@@ -20,18 +20,18 @@ import android.widget.Toast
 import android.widget.ToggleButton
 import it.convergent.obliterator.managers.Carnets
 import it.convergent.obliterator.models.Carnet
-import it.convergent.obliterator.state_machines.AcquireCarnetFlow
-import it.convergent.obliterator.state_machines.AcquireCarnetFlow.State.*
-import it.convergent.obliterator.state_machines.AcquireCarnetHandler
+import it.convergent.obliterator.state_machines.AcquireTagFlow
+import it.convergent.obliterator.state_machines.AcquireTagFlow.State.*
+import it.convergent.obliterator.state_machines.AcquireTagHandler
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
+class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 
     val TAG: String = this.javaClass.simpleName
 
-    private val acquireCarnet by lazy { AcquireCarnetHandler(this.baseContext, this) }
+    private val acquireCarnet by lazy { AcquireTagHandler(this.baseContext, this) }
 
     private val carnets by lazy { Carnets(this) }
 
@@ -115,7 +115,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
                         acquireCarnet.flow.start() // start over again
                     } else {
                         carnet = maybeCarnet
-                        acquireCarnet.flow.next(CARNET_READ)
+                        acquireCarnet.flow.next(TAG_READ)
                     }
                 }
         }
@@ -144,10 +144,11 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 
     override fun onNewIntent(intent: Intent?) {
         if (intent != null && isNfcDiscovered(intent)) {
-            acquireCarnet.flow.next(CARNET_IN_RANGE)
             val mifareUltralight = getTag(intent)
-             if (mifareUltralight != null)
+             if (mifareUltralight != null) {
+                 acquireCarnet.flow.next(TAG_IN_RANGE)
                  readTag(mifareUltralight)
+             }
         }
     }
 
@@ -177,7 +178,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
         if (isPcdModeActive)
             if (isNfcEnabled()) {
                 adapter.enableForegroundDispatch(this, pendingIntent, filters, techlist)
-                activatePcdModeCallback()
+                activateTagPollingCallback()
             } else {
                 activateNfcRequest()
             }
@@ -187,7 +188,7 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
         if (!isPcdModeActive)
             if (isNfcEnabled()) {
                 adapter.disableForegroundDispatch(this)
-                deactivatePcdModeCallback()
+                deactivateTagPollingCallback()
             }
     }
 
@@ -200,7 +201,6 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
         val tag: Tag = intent.getParcelableExtra(EXTRA_TAG)
         val techList = tag.techList
         if (techList.any { tech -> tech.equals(MifareUltralight::class.java.name) }) {
-            carnetInRangeCallback()
             return MifareUltralight.get(tag)
         }
         return null
@@ -224,22 +224,22 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
     // flows callback
     override fun startAcquireCarnet() { acquireCarnet.flow.start() }
 
-    override fun activatePcdModeCallback() {
+    override fun activateTagPollingCallback() {
         Log.d(TAG, "activatePcdMode")
         isPcdModeActive = true
     }
 
-    override fun deactivatePcdModeCallback() {
+    override fun deactivateTagPollingCallback() {
         Log.d(TAG, "deactivatePcdMode")
         isPcdModeActive = false
-        acquireCarnet.flow.next(PCD_DEACTIVATED)
+        acquireCarnet.flow.next(POLL_DEACTIVATED)
     }
 
-    override fun carnetInRangeCallback() {
+    override fun tagInRangeCallback() {
         Log.d(TAG, "carnetInRange")
     }
 
-    override fun carnetReadCallback() {
+    override fun tagReadCallback() {
         Log.d(TAG, "carnetRead: $carnet")
 //        if (carnets.isPredecessorAvailable(carnet!!)) {
 //            predecessor = carnets.predecessor(carnet!!)
@@ -266,13 +266,13 @@ class MainActivity: Activity(),  AcquireCarnetFlow.Callbacks {
 //        flash green light led 3 of times
     }
 
-    override fun acquireCarnetCompleted() {
-        Log.d(TAG, "acquireCarnetCompleted")
+    override fun acquireTagCompleted() {
+        Log.d(TAG, "acquireTagCompleted")
 //        showCarnetLayout()
 //        startHceMode(predecessor)
     }
 
-    override fun acquireCarnetError() {
+    override fun acquireTagError() {
         Toast.makeText(this@MainActivity,
                             R.string.acquire_carnet_error,
                             Toast.LENGTH_LONG).show()
