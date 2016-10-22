@@ -139,6 +139,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         carnets.persist()
     }
 
@@ -221,7 +222,10 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     // flows callback
-    override fun startAcquireCarnet() { acquireCarnet.start() }
+    override fun startAcquireCarnet() {
+        if (acquireCarnet.flow.currentState != END)
+            acquireCarnet.start()
+    }
 
     override fun activateTagPollingCallback() {
         isTagPollingActive = true
@@ -233,7 +237,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
             Log.d(TAG, "deactivatePcdMode")
             acquireCarnet.next(END)
         }
-        
+
         isTagPollingActive = false
     }
 
