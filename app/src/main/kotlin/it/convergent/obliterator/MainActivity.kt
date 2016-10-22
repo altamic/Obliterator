@@ -35,7 +35,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 
     private val carnets by lazy { Carnets(this) }
 
-    var isPcdModeActive = false
+    var isTagPollingActive = true
 
     private val EXTRA_TAG = "android.nfc.extra.TAG"
     private val NFC_TECH_DISCOVERED = "android.nfc.action.TECH_DISCOVERED"
@@ -102,7 +102,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
             }
 
             override fun onError(message: String) {
-                acquireCarnet.flow.start() // start over again
+                startAcquireCarnet()   // start over again
                 Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG).show()
                 vibrator.vibrate(failVibration)
             }
@@ -112,7 +112,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     private val carnetListener by lazy { object: OnDataReceived {
                 override fun onDataReceived(maybeCarnet: Carnet?) {
                     if (maybeCarnet == null) {
-                        acquireCarnet.flow.start() // start over again
+                        startAcquireCarnet()  // start over again
                     } else {
                         carnet = maybeCarnet
                         acquireCarnet.flow.next(TAG_READ)
@@ -146,7 +146,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         if (intent != null && isNfcDiscovered(intent)) {
             val mifareUltralight = getTag(intent)
              if (mifareUltralight != null) {
-                 acquireCarnet.flow.next(TAG_IN_RANGE)
+                 acquireCarnet.next(TAG_IN_RANGE)
                  readTag(mifareUltralight)
              }
         }
@@ -175,7 +175,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         startActivity(intent)
     }
     private fun enableForegroundDispatchOrActivateNfcIfNeeded() {
-        if (isPcdModeActive)
+        if (isTagPollingActive)
             if (isNfcEnabled()) {
                 adapter.enableForegroundDispatch(this, pendingIntent, filters, techlist)
                 activateTagPollingCallback()
@@ -185,7 +185,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     private fun disableForegroundDispatchIfNeeeded() {
-        if (!isPcdModeActive)
+        if (!isTagPollingActive)
             if (isNfcEnabled()) {
                 adapter.disableForegroundDispatch(this)
                 deactivateTagPollingCallback()
@@ -222,17 +222,17 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     // flows callback
-    override fun startAcquireCarnet() { acquireCarnet.flow.start() }
+    override fun startAcquireCarnet() { acquireCarnet.start() }
 
     override fun activateTagPollingCallback() {
         Log.d(TAG, "activatePcdMode")
-        isPcdModeActive = true
+        isTagPollingActive = true
     }
 
     override fun deactivateTagPollingCallback() {
         Log.d(TAG, "deactivatePcdMode")
-        isPcdModeActive = false
-        acquireCarnet.flow.next(POLL_DEACTIVATED)
+        isTagPollingActive = false
+        acquireCarnet.next(DEACTIVATE_POLLING)
     }
 
     override fun tagInRangeCallback() {
@@ -243,15 +243,14 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         Log.d(TAG, "carnetRead: $carnet")
 //        if (carnets.isPredecessorAvailable(carnet!!)) {
 //            predecessor = carnets.predecessor(carnet!!)
-//            acquireCarnet.flow.next(PREDECESSOR_FOUND)
+//            acquireCarnet.next(DEACTIVATE_POLLING)
 //
 //        } else {
-//            acquireCarnet.flow.next(PREDECESSOR_NOT_FOUND)
+//            startAcquireCarnet() // start over again
 //        }
 
         predecessor = carnet
-        acquireCarnet.flow.next(PREDECESSOR_FOUND)
-
+        acquireCarnet.next(DEACTIVATE_POLLING)
     }
 
     override fun predecessorCarnetNotFoundCallback() {

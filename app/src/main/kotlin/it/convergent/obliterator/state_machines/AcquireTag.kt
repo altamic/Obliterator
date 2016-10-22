@@ -29,28 +29,28 @@ class AcquireTagFlow(val actions: Actions, val callbacks: Callbacks) {
 
     enum class State {
         START,
-        POLLING_ACTIVATED,
+        ACTIVATE_POLLING,
         TAG_IN_RANGE,
         TAG_READ,
-        POLL_DEACTIVATED,
+        DEACTIVATE_POLLING,
         END,
         ERROR
     }
 
     private val transitions = mapOf(
-            State.START             to arrayOf(State.POLLING_ACTIVATED),
-            State.POLLING_ACTIVATED to arrayOf(State.TAG_IN_RANGE),
+            State.START             to arrayOf(State.ACTIVATE_POLLING),
+            State.ACTIVATE_POLLING to arrayOf(State.TAG_IN_RANGE),
             State.TAG_IN_RANGE      to arrayOf(State.TAG_READ),
-            State.TAG_READ          to arrayOf(State.POLL_DEACTIVATED),
-            State.POLL_DEACTIVATED  to arrayOf(State.END)
+            State.TAG_READ          to arrayOf(State.DEACTIVATE_POLLING),
+            State.DEACTIVATE_POLLING to arrayOf(State.END)
     )
 
     private val behaviour = mapOf(
-            Pair(State.START,               State.POLLING_ACTIVATED) to { callbacks.activateTagPollingCallback() },
-            Pair(State.POLLING_ACTIVATED,   State.TAG_IN_RANGE)    to { callbacks.tagInRangeCallback() },
-            Pair(State.TAG_IN_RANGE,        State.TAG_READ)        to { callbacks.tagReadCallback() },
-            Pair(State.TAG_READ,            State.POLL_DEACTIVATED) to { callbacks.deactivateTagPollingCallback() },
-            Pair(State.POLL_DEACTIVATED,    State.END)             to { callbacks.acquireTagCompleted() }
+            Pair(State.START,              State.ACTIVATE_POLLING) to { callbacks.activateTagPollingCallback() },
+            Pair(State.ACTIVATE_POLLING,   State.TAG_IN_RANGE)    to { callbacks.tagInRangeCallback() },
+            Pair(State.TAG_IN_RANGE,       State.TAG_READ)        to { callbacks.tagReadCallback() },
+            Pair(State.TAG_READ,           State.DEACTIVATE_POLLING) to { callbacks.deactivateTagPollingCallback() },
+            Pair(State.DEACTIVATE_POLLING, State.END)             to { callbacks.acquireTagCompleted() }
     )
 
     var currentState = State.START
@@ -79,7 +79,7 @@ class AcquireTagFlow(val actions: Actions, val callbacks: Callbacks) {
 
     fun start() {
         currentState = State.START
-        next(State.POLLING_ACTIVATED)
+        next(State.ACTIVATE_POLLING)
     }
 
     fun error() {
@@ -90,4 +90,7 @@ class AcquireTagFlow(val actions: Actions, val callbacks: Callbacks) {
 
 class AcquireTagHandler(val context: Context, val callbacks: AcquireTagFlow.Callbacks): AcquireTagFlow.Actions {
     val flow = AcquireTagFlow(this, this.callbacks)
+
+    fun start() { flow.start() }
+    fun next(state: AcquireTagFlow.State) { flow.next(state) }
 }
