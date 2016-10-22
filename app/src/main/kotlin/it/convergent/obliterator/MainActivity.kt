@@ -143,13 +143,14 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        if (intent != null && isNfcDiscovered(intent)) {
-            val mifareUltralight = getTag(intent)
-             if (mifareUltralight != null) {
-                 acquireCarnet.next(TAG_IN_RANGE)
-                 readTag(mifareUltralight)
-             }
-        }
+        if (isTagPollingActive)
+            if (intent != null && isNfcDiscovered(intent)) {
+                val mifareUltralight = getTag(intent)
+                if (mifareUltralight != null) {
+                    acquireCarnet.next(TAG_IN_RANGE)
+                    readTag(mifareUltralight)
+                }
+            }
     }
 
     // utils
@@ -254,7 +255,6 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 //        }
 
         predecessor = carnet
-        acquireTagCompleted()
         acquireCarnet.next(DEACTIVATE_POLLING)
     }
 
