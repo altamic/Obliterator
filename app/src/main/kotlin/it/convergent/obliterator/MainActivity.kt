@@ -86,7 +86,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     interface OnDataReceived {
-        fun onDataReceived(data: ByteArray?)
+        fun onDataReceived(result: ByteArray?)
     }
 
     val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
@@ -112,11 +112,12 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
     }
 
     private val carnetListener by lazy { object: OnDataReceived {
-                override fun onDataReceived(data: ByteArray?) {
-                    if (data == null) {
+                override fun onDataReceived(result: ByteArray?) {
+                    if (result == null) {
                         startAcquireCarnet()  // start over again
                     } else {
-                        carnet = Carnet(data)
+                        data   = result
+                        carnet = Carnet(result)
                         acquireCarnet.flow.next(TAG_READ)
                     }
                 }
