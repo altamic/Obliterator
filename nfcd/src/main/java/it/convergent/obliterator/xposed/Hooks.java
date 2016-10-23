@@ -23,9 +23,40 @@ public class Hooks implements IXposedHookLoadPackage {
         if(!"com.android.nfc".equals(lpparam.packageName))
             return;
 
-//        System.loadLibrary("nfc-native");
-//        System.load("/data/data/it.convergent.obliterator/lib/libnfc-native.so");
-        System.load("/data/app/it.convergent.obliterator-1/lib/arm/libnfc-native.so");
+        //System.load("/data/data/it.convergent.obliterator/lib/libnfc-native.so");
+
+        String lib  = "nfc-native";
+        try {
+            System.loadLibrary(lib);
+        } catch (UnsatisfiedLinkError e) {
+            // DON'T WORK
+//            String link = String.format("/data/data/it.convergent.obliterator/lib/lib%s.so", lib);
+//            Log.d("IPCBroadcastReceiver", link);
+//
+//            String target = Os.readlink(link); // EACCESS
+//            System.load(target);
+
+            // SUPER HACK
+            String path = "/data/app/it.convergent.obliterator%s/lib/arm/libnfc-native.so";
+            String destination;
+            for (int i = 0; i < 6; i++) {
+                try {
+                    if (i == 0) {
+                        destination = String.format(path, "");
+                        System.load(destination);
+                        break;
+                    }
+
+                    destination = String.format(path, "-" + String.valueOf(i));
+                    System.load(destination);
+                    break;
+
+                } catch (UnsatisfiedLinkError err) {
+                    Log.d("HOOKNFC",
+                            String.format("Failed loading lib %s attempt #%s", lib, String.valueOf(i)));
+                }
+            }
+        }
 
         // hook construtor to catch application context
         findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
