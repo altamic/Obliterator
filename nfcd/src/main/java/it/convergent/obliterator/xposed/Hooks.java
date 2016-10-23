@@ -23,9 +23,9 @@ public class Hooks implements IXposedHookLoadPackage {
         if(!"com.android.nfc".equals(lpparam.packageName))
             return;
 
-        //System.loadLibrary("nfcgate-native");
-        System.load("/data/data/it.convergent.obliterator/lib/libnfc-native.so");
-
+//        System.loadLibrary("nfc-native");
+//        System.load("/data/data/it.convergent.obliterator/lib/libnfc-native.so");
+        System.load("/data/app/it.convergent.obliterator-1/lib/arm/libnfcgate-native.so");
 
         // hook construtor to catch application context
         findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {

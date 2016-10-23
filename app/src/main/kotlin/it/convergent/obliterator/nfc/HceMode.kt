@@ -37,7 +37,7 @@ object HceMode {
         intent.putExtra("uid", uid)
         intent.putExtra("data", data)
 
-        // send configuration patch
+        // upload configuration patch
         setActionAnSend(intent)
     }
 
@@ -81,7 +81,7 @@ object HceMode {
     }
 
     private fun showWarning() {
-        Log.w(TAG, "Context has not been notInitialized!")
+        Log.w(TAG, "Context has not been initialized!")
         Log.w(TAG, "invoke: 'initialize(context: Context)' before!")
     }
 }
