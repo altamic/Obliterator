@@ -23,7 +23,17 @@ object HceMode {
         return this
     }
 
-    fun enable(uid: ByteArray, data: ByteArray) {
+    fun enable() {
+        if (!initialized()) {
+            showWarning()
+            return
+        }
+
+        // enable patch
+        setExtraActionAndSend("ENABLE")
+    }
+
+    fun patch(uid: ByteArray, data: ByteArray) {
         if (!initialized()) {
             showWarning()
             return

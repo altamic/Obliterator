@@ -29,13 +29,12 @@ JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_uploadConfig
         env->ThrowNew(Exception, "uid bigger than buffer");
     }
 
-
     patchValues.atqa = atqa;
     patchValues.sak = sak;
-//    patchValues.uid_len = uid_len;
+    patchValues.uid_len = uid_len;
 
     jbyte* uid = env->GetByteArrayElements(_uid, 0);
-    jbyte* data = env->GetByteArrayElements(_data, 0);
+//    jbyte* data = env->GetByteArrayElements(_data, 0);
 
     memcpy(patchValues.uid, uid, uid_len);
 //    memcpy(patchValues.data, data, data_len);

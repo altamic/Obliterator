@@ -26,10 +26,20 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getStringExtra("action");
-        Log.d("IPCBroadcastReceiver", "Command: " + action);
+        Log.d("HOOKNFC", "Command: " + action);
 
         if (action != null) {
             switch (action) {
+                case "UPLOAD":
+                    byte atqa = intent.getByteExtra("atqa", (byte) 0);
+                    byte sak = intent.getByteExtra("sak", (byte) 0);
+                    byte[] uid = intent.getByteArrayExtra("uid");
+                    byte[] data = intent.getByteArrayExtra("data");
+
+                    Native.Instance
+                            .uploadConfiguration(atqa, sak, uid, data);
+                    break;
+
                 case "ENABLE":
                     Native.Instance.setEnabled(true);
                     break;
@@ -38,19 +48,18 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
                     Native.Instance.setEnabled(false);
                     break;
 
-                case "UPLOAD":
-                    byte atqa = intent.getByteExtra("atqa", (byte)0);
-                    byte sak  = intent.getByteExtra("sak", (byte)0);
-                    byte[] uid  = intent.getByteArrayExtra("uid");
-                    byte[] data = intent.getByteArrayExtra("data");
-
-                    Native.Instance
-                            .uploadConfiguration(atqa, sak, uid, data);
-                    break;
-
                 case "REQSTATE":
+                    String status;
+                    if (Native.Instance.isEnabled())
+                        status = "Active";
+                    else
+                        status = "Inactive";
+
+                    Intent toaster = new Intent("it.convergent.obliterator.toaster");
+                    toaster.putExtra("text", "Patch state: " + status);
+                    context.sendBroadcast(toaster);
                     break;
-                
+
                 default:
                     break;
             }
