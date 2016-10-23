@@ -23,18 +23,8 @@ object HceMode {
         return this
     }
 
-    fun enable() {
-        if (!initialized()) {
-            showWarning()
-            return
-        }
-
-        // enable patch
-        setExtraActionAndSend("ENABLE")
-    }
-
-    fun patch(uid: ByteArray, data: ByteArray) {
-        if (!initialized()) {
+    fun upload(uid: ByteArray, data: ByteArray) {
+        if (notInitialized()) {
             showWarning()
             return
         }
@@ -51,8 +41,18 @@ object HceMode {
         setActionAnSend(intent)
     }
 
+    fun enable() {
+        if (notInitialized()) {
+            showWarning()
+            return
+        }
+
+        // enable patch
+        setExtraActionAndSend("ENABLE")
+    }
+
     fun disable() {
-        if (!initialized()) {
+        if (notInitialized()) {
             showWarning()
             return
         }
@@ -65,7 +65,7 @@ object HceMode {
         setExtraActionAndSend("REQSTATE")
     }
 
-    private fun initialized(): Boolean {
+    private fun notInitialized(): Boolean {
         return context == null
     }
 
@@ -81,7 +81,7 @@ object HceMode {
     }
 
     private fun showWarning() {
-        Log.w(TAG, "Context has not been initialized!")
+        Log.w(TAG, "Context has not been notInitialized!")
         Log.w(TAG, "invoke: 'initialize(context: Context)' before!")
     }
 }
