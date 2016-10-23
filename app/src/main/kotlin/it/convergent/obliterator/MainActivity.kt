@@ -216,6 +216,9 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         val techList = tag.techList
         if (techList.any { tech -> tech.equals(MifareUltralight::class.java.name) }) {
             uid = tag.id
+            Log.d(TAG, String.format("Registered UID: %s of lenght %d",
+                                        uid.toHexString(),
+                                        uid.size))
             return MifareUltralight.get(tag)
         }
         return null
@@ -283,7 +286,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 //        showCarnetLayout()
         hceMode.requestStatus()
         hceMode.upload(uid, data)
-        hceMode.enable()
+//        hceMode.enable()
         hceMode.requestStatus()
     }
 

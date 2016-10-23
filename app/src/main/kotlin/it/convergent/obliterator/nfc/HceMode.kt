@@ -15,8 +15,8 @@ object HceMode {
 
     private var context: Context? = null
 
-    private val atqa = byteArrayOf(0x44, 0x00)
-    private val sak  = byteArrayOf(0x00)
+    private val atqa = 0x44.toByte()
+    private val sak  = 0x00.toByte()
 
     fun initialize(context: Context): HceMode {
         HceMode.context = context
