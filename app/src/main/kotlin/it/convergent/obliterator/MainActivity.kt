@@ -285,9 +285,9 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         Log.d(acquireCarnet.TAG, "acquireTagCompleted")
 //        showCarnetLayout()
         hceMode.requestStatus()
-        hceMode.upload(uid, data)
+//        hceMode.upload(uid, data)
 //        hceMode.enable()
-        hceMode.requestStatus()
+//        hceMode.requestStatus()
     }
 
     override fun acquireTagError() {

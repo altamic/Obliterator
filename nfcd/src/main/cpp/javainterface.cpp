@@ -4,7 +4,7 @@
 extern "C" {
     JNIEXPORT jboolean JNICALL Java_it_convergent_obliterator_xposed_Native_isEnabled(JNIEnv* env, jobject javaThis);
     JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_setEnabled(JNIEnv* env, jobject javaThis, jboolean enabled);
-    JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray _uid, jbyteArray _data);
+    JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray _hist, jbyteArray _uid, jbyteArray _data);
 }
 
 
