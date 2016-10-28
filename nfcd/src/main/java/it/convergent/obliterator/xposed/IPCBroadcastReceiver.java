@@ -26,7 +26,7 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getStringExtra("action");
-        Log.d("HOOKNFC", "Command: " + action);
+        Log.d("Obliterator", "Command: " + action);
 
         if (action != null) {
             switch (action) {

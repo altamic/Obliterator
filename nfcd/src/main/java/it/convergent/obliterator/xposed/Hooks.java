@@ -52,7 +52,7 @@ public class Hooks implements IXposedHookLoadPackage {
                     break;
 
                 } catch (UnsatisfiedLinkError err) {
-                    Log.d("HOOKNFC",
+                    Log.d("Obliterator",
                             String.format("Failed loading lib %s attempt #%s", lib, String.valueOf(i)));
                 }
             }
@@ -62,7 +62,7 @@ public class Hooks implements IXposedHookLoadPackage {
         findAndHookConstructor("com.android.nfc.NfcService", lpparam.classLoader, Application.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Log.i("HOOKNFC", "constructor");
+                Log.i("Obliterator", "constructor");
                 Application app = (Application) param.args[0];
                 mReceiver = new IPCBroadcastReceiver(app);
             }
