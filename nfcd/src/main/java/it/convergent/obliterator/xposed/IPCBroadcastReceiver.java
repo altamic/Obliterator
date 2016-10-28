@@ -16,7 +16,7 @@ import android.util.Log;
 public class IPCBroadcastReceiver extends BroadcastReceiver {
 
     public IPCBroadcastReceiver(Context ctx) {
-        HandlerThread handlerThread = new HandlerThread("ht");
+        HandlerThread handlerThread = new HandlerThread("ObliteratorHandlerThread");
         handlerThread.start();
         Looper looper = handlerThread.getLooper();
         Handler handler = new Handler(looper);
