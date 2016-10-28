@@ -40,13 +40,13 @@ tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     LOGD("hook_SetRfCback");
     nci_SetRfCback(p_cback);
-    if(p_cback != NULL && patchEnabled) {
+    if (p_cback != NULL && patchEnabled) {
         // fake that the default aid is selected
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_NDEF_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_T4T_APP_SELECTED);
+        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_WILDCARD_AID_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
-        ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
+        ce_cb->mem.t4t.status |= CE_T4T_STATUS_NDEF_SELECTED;
     }
 }
 
@@ -58,9 +58,9 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     loghex("NfcSetConfig", tlv, size);
     uint8_t i = 0;
     bool needUpload = false;
-    // read the configuration bytestream and extract the values that we indent to override
+    // read the configuration bytestream and extract the values that we intend to override
     // if we are in an active mode and the value gets overridden, then upload our configuration
-    // afterwards in any case: safe the values to allow re-uploading when deactivation the patch
+    // afterwards in any case: save the values to allow re-uploading when deactivation the patch
     while (size > i + 2) {
         // first byte: type
         // second byte: len (if len=0, then val=0)
