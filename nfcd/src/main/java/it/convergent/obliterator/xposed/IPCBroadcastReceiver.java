@@ -34,10 +34,11 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
                     byte atqa = intent.getByteExtra("atqa", (byte) 0);
                     byte sak = intent.getByteExtra("sak", (byte) 0);
                     byte[] uid = intent.getByteArrayExtra("uid");
+                    byte[] hist = intent.getByteArrayExtra("hist");
                     byte[] data = intent.getByteArrayExtra("data");
 
                     Native.Instance
-                            .uploadConfiguration(atqa, sak, uid, data);
+                            .uploadConfiguration(atqa, sak, uid, hist, data);
                     break;
 
                 case "ENABLE":
