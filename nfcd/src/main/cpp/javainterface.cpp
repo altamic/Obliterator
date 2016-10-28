@@ -21,14 +21,13 @@ JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_setEnabled(J
     }
 }
 
-JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray _uid, jbyteArray _hist, jbyteArray _data) {
+JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_uploadConfiguration(JNIEnv* env, jobject javaThis, jbyte atqa, jbyte sak, jbyteArray _hist, jbyteArray _uid, jbyteArray _data) {
     jsize uid_len = env->GetArrayLength(_uid);
     jsize hist_len = env->GetArrayLength(_hist);
-    if(uid_len > sizeof(s_chip_config::uid) || hist_len > sizeof(s_chip_config::hist)) {
+    if (uid_len > UID_MAX_LEN || hist_len > HIST_MAX_LEN) {
         jclass Exception = env->FindClass("java/lang/Exception");
         env->ThrowNew(Exception, "uid or hist bigger than buffer");
     }
-
 
     patchValues.atqa = atqa;
     patchValues.sak = sak;

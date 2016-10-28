@@ -33,8 +33,8 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
                 case "UPLOAD":
                     byte atqa = intent.getByteExtra("atqa", (byte) 0);
                     byte sak = intent.getByteExtra("sak", (byte) 0);
-                    byte[] uid = intent.getByteArrayExtra("uid");
                     byte[] hist = intent.getByteArrayExtra("hist");
+                    byte[] uid = intent.getByteArrayExtra("uid");
                     byte[] data = intent.getByteArrayExtra("data");
 
                     Native.Instance
