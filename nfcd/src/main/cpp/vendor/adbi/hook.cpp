@@ -23,7 +23,7 @@ void inline hook_cacheflush(unsigned int begin, unsigned int end)
 		"mov	 r0, %0\n"			
 		"mov	 r1, %1\n"
 		"mov	 r7, %2\n"
-		"movs    r2, #0x0\n"
+		"mov     r2, #0x0\n"
 		"svc     0x00000000\n"
 		:
 		:	"r" (begin), "r" (end), "r" (syscall)

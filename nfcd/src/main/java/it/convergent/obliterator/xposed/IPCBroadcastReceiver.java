@@ -37,6 +37,14 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
                     byte[] uid = intent.getByteArrayExtra("uid");
                     byte[] data = intent.getByteArrayExtra("data");
 
+                    Log.d("Obliterator", "UPLOAD: " +
+                            String.format("atqa: 0x%02X, sak: 0x%02X,\n", atqa, sak) +
+                            String.format("hist: 0x%s," +
+                                            "uid: 0x%s,\n" +
+                                             "data: 0x%s ", bytesToHexString(hist),
+                                                              bytesToHexString(uid),
+                                                                bytesToHexString(data)));
+
                     Native.Instance
                             .uploadConfiguration(atqa, sak, uid, hist, data);
                     break;
@@ -65,5 +73,18 @@ public class IPCBroadcastReceiver extends BroadcastReceiver {
                     break;
             }
         }
+    }
+
+    private static String bytesToHexString(byte[] bytes) {
+        // http://stackoverflow.com/questions/332079
+        StringBuilder sb = new StringBuilder();
+        for (byte aByte: bytes) {
+            String hex = Integer.toHexString(0xFF & aByte);
+            if (hex.length() == 1) {
+                sb.append('0');
+            }
+            sb.append(hex);
+        }
+        return sb.toString();
     }
 }

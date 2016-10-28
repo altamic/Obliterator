@@ -139,7 +139,15 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         }, IntentFilter("it.convergent.obliterator.toaster"))
 
         setContentView(R.layout.activity_main)
-        startAcquireCarnet()
+//        startAcquireCarnet()
+
+        val uid  = hexStringToByteArray("042C5002323680")
+        val data = hexStringToByteArray("042C50F0023236808648F2037FFFFFFF01050000020102BD5A8C640000AE10A6B80049035D77A8275AD4420004F800005AD44200003C0004F8AE10799912F941")
+
+        hceMode.requestStatus()
+        hceMode.upload(uid, data)
+        hceMode.enable()
+        hceMode.requestStatus()
     }
 
     override fun onResume() {
