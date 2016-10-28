@@ -34,6 +34,7 @@ object HceMode {
         intent.putExtra("action", "UPLOAD")
         intent.putExtra("atqa", atqa)
         intent.putExtra("sak", sak)
+        intent.putExtra("hist", byteArrayOf())
         intent.putExtra("uid", uid)
         intent.putExtra("data", data)
 
