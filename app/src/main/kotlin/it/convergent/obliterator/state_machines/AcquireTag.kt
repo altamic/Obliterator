@@ -66,9 +66,9 @@ class AcquireTagFlow(val actions: Actions, val callbacks: Callbacks) {
     private fun transaction(next:State) {
         val oldState = currentState
         currentState = next
+        Log.d(TAG, "current state now is: $currentState")
         val transition = behaviour[Pair(oldState, currentState)]!!
         transition.invoke()
-        Log.d(TAG, "current state now is: $currentState")
     }
 
     fun next(state:State) {
