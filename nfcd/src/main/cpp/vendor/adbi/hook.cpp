@@ -48,8 +48,7 @@ int hook(struct hook_t *h, unsigned int addr, void *hookf)
     unsigned int page_size = sysconf(_SC_PAGESIZE);
     unsigned int entry_page_start = ~((page_size) - 1) & (addr);
     if(mprotect((void*)entry_page_start, page_size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0) {
-//    	log("mprotect: %u", errno);
-    	log("mprotect");
+    	log("mprotect: %u", errno);
     	return -1;
     }
 
