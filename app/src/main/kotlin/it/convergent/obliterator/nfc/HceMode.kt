@@ -24,8 +24,9 @@ object HceMode {
 
     private var context: Context? = null
 
-    private val atqa = 0x44.toByte()
+    private val atqa = 0x00.toByte() //0x44.toByte()
     private val sak  = 0x00.toByte()
+    private val hist  = byteArrayOf()
 
     fun initialize(context: Context): HceMode {
         HceMode.context = context
@@ -43,8 +44,8 @@ object HceMode {
         // prepare intent
         intent.putExtra("atqa", atqa)
         intent.putExtra("sak", sak)
-        intent.putExtra("hist", byteArrayOf())
-        intent.putExtra("uid", uid)
+        intent.putExtra("hist", uid)
+        intent.putExtra("uid", hist)
         intent.putExtra("data", data)
 
         // upload configuration patch

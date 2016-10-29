@@ -34,11 +34,11 @@ JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_uploadConfig
     patchValues.hist_len = hist_len;
     patchValues.uid_len = uid_len;
 
-    jbyte* uid = env->GetByteArrayElements(_uid, 0);
     jbyte* hist = env->GetByteArrayElements(_hist, 0);
+    jbyte* uid = env->GetByteArrayElements(_uid, 0);
 
-    memcpy(patchValues.uid, uid, uid_len);
     memcpy(patchValues.hist, hist, hist_len);
+    memcpy(patchValues.uid, uid, uid_len);
 
     env->ReleaseByteArrayElements(_uid, uid, 0);
     env->ReleaseByteArrayElements(_hist, hist, 0);

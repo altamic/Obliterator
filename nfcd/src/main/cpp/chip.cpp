@@ -60,10 +60,10 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     bool needUpload = false;
     // read the configuration bytestream and extract the values that we intend to override
     // if we are in an active mode and the value gets overridden, then upload our configuration afterwards
-    // in any case: safe the values to allow re-uploading when deactivation the patch
+    // in any case: save the values to allow re-uploading when deactivation the patch
     while (size > i + 2) {
         // first byte: type
-        // second byte: len (if len=0, then val=0)
+        // second byte: len (if len = 0, then val = 0)
         // following bytes: value (length: len)
         uint8_t type = *(tlv + i);
         uint8_t len  = *(tlv + i + 1);
