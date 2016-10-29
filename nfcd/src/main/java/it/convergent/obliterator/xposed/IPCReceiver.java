@@ -13,9 +13,9 @@ import android.util.Log;
  * Created by altamic on 23/10/16.
  */
 
-public class IPCBroadcastReceiver extends BroadcastReceiver {
+public class IPCReceiver extends BroadcastReceiver {
 
-    public IPCBroadcastReceiver(Context ctx) {
+    public IPCReceiver(Context ctx) {
         HandlerThread handlerThread = new HandlerThread("ObliteratorHandlerThread");
         handlerThread.start();
         Looper looper = handlerThread.getLooper();

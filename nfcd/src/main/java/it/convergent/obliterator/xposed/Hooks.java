@@ -16,7 +16,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
 
 public class Hooks implements IXposedHookLoadPackage {
 
-    private IPCBroadcastReceiver mReceiver;
+    private IPCReceiver mReceiver;
 
     @SuppressLint("SdCardPath")
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -31,7 +31,7 @@ public class Hooks implements IXposedHookLoadPackage {
         } catch (UnsatisfiedLinkError e) {
             // DON'T WORK
 //            String link = String.format("/data/data/it.convergent.obliterator/lib/lib%s.so", lib);
-//            Log.d("IPCBroadcastReceiver", link);
+//            Log.d("IPCReceiver", link);
 //
 //            String target = Os.readlink(link); // EACCESS
 //            System.load(target);
@@ -64,7 +64,7 @@ public class Hooks implements IXposedHookLoadPackage {
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 Log.i("Obliterator", "constructor");
                 Application app = (Application) param.args[0];
-                mReceiver = new IPCBroadcastReceiver(app);
+                mReceiver = new IPCReceiver(app);
             }
         });
     }
