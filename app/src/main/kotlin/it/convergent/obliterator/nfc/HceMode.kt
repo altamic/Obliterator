@@ -13,6 +13,15 @@ object HceMode {
 
     val actionName = "it.convergent.obliterator.nfcreceiver"
 
+    private fun intentTemplate(action: String): Intent {
+        val template = Intent()
+        template.action = actionName
+
+        template.putExtra("action", action)
+
+        return template
+    }
+
     private var context: Context? = null
 
     private val atqa = 0x44.toByte()
@@ -29,9 +38,9 @@ object HceMode {
             return
         }
 
+        val intent = intentTemplate("UPLOAD")
+
         // prepare intent
-        val intent = Intent()
-        intent.putExtra("action", "UPLOAD")
         intent.putExtra("atqa", atqa)
         intent.putExtra("sak", sak)
         intent.putExtra("hist", byteArrayOf())
@@ -39,7 +48,7 @@ object HceMode {
         intent.putExtra("data", data)
 
         // upload configuration patch
-        setActionAnSend(intent)
+        send(intent)
     }
 
     fun enable() {
@@ -48,8 +57,10 @@ object HceMode {
             return
         }
 
+        val intent = intentTemplate("ENABLE")
+
         // enable patch
-        setExtraActionAndSend("ENABLE")
+        send(intent)
     }
 
     fun disable() {
@@ -58,26 +69,28 @@ object HceMode {
             return
         }
 
+        val intent = intentTemplate("DISABLE")
+
         // reset original configuration
-        setExtraActionAndSend("DISABLE")
+        send(intent)
     }
 
     fun requestStatus() {
-        setExtraActionAndSend("REQSTATE")
+        if (notInitialized()) {
+            showWarning()
+            return
+        }
+
+        val intent = intentTemplate("REQSTATE")
+
+        send(intent)
     }
 
     private fun notInitialized(): Boolean {
         return context == null
     }
 
-    private fun setExtraActionAndSend(extraAction: String) {
-        val intent = Intent()
-        intent.putExtra("action", extraAction)
-        setActionAnSend(intent)
-    }
-
-    private fun setActionAnSend(intent: Intent) {
-        intent.action = actionName
+    private fun send(intent: Intent) {
         context?.sendBroadcast(intent)
     }
 
