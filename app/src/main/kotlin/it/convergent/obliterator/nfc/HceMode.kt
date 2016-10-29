@@ -11,7 +11,7 @@ import android.util.Log
 object HceMode {
     val TAG = javaClass.simpleName
 
-    val actionName = "it.convergent.obliterator.daemoncall"
+    val actionName = "it.convergent.obliterator.nfcreceiver"
 
     private var context: Context? = null
 

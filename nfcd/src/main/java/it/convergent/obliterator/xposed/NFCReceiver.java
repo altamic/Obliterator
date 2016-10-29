@@ -13,14 +13,14 @@ import android.util.Log;
  * Created by altamic on 23/10/16.
  */
 
-public class IPCReceiver extends BroadcastReceiver {
+public class NFCReceiver extends BroadcastReceiver {
 
-    public IPCReceiver(Context ctx) {
+    public NFCReceiver(Context ctx) {
         HandlerThread handlerThread = new HandlerThread("ObliteratorHandlerThread");
         handlerThread.start();
         Looper looper = handlerThread.getLooper();
         Handler handler = new Handler(looper);
-        ctx.registerReceiver(this, new IntentFilter("it.convergent.obliterator.daemoncall"), null, handler);
+        ctx.registerReceiver(this, new IntentFilter("it.convergent.obliterator.nfcreceiver"), null, handler);
     }
 
     @Override
