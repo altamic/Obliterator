@@ -18,9 +18,9 @@ android {
             }
 
             ndk {
-                moduleName "nfc-native"
-                cFlags += " -std=c++11 -fexceptions -marm"
-                ldLibs "log"
+//                moduleName "nfc-native"
+//                cFlags "-std=c++11 -fexceptions -marm"
+//                ldLibs "log"
 
                 // Specifies the ABI configurations of your native
                 // libraries Gradle should build and package with your APK.
