@@ -13,18 +13,15 @@
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__ )
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
-#define HIST_MAX_LEN 64
-#define UID_MAX_LEN 64
-
 /**
  * all values we override in one struct
  */
 struct s_chip_config {
     uint8_t atqa;
     uint8_t sak;
-    uint8_t hist[HIST_MAX_LEN];
+    uint8_t hist[64];
     uint8_t hist_len;
-    uint8_t uid[UID_MAX_LEN];
+    uint8_t uid[64];
     uint8_t uid_len;
 };
 
