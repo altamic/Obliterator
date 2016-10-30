@@ -46,7 +46,7 @@ public class NFCReceiver extends BroadcastReceiver {
                                                                 bytesToHexString(data)));
 
                     Native.Instance
-                            .uploadConfiguration(atqa, sak, uid, hist, data);
+                            .uploadConfiguration(atqa, sak, hist, uid, data);
                     break;
 
                 case "ENABLE":

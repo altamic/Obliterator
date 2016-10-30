@@ -44,8 +44,8 @@ object HceMode {
         // prepare intent
         intent.putExtra("atqa", atqa)
         intent.putExtra("sak", sak)
-        intent.putExtra("hist", uid)
-        intent.putExtra("uid", hist)
+        intent.putExtra("hist", hist)
+        intent.putExtra("uid", uid)
         intent.putExtra("data", data)
 
         // upload configuration patch
