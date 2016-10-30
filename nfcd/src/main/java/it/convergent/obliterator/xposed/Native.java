@@ -4,7 +4,7 @@ package it.convergent.obliterator.xposed;
  * Created by altamic on 23/10/16.
  */
 
-public class Native {
+class Native {
     static {
         Instance = new Native();
     }
