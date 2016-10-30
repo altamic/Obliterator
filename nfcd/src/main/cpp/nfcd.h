@@ -23,6 +23,8 @@ struct s_chip_config {
     uint8_t hist_len;
     uint8_t uid[64];
     uint8_t uid_len;
+    uint8_t data[128];
+    uint8_t data_len;
 };
 
 // main.cpp
@@ -46,6 +48,10 @@ extern tCE_CB *ce_cb;
 extern struct s_chip_config patchValues;
 extern struct hook_t hook_config;
 extern struct hook_t hook_rfcback;
+
+
+//extern NFA_CeConfigureLocalTag *ori
+
 
 // ipc.cpp
 void ipc_prepare();
