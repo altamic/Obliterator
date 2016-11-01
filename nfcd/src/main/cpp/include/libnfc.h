@@ -274,3 +274,422 @@ typedef struct {
     uint8_t tech;
     uint8_t trace_level;
 } tCE_CB;
+
+
+typedef tNFA_STATUS NFA_CeConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
+                                            UINT8 *p_ndef_data,
+                                            UINT16 ndef_cur_size,
+                                            UINT16 ndef_max_size,
+                                            BOOLEAN read_only,
+                                            UINT8 uid_len,
+                                            UINT8 *p_uid);
+
+/* NFA Connection Callback Events */
+#define NFA_POLL_ENABLED_EVT                    0   /* Polling enabled event                        */
+#define NFA_POLL_DISABLED_EVT                   1   /* Polling disabled event                       */
+#define NFA_DISC_RESULT_EVT                     2   /* NFC link/protocol discovery notificaiton     */
+#define NFA_SELECT_RESULT_EVT                   3   /* NFC link/protocol discovery select response  */
+#define NFA_DEACTIVATE_FAIL_EVT                 4   /* NFA_Deactivate failure                       */
+#define NFA_ACTIVATED_EVT                       5   /* NFC link/protocol activated                  */
+#define NFA_DEACTIVATED_EVT                     6   /* NFC link/protocol deactivated                */
+#define NFA_TLV_DETECT_EVT                      7   /* TLV Detection complete                       */
+#define NFA_NDEF_DETECT_EVT                     8   /* NDEF Detection complete                      */
+#define NFA_DATA_EVT                            9   /* Data message received                        */
+#define NFA_SELECT_CPLT_EVT                     10  /* Select completed                             */
+#define NFA_READ_CPLT_EVT                       11  /* Read completed                               */
+#define NFA_WRITE_CPLT_EVT                      12  /* Write completed                              */
+#define NFA_LLCP_ACTIVATED_EVT                  13  /* LLCP link is activated                       */
+#define NFA_LLCP_DEACTIVATED_EVT                14  /* LLCP link is deactivated                     */
+#define NFA_PRESENCE_CHECK_EVT                  15  /* Response to NFA_RwPresenceCheck              */
+#define NFA_FORMAT_CPLT_EVT                     16  /* Tag Formating completed                      */
+#define NFA_I93_CMD_CPLT_EVT                    17  /* ISO 15693 command completed                  */
+#define NFA_SET_TAG_RO_EVT                      18  /* Tag set as Read only                         */
+#define NFA_EXCLUSIVE_RF_CONTROL_STARTED_EVT    19  /* Result for NFA_RequestExclusiveRfControl     */
+#define NFA_EXCLUSIVE_RF_CONTROL_STOPPED_EVT    20  /* Result for NFA_ReleaseExclusiveRfControl     */
+#define NFA_CE_REGISTERED_EVT                   21  /* DH Card emulation: AID or System code reg'd  */
+#define NFA_CE_DEREGISTERED_EVT                 22  /* DH Card emulation: AID or System code dereg'd*/
+#define NFA_CE_DATA_EVT                         23  /* DH Card emulation: data received event       */
+#define NFA_CE_ACTIVATED_EVT                    24  /* DH Card emulation: activation event          */
+#define NFA_CE_DEACTIVATED_EVT                  25  /* DH Card emulation: deactivation event        */
+#define NFA_CE_LOCAL_TAG_CONFIGURED_EVT         26  /* DH Card emulation: local NDEF configured     */
+#define NFA_CE_NDEF_WRITE_START_EVT             27  /* DH Card emulation: NDEF write started        */
+#define NFA_CE_NDEF_WRITE_CPLT_EVT              28  /* DH Card emulation: NDEF write completed      */
+#define NFA_CE_UICC_LISTEN_CONFIGURED_EVT       29  /* UICC Listen configured                       */
+#define NFA_RF_DISCOVERY_STARTED_EVT            30  /* RF Discovery started event                   */
+#define NFA_RF_DISCOVERY_STOPPED_EVT            31  /* RF Discovery stopped event                   */
+#define NFA_UPDATE_RF_PARAM_RESULT_EVT          32  /* status of updating RF communication paramters*/
+#define NFA_SET_P2P_LISTEN_TECH_EVT             33  /* status of setting P2P listen technologies    */
+#define NFA_RW_INTF_ERROR_EVT                   34  /* RF Interface error event                     */
+#define NFA_LLCP_FIRST_PACKET_RECEIVED_EVT      35  /* First packet received over LLCP link         */
+#define NFA_LISTEN_ENABLED_EVT                  36  /* Listening enabled event                      */
+#define NFA_LISTEN_DISABLED_EVT                 37  /* Listening disabled event                     */
+#define NFA_P2P_PAUSED_EVT                      38  /* P2P services paused event                    */
+#define NFA_P2P_RESUMED_EVT                     39  /* P2P services resumed event                   */
+
+/* NFC deactivation type */
+#define NFA_DEACTIVATE_TYPE_IDLE        NFC_DEACTIVATE_TYPE_IDLE
+#define NFA_DEACTIVATE_TYPE_SLEEP       NFC_DEACTIVATE_TYPE_SLEEP
+#define NFA_DEACTIVATE_TYPE_DISCOVERY   NFC_DEACTIVATE_TYPE_DISCOVERY
+
+typedef UINT8 tNFA_DEACTIVATE_TYPE;
+
+typedef union {
+    tNFC_RF_PA_PARAMS pa;
+    tNFC_RF_PB_PARAMS pb;
+    tNFC_RF_PF_PARAMS pf;
+    tNFC_RF_LF_PARAMS lf;
+    tNFC_RF_PISO15693_PARAMS pi93;
+    tNFC_RF_PKOVIO_PARAMS pk;
+} tNFC_RF_TECH_PARAMU;
+
+typedef struct {
+    tNFC_DISCOVERY_TYPE mode;
+    tNFC_RF_TECH_PARAMU param;
+} tNFC_RF_TECH_PARAMS;
+
+/* the data type associated with NFC_RESULT_DEVT */
+typedef struct {
+    tNFC_STATUS status; /* The event status - place holder.  */
+    UINT8 rf_disc_id;   /* RF Discovery ID                   */
+    UINT8 protocol;     /* supported protocol                */
+    tNFC_RF_TECH_PARAMS rf_tech_param;  /* RF technology parameters          */
+    UINT8 more;           /* 0: last, 1: last (limit), 2: more */
+} tNFC_RESULT_DEVT;
+
+
+/* Data for NFA_DISC_RESULT_EVT */
+typedef struct {
+    tNFA_STATUS status; /* NFA_STATUS_OK if successful       */
+    tNFC_RESULT_DEVT discovery_ntf;  /* RF discovery notification details */
+} tNFA_DISC_RESULT;
+
+#define NFA_T1T_HR_LEN       T1T_HR_LEN     /* T1T HR length            */
+#define T1T_HR_LEN                    2     /* the len of HR used in Type 1 Tag               */
+
+#define NFA_T1T_CMD_UID_LEN  T1T_CMD_UID_LEN /* UID len for T1T cmds     */
+#define T1T_CMD_UID_LEN                    4 /* the len of UID used in Type 1 Tag Commands     */
+
+/* Data for NFA_ACTIVATED_EVT */
+typedef struct {
+    UINT8 hr[NFA_T1T_HR_LEN];       /* HR of Type 1 tag         */
+    UINT8 uid[NFA_T1T_CMD_UID_LEN]; /* UID used in T1T Commands */
+} tNFA_T1T_PARAMS;
+
+#define NFA_MAX_UID_LEN  TAG_MAX_UID_LEN /* Max UID length of T1/T2  */
+#define TAG_MAX_UID_LEN             0x0A  /* Max UID Len of type 1 and type 2 tag           */
+typedef struct {
+    UINT8 uid[NFA_MAX_UID_LEN];     /* UID of T2T tag           */
+} tNFA_T2T_PARAMS;
+
+typedef struct {
+    UINT8 num_system_codes;        /* Number of system codes supporte by tag   */
+    UINT16 *p_system_codes;        /* Pointer to list of system codes          */
+} tNFA_T3T_PARAMS;
+
+#define I93_UID_BYTE_LEN                    8       /* UID length in bytes                  */
+
+typedef struct {
+    UINT8 uid[I93_UID_BYTE_LEN];    /* UID[0]:MSB, ... UID[7]:LSB                   */
+    UINT8 info_flags;               /* information flags                            */
+    UINT8 dsfid;                    /* DSFID if I93_INFO_FLAG_DSFID                 */
+    UINT8 afi;                      /* AFI if I93_INFO_FLAG_AFI                     */
+    UINT16 num_block;               /* number of blocks if I93_INFO_FLAG_MEM_SIZE   */
+    UINT8 block_size;               /* block size in byte if I93_INFO_FLAG_MEM_SIZE */
+    UINT8 IC_reference;             /* IC Reference if I93_INFO_FLAG_IC_REF         */
+} tNFA_I93_PARAMS;
+
+typedef union {
+    tNFA_T1T_PARAMS t1t;    /* HR and UID of T1T                */
+    tNFA_T2T_PARAMS t2t;    /* UID of T2T                       */
+    tNFA_T3T_PARAMS t3t;    /* System codes                     */
+    tNFA_I93_PARAMS i93;    /* System Information of ISO 15693  */
+} tNFA_TAG_PARAMS;
+
+typedef UINT8 tNFC_PROTOCOL;
+typedef UINT8 tNFC_BIT_RATE;
+
+typedef UINT8 tNCI_INTF_TYPE;
+typedef tNCI_INTF_TYPE tNFC_INTF_TYPE;
+typedef tNFC_INTF_TYPE tNFA_INTF_TYPE;
+
+typedef struct {
+    UINT8 rats;  /* RATS */
+} tNFC_INTF_LA_ISO_DEP;
+
+#define NFC_MAX_ATS_LEN             NCI_MAX_ATS_LEN
+#define NCI_MAX_ATS_LEN             60
+
+#define NFC_MAX_HIS_BYTES_LEN       NCI_MAX_HIS_BYTES_LEN
+#define NCI_MAX_HIS_BYTES_LEN       50
+
+typedef struct {
+    UINT8 ats_res_len;              /* Length of ATS RES                */
+    UINT8 ats_res[NFC_MAX_ATS_LEN]; /* ATS RES                          */
+    BOOLEAN nad_used;               /* NAD is used or not               */
+    UINT8 fwi;                      /* Frame Waiting time Integer       */
+    UINT8 sfgi;                     /* Start-up Frame Guard time Integer*/
+    UINT8 his_byte_len;             /* len of historical bytes          */
+    UINT8 his_byte[NFC_MAX_HIS_BYTES_LEN];/* historical bytes             */
+} tNFC_INTF_PA_ISO_DEP;
+
+#define NFC_MAX_ATTRIB_LEN      NCI_MAX_ATTRIB_LEN
+#define NCI_MAX_ATTRIB_LEN   (10 + NCI_MAX_GEN_BYTES_LEN)
+#define NCI_MAX_GEN_BYTES_LEN       48
+#define NFC_MAX_GEN_BYTES_LEN       NCI_MAX_GEN_BYTES_LEN
+
+typedef struct {
+    UINT8 attrib_req_len;                   /* Length of ATTRIB REQ      */
+    UINT8 attrib_req[NFC_MAX_ATTRIB_LEN];   /* ATTRIB REQ (Byte 2 - 10+k)*/
+    UINT8 hi_info_len;                      /* len of Higher layer Info  */
+    UINT8 hi_info[NFC_MAX_GEN_BYTES_LEN];   /* Higher layer Info         */
+    UINT8 nfcid0[NFC_NFCID0_MAX_LEN];       /* NFCID0                    */
+} tNFC_INTF_LB_ISO_DEP;
+
+typedef struct {
+    UINT8 attrib_res_len;                   /* Length of ATTRIB RES      */
+    UINT8 attrib_res[NFC_MAX_ATTRIB_LEN];   /* ATTRIB RES                */
+    UINT8 hi_info_len;                      /* len of Higher layer Info  */
+    UINT8 hi_info[NFC_MAX_GEN_BYTES_LEN];   /* Higher layer Info         */
+    UINT8 mbli;                             /* Maximum buffer length.    */
+} tNFC_INTF_PB_ISO_DEP;
+
+/* Note: keep tNFC_INTF_PA_NFC_DEP data member in the same order as tNFC_INTF_LA_NFC_DEP */
+typedef struct {
+    UINT8 atr_req_len;              /* Length of ATR_REQ            */
+    UINT8 atr_req[NFC_MAX_ATS_LEN]; /* ATR_REQ (Byte 3 - Byte 18+n) */
+    UINT8 max_payload_size;         /* 64, 128, 192 or 254          */
+    UINT8 gen_bytes_len;            /* len of general bytes         */
+    UINT8 gen_bytes[NFC_MAX_GEN_BYTES_LEN]; /* general bytes           */
+} tNFC_INTF_LA_NFC_DEP;
+
+typedef tNFC_INTF_LA_NFC_DEP tNFC_INTF_LF_NFC_DEP;
+
+typedef struct {
+    UINT8 atr_res_len;              /* Length of ATR_RES            */
+    UINT8 atr_res[NFC_MAX_ATS_LEN]; /* ATR_RES (Byte 3 - Byte 17+n) */
+    UINT8 max_payload_size;         /* 64, 128, 192 or 254          */
+    UINT8 gen_bytes_len;            /* len of general bytes         */
+    UINT8 gen_bytes[NFC_MAX_GEN_BYTES_LEN];  /* general bytes           */
+    UINT8 waiting_time;               /* WT -> Response Waiting Time RWT = (256 x 16/fC) x 2WT */
+} tNFC_INTF_PA_NFC_DEP;
+
+/* Note: keep tNFC_INTF_PA_NFC_DEP data member in the same order as tNFC_INTF_LA_NFC_DEP */
+typedef struct {
+    UINT8 atr_req_len;              /* Length of ATR_REQ            */
+    UINT8 atr_req[NFC_MAX_ATS_LEN]; /* ATR_REQ (Byte 3 - Byte 18+n) */
+    UINT8 max_payload_size;         /* 64, 128, 192 or 254          */
+    UINT8 gen_bytes_len;            /* len of general bytes         */
+    UINT8 gen_bytes[NFC_MAX_GEN_BYTES_LEN];  /* general bytes           */
+} tNFC_INTF_LA_NFC_DEP;
+typedef tNFC_INTF_LA_NFC_DEP tNFC_INTF_LF_NFC_DEP;
+typedef tNFC_INTF_PA_NFC_DEP tNFC_INTF_PF_NFC_DEP;
+
+#define NFC_MAX_RAW_PARAMS       16
+typedef struct {
+    UINT8 param_len;
+    UINT8 param[NFC_MAX_RAW_PARAMS];
+} tNFC_INTF_FRAME;
+
+typedef struct {
+    tNFC_INTF_TYPE type;    /* Interface Type  1 Byte  See Table 67 */
+    union {
+        tNFC_INTF_LA_ISO_DEP la_iso;
+        tNFC_INTF_PA_ISO_DEP pa_iso;
+        tNFC_INTF_LB_ISO_DEP lb_iso;
+        tNFC_INTF_PB_ISO_DEP pb_iso;
+        tNFC_INTF_LA_NFC_DEP la_nfc;
+        tNFC_INTF_PA_NFC_DEP pa_nfc;
+        tNFC_INTF_LF_NFC_DEP lf_nfc;
+        tNFC_INTF_PF_NFC_DEP pf_nfc;
+        tNFC_INTF_FRAME frame;
+    } intf_param;       /* Activation Parameters   0 - n Bytes */
+} tNFC_INTF_PARAMS;
+
+
+/* the data type associated with NFC_ACTIVATE_DEVT */
+typedef struct {
+    UINT8 rf_disc_id;       /* RF Discovery ID          */
+    tNFC_PROTOCOL protocol; /* supported protocol       */
+    tNFC_RF_TECH_PARAMS rf_tech_param;  /* RF technology parameters */
+    tNFC_DISCOVERY_TYPE data_mode;      /* for future Data Exchange */
+    tNFC_BIT_RATE tx_bitrate;           /* Data Exchange Tx Bitrate */
+    tNFC_BIT_RATE rx_bitrate;           /* Data Exchange Rx Bitrate */
+    tNFC_INTF_PARAMS intf_param;        /* interface type and params*/
+} tNFC_ACTIVATE_DEVT;
+
+
+typedef struct {
+    tNFC_ACTIVATE_DEVT activate_ntf; /* RF discovery activation details */
+    tNFA_TAG_PARAMS params;          /* additional informaiton of tag   */
+} tNFA_ACTIVATED;
+
+/* Data for NFA_DEACTIVATED_EVT */
+typedef struct {
+    tNFA_DEACTIVATE_TYPE type;          /* NFA_DEACTIVATE_TYPE_IDLE or NFA_DEACTIVATE_TYPE_SLEEP */
+} tNFA_DEACTIVATED;
+
+/* Definitions for NFC protocol for RW, CE and P2P APIs */
+#define NFA_PROTOCOL_T1T        NFC_PROTOCOL_T1T        /* Type1Tag         - NFC-A             */
+#define NFA_PROTOCOL_T2T        NFC_PROTOCOL_T2T        /* MIFARE/Type2Tag  - NFC-A             */
+#define NFA_PROTOCOL_T3T        NFC_PROTOCOL_T3T        /* Felica/Type3Tag  - NFC-F             */
+#define NFA_PROTOCOL_ISO_DEP    NFC_PROTOCOL_ISO_DEP    /* Type 4A,4B       - NFC-A or NFC-B    */
+#define NFA_PROTOCOL_NFC_DEP    NFC_PROTOCOL_NFC_DEP    /* NFCDEP/LLCP      - NFC-A or NFC-F    */
+#define NFA_PROTOCOL_ISO15693   NFC_PROTOCOL_15693
+#define NFA_PROTOCOL_B_PRIME    NFC_PROTOCOL_B_PRIME
+#define NFA_PROTOCOL_KOVIO      NFC_PROTOCOL_KOVIO
+#define NFA_PROTOCOL_MIFARE     NFC_PROTOCOL_MIFARE
+#define NFA_PROTOCOL_INVALID    0xFF
+#define NFA_MAX_NUM_PROTOCOLS   8
+
+typedef UINT8 tNFA_NFC_PROTOCOL;
+
+typedef UINT8 tNFA_RW_NDEF_FLAG;
+
+/* Structure for NFA_NDEF_DETECT_EVT event data */
+typedef struct {
+    tNFA_STATUS status;         /* Status of the ndef detecton                              */
+    tNFA_NFC_PROTOCOL protocol; /* protocol used to detect NDEF                             */
+    UINT32 max_size;            /* max number of bytes available for NDEF data              */
+    UINT32 cur_size;            /* current size of stored NDEF data (in bytes)              */
+    tNFA_RW_NDEF_FLAG flags;    /* Flags to indicate NDEF capability, is formated, soft/hard lockable, formatable, otp and read only */
+} tNFA_NDEF_DETECT;
+
+
+/* Structure for NFA_TLV_DETECT_EVT event data */
+typedef struct {
+    tNFA_STATUS status;         /* Status of the tlv detecton        */
+    tNFA_NFC_PROTOCOL protocol; /* protocol used to detect TLV       */
+    UINT8 num_tlvs;             /* number of tlvs present in the tag */
+    UINT8 num_bytes;            /* number of lock/reserved bytes     */
+} tNFA_TLV_DETECT;
+
+/* Structure for NFA_DATA_EVT data */
+typedef struct {
+    tNFA_STATUS status;     /* Status of Data received          */
+    UINT8 *p_data;          /* Data buffer                      */
+    UINT16 len;             /* Length of data                   */
+} tNFA_RX_DATA;
+
+/* Structure for NFA_CE_NDEF_WRITE_CPLT_EVT data */
+typedef struct {
+    tNFA_STATUS status;     /* Status of the ndef write op      */
+    UINT32 len;             /* Update length of NDEF data       */
+    UINT8 *p_data;          /* data buffer                      */
+} tNFA_CE_NDEF_WRITE_CPLT;
+
+/* Data for NFA_LLCP_ACTIVATED_EVT */
+typedef struct {
+    BOOLEAN is_initiator;       /* TRUE if initiator                */
+    UINT16 remote_wks;          /* Well-Known service mask of peer  */
+    UINT8 remote_lsc;           /* Link Service Class of peer       */
+    UINT16 remote_link_miu;     /* Link MIU of peer                 */
+    UINT16 local_link_miu;      /* Link MIU of local                */
+    UINT8 remote_version;       /* LLCP version of remote           */
+} tNFA_LLCP_ACTIVATED;
+
+/* Data for NFA_LLCP_DEACTIVATED_EVT */
+typedef struct {
+    UINT8 reason;         /* reason of deactivation           */
+} tNFA_LLCP_DEACTIVATED;
+
+/* Data for NFA_I93_CMD_CPLT_EVT */
+typedef struct {
+    UINT8 dsfid;                  /* DSFID                       */
+    UINT8 uid[I93_UID_BYTE_LEN];  /* UID[0]:MSB, ... UID[7]:LSB  */
+} tNFA_I93_INVENTORY;
+
+/* RW_I93_SYS_INFO_EVT */
+typedef struct{
+    UINT8 info_flags;               /* information flags                            */
+    UINT8 uid[I93_UID_BYTE_LEN];    /* UID                                          */
+    UINT8 dsfid;                    /* DSFID if I93_INFO_FLAG_DSFID                 */
+    UINT8 afi;                      /* AFI if I93_INFO_FLAG_AFI                     */
+    UINT16 num_block;               /* number of blocks if I93_INFO_FLAG_MEM_SIZE   */
+    UINT8 block_size;               /* block size in byte if I93_INFO_FLAG_MEM_SIZE */
+    UINT8 IC_reference;             /* IC Reference if I93_INFO_FLAG_IC_REF         */
+} tNFA_I93_SYS_INFO;
+
+typedef struct {
+    tNFA_STATUS status;         /* Status of sending command       */
+    UINT8 sent_command;         /* sent command to tag             */
+    union {
+        UINT8 error_code;       /* error code defined in ISO 15693 */
+        tNFA_I93_INVENTORY inventory;   /* inventory response              */
+        tNFA_I93_SYS_INFO sys_info;     /* system information              */
+    } params;
+} tNFA_I93_CMD_CPLT;
+
+typedef UINT16 tNFA_HANDLE;
+
+/* Data for NFA_CE_REGISTERED_EVT */
+typedef struct {
+    tNFA_STATUS status;         /* NFA_STATUS_OK if successful                      */
+    tNFA_HANDLE handle;         /* handle for NFA_CeRegisterFelicaSystemCodeOnDH () */
+    /*            NFA_CeRegisterT4tAidOnDH ()           */
+} tNFA_CE_REGISTERED;
+
+/* Data for NFA_CE_DEREGISTERED_EVT */
+typedef struct {
+    tNFA_HANDLE handle;         /* handle from NFA_CE_REGISTERED_EVT   */
+} tNFA_CE_DEREGISTERED;
+
+/* Data for NFA_CE_ACTIVATED_EVT */
+typedef struct {
+    tNFA_STATUS status;     /* NFA_STATUS_OK if successful              */
+    tNFA_HANDLE handle;     /* handle from NFA_CE_REGISTERED_EVT        */
+    tNFC_ACTIVATE_DEVT activate_ntf;   /* RF discovery activation details          */
+} tNFA_CE_ACTIVATED;
+
+/* Data for NFA_CE_DEACTIVATED_EVT */
+typedef struct {
+    tNFA_HANDLE handle;         /* handle from NFA_CE_REGISTERED_EVT   */
+    tNFA_DEACTIVATE_TYPE type;  /* NFA_DEACTIVATE_TYPE_IDLE or NFA_DEACTIVATE_TYPE_SLEEP */
+} tNFA_CE_DEACTIVATED;
+
+/* Structure for NFA_CE_DATA_EVT data */
+typedef struct {
+    tNFA_STATUS status;     /* NFA_STATUS_OK if complete packet     */
+    tNFA_HANDLE handle;     /* handle from NFA_CE_REGISTERED_EVT    */
+    UINT8 *p_data;          /* Data buffer                          */
+    UINT16 len;             /* Length of data                       */
+} tNFA_CE_DATA;
+
+
+/* Union of all connection callback structures */
+typedef union {
+    tNFA_STATUS status;             /* NFA_POLL_ENABLED_EVT                 */
+                                    /* NFA_POLL_DISABLED_EVT                */
+                                    /* NFA_CE_UICC_LISTEN_CONFIGURED_EVT    */
+                                    /* NFA_EXCLUSIVE_RF_CONTROL_STARTED_EVT */
+                                    /* NFA_EXCLUSIVE_RF_CONTROL_STOPPED_EVT */
+                                    /* NFA_SELECT_RESULT_EVT                */
+                                    /* NFA_DEACTIVATE_FAIL_EVT              */
+                                    /* NFA_CE_NDEF_WRITE_START_EVT          */
+                                    /* NFA_SELECT_CPLT_EVT                  */
+                                    /* NFA_READ_CPLT_EVT                    */
+                                    /* NFA_WRITE_CPLT_EVT                   */
+                                    /* NFA_PRESENCE_CHECK_EVT               */
+                                    /* NFA_FORMAT_CPLT_EVT                  */
+                                    /* NFA_SET_TAG_RO_EVT                   */
+                                    /* NFA_UPDATE_RF_PARAM_RESULT_EVT       */
+                                    /* NFA_RW_INTF_ERROR_EVT                */
+    tNFA_DISC_RESULT disc_result;   /* NFA_DISC_RESULT_EVT                  */
+    tNFA_ACTIVATED activated;       /* NFA_ACTIVATED_EVT                    */
+    tNFA_DEACTIVATED deactivated;   /* NFA_DEACTIVATED_EVT                  */
+    tNFA_NDEF_DETECT ndef_detect;   /* NFA_NDEF_DETECT_EVT                  */
+    tNFA_TLV_DETECT tlv_detect;     /* NFA_TLV_DETECT_EVT                   */
+    tNFA_RX_DATA data;              /* NFA_DATA_EVT                         */
+    tNFA_CE_NDEF_WRITE_CPLT ndef_write_cplt;    /* NFA_CE_NDEF_WRITE_CPLT_EVT           */
+    tNFA_LLCP_ACTIVATED llcp_activated;     /* NFA_LLCP_ACTIVATED_EVT               */
+    tNFA_LLCP_DEACTIVATED llcp_deactivated; /* NFA_LLCP_DEACTIVATED_EVT             */
+    tNFA_I93_CMD_CPLT i93_cmd_cplt; /* NFA_I93_CMD_CPLT_EVT                 */
+    tNFA_CE_REGISTERED ce_registered;   /* NFA_CE_REGISTERED_EVT                */
+    tNFA_CE_DEREGISTERED ce_deregistered;   /* NFA_CE_DEREGISTERED_EVT              */
+    tNFA_CE_ACTIVATED ce_activated; /* NFA_CE_ACTIVATED_EVT                 */
+    tNFA_CE_DEACTIVATED ce_deactivated; /* NFA_CE_DEACTIVATED_EVT               */
+    tNFA_CE_DATA ce_data;               /* NFA_CE_DATA_EVT                      */
+
+} tNFA_CONN_EVT_DATA;
+
+/* NFA Connection Callback */
+typedef void (tNFA_CONN_CBACK)(UINT8 event, tNFA_CONN_EVT_DATA *p_data);
