@@ -18,6 +18,8 @@ struct s_chip_config patchValues = { 0 };
 
 NFC_SetStaticRfCback *nci_orig_SetRfCback;
 NFC_SetConfig *nci_orig_NfcSetConfig;
+NFA_CeConfigureLocalTag *nci_orig_NfaCeConfigureLocalTag;
+
 tCE_CB *ce_cb;
 
 void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
@@ -26,10 +28,25 @@ void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     hook_postcall(&hook_rfcback);
 }
 
-tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
+tNFC_STATUS nci_NfcSetConfig(uint8_t size, uint8_t *tlv) {
     hook_precall(&hook_config);
     tNFC_STATUS r = nci_orig_NfcSetConfig(size, tlv);
     hook_postcall(&hook_config);
+    return r;
+}
+
+tNFA_STATUS nci_ceConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
+                                     UINT8     *p_ndef_data,
+                                     UINT16    ndef_cur_size,
+                                     UINT16    ndef_max_size,
+                                     BOOLEAN   read_only,
+                                     UINT8     uid_len,
+                                     UINT8     *p_uid) {
+    hook_precall(&hook_local_tag);
+    tNFA_STATUS r = nci_orig_NfaCeConfigureLocalTag(protocol_mask, p_ndef_data,
+                                 ndef_cur_size, ndef_max_size, read_only,
+                                 uid_len, p_uid);
+    hook_postcall(&hook_local_tag);
     return r;
 }
 
@@ -53,7 +70,7 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
 /**
  * hooked NfcSetConfig implementation
  */
-tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
+tNFC_STATUS hook_NfcSetConfig(uint8_t size, uint8_t *tlv) {
 
     loghex("NfcSetConfig", tlv, size);
     uint8_t i = 0;
@@ -77,11 +94,13 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
                 origValues.atqa = firstval;
                 LOGD("NfcSetConfig Read: ATQA 0x%02x", firstval);
             break;
+
             case CFG_TYPE_SAK:
                 needUpload = true;
                 origValues.sak = firstval;
                 LOGD("NfcSetConfig Read: SAK  0x%02x", firstval);
             break;
+
             case CFG_TYPE_HIST:
                 needUpload = true;
                 if(len > sizeof(origValues.hist)) {
@@ -92,6 +111,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
                     loghex("NfcSetConfig Read: HIST", valbp, len);
                 }
             break;
+
             case CFG_TYPE_UID:
                 needUpload = true;
                 if(len > sizeof(origValues.uid)) {
@@ -167,3 +187,42 @@ void uploadPatchConfig() {
 void uploadOriginalConfig() {
     uploadConfig(origValues);
 }
+
+
+// NDEF
+void uploadNdef() {
+    uploadConfig(patchValues);
+}
+
+static void uploadNdefConfig(const struct s_chip_config config) {
+    tNFA_PROTOCOL_MASK protocol_mask = NFA_PROTOCOL_MASK_ISO_DEP;
+    BOOLEAN readonly = false;
+    nci_orig_NfaCeConfigureLocalTag(protocol_mask, config.data,
+                                    config.data_len, config.data_len,
+                                    readonly, 0, NULL);
+}
+
+/**
+ * hooked NfaCeConfigureLocalTag implementation
+ */
+
+tNFA_STATUS hook_CeConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
+                                     UINT8     *p_ndef_data,
+                                     UINT16    ndef_cur_size,
+                                     UINT16    ndef_max_size,
+                                     BOOLEAN   read_only,
+                                     UINT8     uid_len,
+                                     UINT8     *p_uid) {
+
+    loghex("NfaCeConfigureLocalTag", p_ndef_data, ndef_cur_size);
+
+    tNFA_STATUS r = nci_orig_NfaCeConfigureLocalTag(protocol_mask, p_ndef_data, ndef_cur_size,
+                                                 ndef_max_size, read_only, uid_len, p_uid);
+
+    if (uploadNdef && patchEnabled) {
+        uploadNdef();
+    }
+
+    return r;
+}
+

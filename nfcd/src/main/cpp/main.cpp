@@ -7,10 +7,11 @@
 #include <stdio.h>
 
 
-
 bool patchEnabled = false;
+
 struct hook_t hook_config;
 struct hook_t hook_rfcback;
+struct hook_t hook_local_tag;
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -48,9 +49,9 @@ static void hookNative() {
 
     findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
     findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
+    findAndHook(&hook_local_tag, handle, "NFA_CeConfigureLocalTag", (void*)&hook_CeConfigureLocalTag, (void**)&nci_orig_NfaCeConfigureLocalTag);
 
-
-    if(nci_orig_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
+    if (nci_orig_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
 
     // find pointer to ce_t4t control structure
     ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");

@@ -160,6 +160,13 @@ typedef UINT8 NFA_SetTraceLevel(UINT8 new_level);
 
 typedef UINT8 tNFA_STATUS;
 typedef UINT8 tNFC_STATUS;
+
+/* Definitions for tNFA_PROTOCOL_MASK */
+#define NFA_PROTOCOL_MASK_T1T       0x01    /* Type 1 tag          */
+#define NFA_PROTOCOL_MASK_T2T       0x02    /* MIFARE / Type 2 tag */
+#define NFA_PROTOCOL_MASK_T3T       0x04    /* FeliCa / Type 3 tag */
+#define NFA_PROTOCOL_MASK_ISO_DEP   0x08    /* ISODEP/4A,4B        */
+#define NFA_PROTOCOL_MASK_NFC_DEP   0x10    /* NFCDEP/LLCP         */
 typedef UINT8 tNFA_PROTOCOL_MASK;
 
 typedef UINT32 tNFA_DM_DISC_TECH_PROTO_MASK;
@@ -284,7 +291,7 @@ typedef tNFA_STATUS NFA_CeConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
                                             UINT8 uid_len,
                                             UINT8 *p_uid);
 
-/* NFA Connection Callback Events */
+/* NFA Connection Callback (tNFA_CONN_CBACK) Events */
 #define NFA_POLL_ENABLED_EVT                    0   /* Polling enabled event                        */
 #define NFA_POLL_DISABLED_EVT                   1   /* Polling disabled event                       */
 #define NFA_DISC_RESULT_EVT                     2   /* NFC link/protocol discovery notificaiton     */
@@ -523,6 +530,11 @@ typedef struct {
     tNFA_TAG_PARAMS params;          /* additional informaiton of tag   */
 } tNFA_ACTIVATED;
 
+/* NFC deactivation type */
+#define NFA_DEACTIVATE_TYPE_IDLE        NFC_DEACTIVATE_TYPE_IDLE
+#define NFA_DEACTIVATE_TYPE_SLEEP       NFC_DEACTIVATE_TYPE_SLEEP
+#define NFA_DEACTIVATE_TYPE_DISCOVERY   NFC_DEACTIVATE_TYPE_DISCOVERY
+
 /* Data for NFA_DEACTIVATED_EVT */
 typedef struct {
     tNFA_DEACTIVATE_TYPE type;          /* NFA_DEACTIVATE_TYPE_IDLE or NFA_DEACTIVATE_TYPE_SLEEP */
@@ -654,6 +666,14 @@ typedef struct {
     UINT16 len;             /* Length of data                       */
 } tNFA_CE_DATA;
 
+#define NFA_STATUS_OK                   NCI_STATUS_OK                   /* Command succeeded    */
+#define NCI_STATUS_OK                   0x00
+
+#define NFA_STATUS_INVALID_PARAM        NCI_STATUS_INVALID_PARAM        /* Invalid Parameter    */
+#define NCI_STATUS_INVALID_PARAM        0x09
+
+#define NFA_STATUS_FAILED               NCI_STATUS_FAILED               /* failed               */
+#define NCI_STATUS_FAILED               0x03
 
 /* Union of all connection callback structures */
 typedef union {
