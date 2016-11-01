@@ -6,7 +6,7 @@
 #include <android/log.h>
 #include <jni.h>
 #include <stdint.h>
-#include "vendor/libnfc.h"
+#include "include/libnfc.h"
 
 #define LOG_TAG "Obliterator"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__ )

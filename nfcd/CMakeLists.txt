@@ -23,7 +23,7 @@ add_library( # Specifies the name of the library.
              src/main/cpp/nfcd.h
              src/main/cpp/vendor/adbi/hook.cpp
              src/main/cpp/vendor/adbi/hook.h
-             src/main/cpp/vendor/libnfc.h )
+             src/main/cpp/include/libnfc.h )
 
 find_library( # Defines the name of the path variable that stores the
               # location of the NDK library.
