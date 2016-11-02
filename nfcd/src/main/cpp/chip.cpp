@@ -57,13 +57,13 @@ tNFA_STATUS nci_ceConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     LOGD("hook_SetRfCback");
     nci_SetRfCback(p_cback);
-    if(p_cback != NULL && patchEnabled) {
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_WILDCARD_AID_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_T4T_APP_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
-        ce_cb->mem.t4t.status |= CE_T4T_STATUS_NDEF_SELECTED;
-    }
+//    if(p_cback != NULL && patchEnabled) {
+//        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
+//        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_WILDCARD_AID_SELECTED);
+//        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_T4T_APP_SELECTED);
+//        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
+//        ce_cb->mem.t4t.status |= CE_T4T_STATUS_NDEF_SELECTED;
+//    }
 }
 
 /**
