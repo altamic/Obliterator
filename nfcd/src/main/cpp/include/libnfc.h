@@ -352,19 +352,19 @@ typedef tNFA_STATUS NFA_CeConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
 
 typedef UINT8 tNFA_DEACTIVATE_TYPE;
 
-typedef union {
-    tNFC_RF_PA_PARAMS pa;
-    tNFC_RF_PB_PARAMS pb;
-    tNFC_RF_PF_PARAMS pf;
-    tNFC_RF_LF_PARAMS lf;
-    tNFC_RF_PISO15693_PARAMS pi93;
-    tNFC_RF_PKOVIO_PARAMS pk;
-} tNFC_RF_TECH_PARAMU;
+//typedef union {
+//    tNFC_RF_PA_PARAMS pa;
+//    tNFC_RF_PB_PARAMS pb;
+//    tNFC_RF_PF_PARAMS pf;
+//    tNFC_RF_LF_PARAMS lf;
+//    tNFC_RF_PISO15693_PARAMS pi93;
+//    tNFC_RF_PKOVIO_PARAMS pk;
+//} tNFC_RF_TECH_PARAMU;
 
-typedef struct {
-    tNFC_DISCOVERY_TYPE mode;
-    tNFC_RF_TECH_PARAMU param;
-} tNFC_RF_TECH_PARAMS;
+//typedef struct {
+//    tNFC_DISCOVERY_TYPE mode;
+//    tNFC_RF_TECH_PARAMU param;
+//} tNFC_RF_TECH_PARAMS;
 
 /* the data type associated with NFC_RESULT_DEVT */
 typedef struct {
@@ -493,13 +493,14 @@ typedef struct {
 } tNFC_INTF_PA_NFC_DEP;
 
 /* Note: keep tNFC_INTF_PA_NFC_DEP data member in the same order as tNFC_INTF_LA_NFC_DEP */
-typedef struct {
-    UINT8 atr_req_len;              /* Length of ATR_REQ            */
-    UINT8 atr_req[NFC_MAX_ATS_LEN]; /* ATR_REQ (Byte 3 - Byte 18+n) */
-    UINT8 max_payload_size;         /* 64, 128, 192 or 254          */
-    UINT8 gen_bytes_len;            /* len of general bytes         */
-    UINT8 gen_bytes[NFC_MAX_GEN_BYTES_LEN];  /* general bytes           */
-} tNFC_INTF_LA_NFC_DEP;
+//typedef struct {
+//    UINT8 atr_req_len;              /* Length of ATR_REQ            */
+//    UINT8 atr_req[NFC_MAX_ATS_LEN]; /* ATR_REQ (Byte 3 - Byte 18+n) */
+//    UINT8 max_payload_size;         /* 64, 128, 192 or 254          */
+//    UINT8 gen_bytes_len;            /* len of general bytes         */
+//    UINT8 gen_bytes[NFC_MAX_GEN_BYTES_LEN];  /* general bytes           */
+//} tNFC_INTF_LA_NFC_DEP;
+
 typedef tNFC_INTF_LA_NFC_DEP tNFC_INTF_LF_NFC_DEP;
 typedef tNFC_INTF_PA_NFC_DEP tNFC_INTF_PF_NFC_DEP;
 

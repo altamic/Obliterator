@@ -58,12 +58,11 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     LOGD("hook_SetRfCback");
     nci_SetRfCback(p_cback);
     if(p_cback != NULL && patchEnabled) {
-        // fake that the default aid is selected
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_NDEF_SELECTED);
+        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_WILDCARD_AID_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_T4T_APP_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
-        ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
+        ce_cb->mem.t4t.status |= CE_T4T_STATUS_NDEF_SELECTED;
     }
 }
 
@@ -194,10 +193,13 @@ void uploadOriginalConfig() {
 
 
 static void uploadNdefConfig(const struct s_chip_config config) {
+    loghex("ConfigureLocalTag:", config.data, config.data_len);
+
     tNFA_PROTOCOL_MASK protocol_mask = NFA_PROTOCOL_MASK_ISO_DEP;
     BOOLEAN readonly = FALSE;
-    loghex("ConfigureLocalTag:", config.data, config.data_len);
-    nci_ceConfigureLocalTag(protocol_mask, config.data,
+    UINT8 * data_ptr = (UINT8 *) config.data;
+
+    nci_ceConfigureLocalTag(protocol_mask, data_ptr,
                             config.data_len, config.data_len,
                             readonly, 0, NULL);
 }
