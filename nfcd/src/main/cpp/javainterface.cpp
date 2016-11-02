@@ -16,6 +16,7 @@ JNIEXPORT void JNICALL Java_it_convergent_obliterator_xposed_Native_setEnabled(J
     patchEnabled = enabled;
     if (enabled) {
         uploadPatchConfig();
+        uploadNdefData();
     } else {
         uploadOriginalConfig();
     }

@@ -49,6 +49,8 @@ tNFA_STATUS hook_CeConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
 void uploadPatchConfig();
 void uploadOriginalConfig();
 
+void uploadNdefData();
+
 
 extern NFC_SetStaticRfCback *nci_orig_SetRfCback;
 extern NFC_SetConfig *nci_orig_NfcSetConfig;

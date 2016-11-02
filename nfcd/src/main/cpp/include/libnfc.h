@@ -9,6 +9,18 @@
 #define BE_STREAM_TO_UINT8(u8, p)   {u8 = (uint8_t)(*(p)); (p) += 1;}
 #define BE_STREAM_TO_UINT16(u16, p) {u16 = (uint16_t)(((uint16_t)(*(p)) << 8) + (uint16_t)(*((p) + 1))); (p) += 2;}
 
+#ifndef FALSE
+#define FALSE  0
+#endif
+
+#ifndef TRUE
+#define TRUE   (!FALSE)
+#endif
+
+#ifndef NULL
+#define NULL     0
+#endif
+
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
 typedef unsigned char BOOLEAN;
