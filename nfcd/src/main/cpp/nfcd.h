@@ -23,7 +23,7 @@ struct s_chip_config {
     uint8_t hist_len;
     uint8_t uid[64];
     uint8_t uid_len;
-    UINT8 data[128];
+    uint8_t data[128];
     uint8_t data_len;
 };
 
@@ -36,32 +36,21 @@ void hookJava(JNIEnv *jni, jclass _class);
 
 
 // chip.cpp
-tNFC_STATUS hook_NfcSetConfig(UINT8 tlv_size, UINT8 *p_param_tlvs);
+tNFC_STATUS hook_NfcSetConfig (UINT8 tlv_size, UINT8 *p_param_tlvs);
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback);
-tNFA_STATUS hook_CeConfigureLocalTag(tNFA_PROTOCOL_MASK protocol_mask,
-                                         UINT8 *p_ndef_data,
-                                         UINT16 ndef_cur_size,
-                                         UINT16 ndef_max_size,
-                                         BOOLEAN read_only,
-                                         UINT8 uid_len,
-                                         UINT8 *p_uid);
-
 void uploadPatchConfig();
 void uploadOriginalConfig();
-
-void uploadNdefData();
 
 
 extern NFC_SetStaticRfCback *nci_orig_SetRfCback;
 extern NFC_SetConfig *nci_orig_NfcSetConfig;
-extern NFA_CeConfigureLocalTag *nci_orig_NfaCeConfigureLocalTag;
-
 extern tCE_CB *ce_cb;
-
 extern struct s_chip_config patchValues;
-extern struct hook_t hook_rfcback;
 extern struct hook_t hook_config;
-extern struct hook_t hook_local_tag;
+extern struct hook_t hook_rfcback;
+
+
+//extern NFA_CeConfigureLocalTag *ori
 
 
 // ipc.cpp

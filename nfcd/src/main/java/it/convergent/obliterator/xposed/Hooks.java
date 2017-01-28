@@ -44,11 +44,13 @@ public class Hooks implements IXposedHookLoadPackage {
                     if (i == 0) {
                         destination = String.format(path, "");
                         System.load(destination);
+                        Log.d("Obliterator", "Loaded lib from: " + destination);
                         break;
                     }
 
                     destination = String.format(path, "-" + String.valueOf(i));
                     System.load(destination);
+                    Log.d("Obliterator", "Loaded lib from: " + destination);
                     break;
 
                 } catch (UnsatisfiedLinkError err) {

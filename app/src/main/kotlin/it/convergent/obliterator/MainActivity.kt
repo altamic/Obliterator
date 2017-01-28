@@ -139,6 +139,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         }, IntentFilter("it.convergent.obliterator.toaster"))
 
         setContentView(R.layout.activity_main)
+//        hceMode.disable()
         startAcquireCarnet()
 
 //        val uid  = hexStringToByteArray("042C5002323680")
@@ -146,7 +147,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
 //
         hceMode.requestStatus()
 //        hceMode.upload(uid, data)
-//        hceMode.enable()
+
 //        hceMode.requestStatus()
     }
 

@@ -4,6 +4,9 @@
 
 cmake_minimum_required(VERSION 3.6.0)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -fPIE -fexceptions -marm")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -g -fPIE")
+
 # Specifies a library name, specifies whether the library is STATIC or
 # SHARED, and provides relative paths to the source code. You can
 # define multiple libraries by adding multiple add.library() commands,
@@ -17,13 +20,10 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
+             src/main/cpp/main.cpp
              src/main/cpp/chip.cpp
              src/main/cpp/javainterface.cpp
-             src/main/cpp/main.cpp
-             src/main/cpp/nfcd.h
-             src/main/cpp/vendor/adbi/hook.cpp
-             src/main/cpp/vendor/adbi/hook.h
-             src/main/cpp/include/libnfc.h )
+             src/main/cpp/vendor/adbi/hook.cpp)
 
 find_library( # Defines the name of the path variable that stores the
               # location of the NDK library.
@@ -33,11 +33,5 @@ find_library( # Defines the name of the path variable that stores the
               # CMake needs to locate.
               log )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fexceptions -marm")
-
 # Links your native library against one or more other native libraries.
-target_link_libraries( # Specifies the target library.
-                       nfc-native
-
-                       # Links the log library to the target library.
-                       ${log-lib} )
+target_link_libraries(nfc-native android log)
