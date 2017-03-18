@@ -20,6 +20,7 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
+             src/main/cpp/ce_t2t.c
              src/main/cpp/main.cpp
              src/main/cpp/chip.cpp
              src/main/cpp/javainterface.cpp

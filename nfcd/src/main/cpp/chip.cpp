@@ -1,8 +1,7 @@
-
-
 #include "nfcd.h"
 #include "vendor/adbi/hook.h"
 #include <cstring>
+
 /**
  * Commands of the broadcom configuration interface
  */
@@ -20,6 +19,9 @@ NFC_SetStaticRfCback *nci_orig_SetRfCback;
 NFC_SetConfig *nci_orig_NfcSetConfig;
 tCE_CB *ce_cb;
 
+tNFC_SendData *orig_NFC_SendData;
+tnfc_stop_quick_timer *orig_nfc_stop_quick_timer;
+
 void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     hook_precall(&hook_rfcback);
     nci_orig_SetRfCback(p_cback);
@@ -31,6 +33,21 @@ tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     tNFC_STATUS r = nci_orig_NfcSetConfig(size, tlv);
     hook_postcall(&hook_config);
     return r;
+}
+
+tNFC_STATUS hook_NFC_SendData(UINT8 conn_id, BT_HDR *p_data) {
+    LOGD("hook_NFC_SendData");
+    hook_precall(&hook_send_data);
+    tNFC_STATUS r = orig_NFC_SendData(conn_id, p_data);
+    hook_postcall(&hook_send_data);
+    return r;
+}
+
+void hook_nfc_stop_quick_timer(TIMER_LIST_ENT *p_tle) {
+    LOGD("hook_nfc_stop_quick_timer");
+    hook_precall(&hook_stop_quick_timer);
+    orig_nfc_stop_quick_timer(p_tle);
+    hook_postcall(&hook_stop_quick_timer);
 }
 
 /**

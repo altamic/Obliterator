@@ -4,20 +4,31 @@
 *****************************************************************
 */
 
+#include <stdint.h>
+
 #define UINT16_TO_BE_STREAM(p, u16) {*(p)++ = (uint8_t)((u16) >> 8); *(p)++ = (uint8_t)(u16);}
 #define UINT8_TO_BE_STREAM(p, u8)   {*(p)++ = (uint8_t)(u8);}
 #define BE_STREAM_TO_UINT8(u8, p)   {u8 = (uint8_t)(*(p)); (p) += 1;}
 #define BE_STREAM_TO_UINT16(u16, p) {u16 = (uint16_t)(((uint16_t)(*(p)) << 8) + (uint16_t)(*((p) + 1))); (p) += 2;}
+
+#define NCI_STATUS_OK                   0x00
+#define NFC_STATUS_OK                   NCI_STATUS_OK                   /* Command succeeded    */
+
+#define NFA_DM_DISC_MASK_LA_T2T                 0x00020000
 
 typedef unsigned char UINT8;
 typedef unsigned short UINT16;
 typedef unsigned char BOOLEAN;
 typedef unsigned long UINT32;
 
+#define FALSE  0
+#define TRUE   (!FALSE)
+
+#define NFC_RF_CONN_ID                 0    /* the static connection ID for RF traffic */
+
 typedef void (tCE_CBACK)(uint8_t event, void *p_data);
 
 typedef uint8_t CE_T4tRegisterAID(uint8_t aid_len, uint8_t *p_aid, tCE_CBACK *p_cback);
-
 
 typedef struct {
     uint16_t event;
@@ -25,6 +36,8 @@ typedef struct {
     uint16_t offset;
     uint16_t layer_specific;
 } BT_HDR;
+
+typedef void DispCET4Tags (BT_HDR *p_buf, BOOLEAN is_rx);
 
 typedef struct {
     uint8_t status;     /* The event status                 */
@@ -72,10 +85,29 @@ enum {
     CE_T4T_MAX_EVT
 };
 
+#define NFC_FIRST_CEVT      0x6000
+
+enum
+{
+    NFC_CONN_CREATE_CEVT = NFC_FIRST_CEVT,  /* 0  Conn Create Response          */
+    NFC_CONN_CLOSE_CEVT,                    /* 1  Conn Close Response           */
+    NFC_DEACTIVATE_CEVT,                    /* 2  Deactivate response/notificatn*/
+    NFC_DATA_CEVT,                          /* 3  Data                          */
+    NFC_ERROR_CEVT,                         /* 4  generic or interface error    */
+    NFC_DATA_START_CEVT                     /* 5  received the first fragment on RF link */
+};
+
+#define CE_T4T_WILDCARD_AID_HANDLE  (CE_T4T_MAX_REG_AID)    /* reserved handle for wildcard aid */
+
+typedef UINT16 tNFC_CONN_EVT;
+
+
+
 /***************************************************/
 typedef void (tNFC_CONN_CBACK)(uint8_t conn_id, uint16_t event, tNFC_CONN *p_data);
 
 typedef void NFC_SetStaticRfCback(tNFC_CONN_CBACK *p_cback);
+
 
 typedef BOOLEAN nfc_hal_nci_receive_msg(UINT8 byte);
 
@@ -172,10 +204,11 @@ typedef tNFA_STATUS nfa_dm_set_rf_listen_mode_config(tNFA_DM_DISC_TECH_PROTO_MAS
 
 typedef tNFC_STATUS NFC_SetConfig(UINT8 tlv_size, UINT8 *p_param_tlvs);
 
+
 /***************************************************/
 
 #define T3T_MSG_SERVICE_LIST_MAX                16
-#define NCI_NFCID2_LEN                           8
+//#define NCI_NFCID2_LEN                           8
 #define NCI_T3T_PMM_LEN                          8
 #define NCI_RF_F_UID_LEN            NCI_NFCID2_LEN
 #define NCI_MAX_AID_LEN                         16
