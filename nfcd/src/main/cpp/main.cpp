@@ -9,6 +9,10 @@ struct hook_t hook_config;
 struct hook_t hook_rfcback;
 struct hook_t hook_send_data;
 struct hook_t hook_stop_quick_timer;
+struct hook_t hook_set_activated_tag_type;
+struct hook_t hook_ce_api_cfg_isodep_tech;
+struct hook_t hook_ce_activate_ntf;
+
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -44,13 +48,21 @@ static void hookNative() {
 
     findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
     findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
-    findAndHook(&hook_send_data, handle, "NFC_SendData", (void*)&hook_NFC_SendData,   (void**)&orig_NFC_SendData);
-    findAndHook(&hook_stop_quick_timer, handle, "nfc_stop_quick_timer", (void*)&hook_nfc_stop_quick_timer,   (void**)&orig_nfc_stop_quick_timer);
+
+    findAndHook(&hook_send_data, handle, "NFC_SendData", (void*)&nci_NFC_SendData,   (void**)&orig_NFC_SendData);
+    findAndHook(&hook_stop_quick_timer, handle, "nfc_stop_quick_timer", (void*)&nci_nfc_stop_quick_timer,   (void**)&orig_nfc_stop_quick_timer);
+
+    findAndHook(&hook_set_activated_tag_type, handle, "CE_SetActivatedTagType", (void*)&hook_ce_set_activated_tag_type,   (void**)&orig_ce_set_activated_tag_type);
+    findAndHook(&hook_ce_api_cfg_isodep_tech, handle, "nfa_ce_api_cfg_isodep_tech", (void*)&hook_nfa_ce_api_cfg_isodep_tech,   (void**)&orig_ce_api_cfg_isodep_tech);
+    findAndHook(&hook_ce_activate_ntf, handle, "nfa_ce_activate_ntf", (void*)&hook_nfa_ce_activate_ntf,   (void**)&orig_ce_activate_ntf);
 
     if (nci_orig_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
 
     // find pointer to ce_t4t control structure
     ce_cb = (tCE_CB*)dlsym(handle, "ce_cb");
+
+    // NFA_CE control structure
+    nfa_ce_cb = (tNFA_CE_CB*)dlsym(handle, "nfa_ce_cb");
 
 }
 

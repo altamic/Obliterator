@@ -22,7 +22,7 @@ static BOOLEAN ce_t2t_send_to_lower (BT_HDR *p_r_apdu)
 //    DispCET4Tags (p_r_apdu, FALSE);
 //#endif
 
-    if (hook_NFC_SendData (NFC_RF_CONN_ID, p_r_apdu) != NFC_STATUS_OK)
+    if (nci_NFC_SendData (NFC_RF_CONN_ID, p_r_apdu) != NFC_STATUS_OK)
     {
 //        CE_TRACE_ERROR0 ("ce_t2t_send_to_lower (): NFC_SendData () failed");
         return FALSE;

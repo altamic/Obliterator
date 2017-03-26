@@ -36,20 +36,33 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback);
 void uploadPatchConfig();
 void uploadOriginalConfig();
 
-tNFC_STATUS hook_NFC_SendData(UINT8 conn_id, BT_HDR *p_data);
-void hook_nfc_stop_quick_timer(TIMER_LIST_ENT *p_tle);
+tNFC_STATUS nci_NFC_SendData(UINT8 conn_id, BT_HDR *p_data);
+void nci_nfc_stop_quick_timer(TIMER_LIST_ENT *p_tle);
+
+tNFC_STATUS hook_ce_set_activated_tag_type(tNFC_ACTIVATE_DEVT*, UINT16, tCE_CBACK*);
+BOOLEAN hook_nfa_ce_api_cfg_isodep_tech(tNFA_CE_MSG *);
+BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *);
 
 extern NFC_SetStaticRfCback *nci_orig_SetRfCback;
 extern NFC_SetConfig *nci_orig_NfcSetConfig;
 
 extern tCE_CB *ce_cb;
+extern tNFA_CE_CB *nfa_ce_cb;
 
 typedef tNFC_STATUS tNFC_SendData(UINT8, BT_HDR *);
-typedef void tnfc_stop_quick_timer(TIMER_LIST_ENT *);
-
 extern tNFC_SendData *orig_NFC_SendData;
+
+typedef void tnfc_stop_quick_timer(TIMER_LIST_ENT *);
 extern tnfc_stop_quick_timer *orig_nfc_stop_quick_timer;
 
+typedef tNFC_STATUS tCE_SetActivatedTagType(tNFC_ACTIVATE_DEVT *, UINT16, tCE_CBACK *);
+extern tCE_SetActivatedTagType *orig_ce_set_activated_tag_type;
+
+typedef BOOLEAN tNfa_ce_api_cfg_isodep_tech(tNFA_CE_MSG *);
+extern tNfa_ce_api_cfg_isodep_tech *orig_ce_api_cfg_isodep_tech;
+
+typedef BOOLEAN tnfa_ce_activate_ntf (tNFA_CE_MSG *);
+extern tnfa_ce_activate_ntf *orig_ce_activate_ntf;
 
 extern struct s_chip_config patchValues;
 extern struct hook_t hook_config;
@@ -57,6 +70,9 @@ extern struct hook_t hook_rfcback;
 extern struct hook_t hook_send_data;
 extern struct hook_t hook_stop_quick_timer;
 
+extern struct hook_t hook_set_activated_tag_type;
+extern struct hook_t hook_ce_api_cfg_isodep_tech;
+extern struct hook_t hook_ce_activate_ntf;
 
 
 

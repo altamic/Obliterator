@@ -13,6 +13,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookConstructor;
+import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 public class Hooks implements IXposedHookLoadPackage {
 
@@ -67,6 +68,33 @@ public class Hooks implements IXposedHookLoadPackage {
                 Log.i("Obliterator", "constructor");
                 Application app = (Application) param.args[0];
                 mReceiver = new NFCReceiver(app);
+            }
+        });
+
+        // hook findSelectAid to route all APDUs to our app
+        findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader, "findSelectAid", byte[].class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                Log.i("HOOKNFC", "beforeHookedMethod");
+                if (Native.Instance.isEnabled()) {
+                    Log.i("HOOKNFC", "enabled");
+                    // F0010203040506 is a aid registered by the obliterator hce service
+                    param.setResult("F0010203040506");
+                }
+            }
+        });
+
+        // support extended length apdus
+        // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
+        findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                int technology = (int) param.args[0];
+                if (technology == 3 /* 3=TagTechnology.ISO_DEP */) {
+                    param.setResult(2462);
+                }
             }
         });
     }
