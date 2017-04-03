@@ -36,7 +36,7 @@ class ApduService: HostApduService() {
      * *
      * @return apdu to answer
      */
-    override fun processCommandApdu(apdu: ByteArray, extras: Bundle): ByteArray {
+    override fun processCommandApdu(apdu: ByteArray, extras: Bundle?): ByteArray {
 
         Log.d(TAG, "APDU-IN: " + apdu.toHexString())
 

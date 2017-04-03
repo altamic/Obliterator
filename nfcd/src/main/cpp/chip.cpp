@@ -15,6 +15,8 @@ static void uploadConfig(const s_chip_config config);
 struct s_chip_config origValues = { 0 };
 struct s_chip_config patchValues = { 0 };
 
+static void ce_t2t_data_cback (UINT8, tNFC_CONN_EVT, tNFC_CONN *);
+
 NFC_SetStaticRfCback *nci_orig_SetRfCback;
 NFC_SetConfig *nci_orig_NfcSetConfig;
 tCE_CB *ce_cb;
@@ -83,12 +85,14 @@ tNFC_STATUS hook_ce_set_activated_tag_type(tNFC_ACTIVATE_DEVT *p_activate_params
     LOGD("hook_CE_SetActivatedTagType");
     tNFC_STATUS status = nci_ce_set_activated_tag_type(p_activate_params,
                                                         t3t_system_code, p_cback);
-    // activate ce for t2t
-    tNFC_PROTOCOL protocol = p_activate_params->protocol;
-    if (protocol == NFC_PROTOCOL_T2T) {
-        /* store callback function before NFC_SetStaticRfCback () */
-        ce_cb->p_cback  = p_cback;
-        status = ce_select_t2t ();
+    if (patchEnabled) {
+        // activate ce for t2t
+        tNFC_PROTOCOL protocol = p_activate_params->protocol;
+        if (protocol == NFC_PROTOCOL_T2T) {
+            /* store callback function before NFC_SetStaticRfCback () */
+            ce_cb->p_cback = p_cback;
+            status = ce_select_t2t();
+        }
     }
     return status;
 }
@@ -157,14 +161,17 @@ BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *p_ce_msg) {
  */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     LOGD("hook_SetRfCback");
-    nci_SetRfCback(p_cback);
-    if(p_cback != NULL && patchEnabled) {
+    if(patchEnabled) {
         // fake that the default aid is selected
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_NDEF_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_T4T_APP_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
         ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
+
+        nci_SetRfCback(ce_t2t_data_cback);
+    } else {
+        nci_SetRfCback(p_cback);
     }
 }
 
@@ -228,6 +235,7 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     if(needUpload && patchEnabled) {
         // any of our values got modified and we are active -> re-upload
         uploadPatchConfig();
+        ce_select_t2t();
     }
     return r;
 }
@@ -344,6 +352,7 @@ static void ce_t2t_data_cback (UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_
         nci_orig_SetRfCback (NULL);
         return;
     }
+
     if (event != NFC_DATA_CEVT)
     {
         return;
@@ -390,7 +399,7 @@ tNFC_STATUS ce_select_t2t (void)
 
     nci_nfc_stop_quick_timer (&p_t4t->timer);
 
-    p_t4t->status = 0;
+//    p_t4t->status = 0;
 
     hook_SetRfCback (ce_t2t_data_cback);
 
