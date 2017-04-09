@@ -51,8 +51,6 @@ class RawFrameService : HostApduService() {
             "1012A40E")
             .joinToString(separator = ""))
 
-    val HARD_CODED_RESPONSE = hexStringToByteArray("9848F2037FFFFFFF01040000020102BE")
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent != null) data = intent.getByteArrayExtra(dataKey)
         Log.d(TAG, "INITIALIZED DATA: ${data.toHexString()}")
