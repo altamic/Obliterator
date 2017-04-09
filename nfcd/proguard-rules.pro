@@ -15,3 +15,5 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+-libraryjars libs/XposedBridgeApi-v86.jar(!de.robv.android.xposed/**)
