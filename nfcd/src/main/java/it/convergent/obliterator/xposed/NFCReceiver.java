@@ -50,11 +50,11 @@ public class NFCReceiver extends BroadcastReceiver {
                     break;
 
                 case "ENABLE":
-                    Native.Instance.setEnabled(true);
+                    if (!Native.Instance.isEnabled()) Native.Instance.setEnabled(true);
                     break;
 
                 case "DISABLE":
-                    Native.Instance.setEnabled(false);
+                    if (Native.Instance.isEnabled()) Native.Instance.setEnabled(false);
                     break;
 
                 case "REQSTATE":

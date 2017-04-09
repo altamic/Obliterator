@@ -117,15 +117,15 @@ public class Hooks implements IXposedHookLoadPackage {
 
         // support extended length apdus
         // see http://stackoverflow.com/questions/25913480/what-are-the-requirements-for-support-of-extended-length-apdus-and-which-smartph
-        findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
-                int technology = (int) param.args[0];
-                if (technology == 3 /* 3=TagTechnology.ISO_DEP */) {
-                    param.setResult(2462);
-                }
-            }
-        });
+//        findAndHookMethod("com.android.nfc.dhimpl.NativeNfcManager", lpparam.classLoader, "getMaxTransceiveLength", int.class, new XC_MethodHook() {
+//            @Override
+//            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+//
+//                int technology = (int) param.args[0];
+//                if (technology == 3 /* 3=TagTechnology.ISO_DEP */) {
+//                    param.setResult(2462);
+//                }
+//            }
+//        });
     }
 }

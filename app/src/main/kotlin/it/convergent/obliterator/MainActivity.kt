@@ -2,10 +2,7 @@ package it.convergent.obliterator
 
 import android.app.Activity
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.net.ConnectivityManager
 import android.nfc.NfcAdapter
 import android.nfc.NfcManager
@@ -21,6 +18,7 @@ import android.widget.Toast
 import it.convergent.obliterator.managers.Carnets
 import it.convergent.obliterator.models.Carnet
 import it.convergent.obliterator.nfc.HceMode
+import it.convergent.obliterator.nfc.RawFrameService
 import it.convergent.obliterator.nfc.ReadMifareUltralight
 import it.convergent.obliterator.nfc.WriteMifareUltralight
 import it.convergent.obliterator.state_machines.AcquireTagFlow
@@ -139,7 +137,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         }, IntentFilter("it.convergent.obliterator.toaster"))
 
         setContentView(R.layout.activity_main)
-//        hceMode.disable()
+        hceMode.disable()
         startAcquireCarnet()
 
 //        val uid  = hexStringToByteArray("042C5002323680")
@@ -296,6 +294,7 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
         Log.d(acquireCarnet.TAG, "acquireTagCompleted")
 //        showCarnetLayout()
 //        hceMode.requestStatus()
+        startFrameServiceWith(data)
         hceMode.upload(uid, data)
         hceMode.enable()
         hceMode.requestStatus()
@@ -306,5 +305,13 @@ class MainActivity: Activity(),  AcquireTagFlow.Callbacks {
                             R.string.acquire_carnet_error,
                             Toast.LENGTH_LONG).show()
         vibrator.vibrate(failVibration)
+    }
+
+    fun startFrameServiceWith(data: ByteArray) {
+        val targetClassName = RawFrameService::class.java.name
+        val serviceIntent = Intent(targetClassName)
+        serviceIntent.putExtra("content", data)
+        serviceIntent.component = ComponentName(packageName, targetClassName)
+        startService(serviceIntent)
     }
 }
