@@ -85,30 +85,10 @@ public class Hooks implements IXposedHookLoadPackage {
                 if (Native.Instance.isEnabled()) {
                     Log.i("HOOKNFC", "enabled");
 
-//                    final Class<?> hostEmulationManager = XposedHelpers.findClass("com.android.nfc.cardemulation.HostEmulationManager", lpparam.classLoader);
-//                    Object obj = hostEmulationManager.newInstance();
-//
-//                    //call the onHostEmulationActivated method
-//                    Method method = hostEmulationManager.getDeclaredMethod("onHostEmulationActivated");
-//                    method.invoke(obj);
-
-//                    findAndHookMethod("com.android.nfc.cardemulation.HostEmulationManager",
-//                            lpparam.classLoader,
-//                            "onHostEmulationActivated",
-////                                        Void.class,
-//                            new XC_MethodHook() {
-//                                @Override
-//                                protected void call(Param param) throws Throwable {
-//                                    Log.i("NFC HOST ACTIVE", "FOCCA");
-//                                    super.call(param);
-//                                }
-//                            }
-//                    );
-
                     final Object THIS = param.thisObject;
-                    final int STATE_W4_SELECT = 1;
+                    final int STATE_XFER = 4;
                     Field mstate = XposedHelpers.findField(THIS.getClass(), "mState");
-                    mstate.setInt(THIS, STATE_W4_SELECT);
+                    mstate.setInt(THIS, STATE_XFER);
                     // F0010203040506 is a aid registered by the obliterator hce service
                     param.setResult("F0010203040506");
                 }

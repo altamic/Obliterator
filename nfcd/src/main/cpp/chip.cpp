@@ -165,9 +165,9 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
         // fake that the default aid is selected
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_NDEF_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_T4T_APP_SELECTED);
+        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_WILDCARD_AID_SELECTED);
         ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
-        ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED;
+        ce_cb->mem.t4t.status |= CE_T4T_STATUS_T4T_APP_SELECTED;
 
         nci_SetRfCback(ce_t2t_data_cback);
     } else {
