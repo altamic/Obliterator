@@ -7,12 +7,11 @@
 jboolean patchEnabled = false;
 struct hook_t hook_config;
 struct hook_t hook_rfcback;
-struct hook_t hook_send_data;
+//struct hook_t hook_send_data;
 struct hook_t hook_stop_quick_timer;
 struct hook_t hook_set_activated_tag_type;
 struct hook_t hook_ce_api_cfg_isodep_tech;
 struct hook_t hook_ce_activate_ntf;
-
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -49,7 +48,7 @@ static void hookNative() {
     findAndHook(&hook_config,  handle, "NFC_SetConfig",        (void*)&hook_NfcSetConfig, (void**)&nci_orig_NfcSetConfig);
     findAndHook(&hook_rfcback, handle, "NFC_SetStaticRfCback", (void*)&hook_SetRfCback,   (void**)&nci_orig_SetRfCback);
 
-    findAndHook(&hook_send_data, handle, "NFC_SendData", (void*)&nci_NFC_SendData,   (void**)&orig_NFC_SendData);
+//    findAndHook(&hook_send_data, handle, "NFC_SendData", (void*)&nci_NFC_SendData,   (void**)&orig_NFC_SendData);
     findAndHook(&hook_stop_quick_timer, handle, "nfc_stop_quick_timer", (void*)&nci_nfc_stop_quick_timer,   (void**)&orig_nfc_stop_quick_timer);
 
     findAndHook(&hook_set_activated_tag_type, handle, "CE_SetActivatedTagType", (void*)&hook_ce_set_activated_tag_type,   (void**)&orig_ce_set_activated_tag_type);

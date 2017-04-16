@@ -761,3 +761,36 @@ typedef struct
 #define NFA_PROTOCOL_MASK_T2T                   0x02    /* MIFARE / Type 2 tag */
 #define NFA_PROTOCOL_MASK_ISO_DEP               0x08    /* ISODEP/4A,4B        */
 #define NFA_CE_LISTEN_INFO_T4T_ACTIVATE_PND 0x00000040  /* App has not been notified of ACTIVATE_EVT yet for this T4T AID   */
+
+#define NFA_ACTIVATED_EVT                       5   /* NFC link/protocol activated */
+
+/* SW sub-systems */
+enum {
+    NFA_ID_SYS,         /* system manager                      */
+    NFA_ID_DM,          /* device manager                      */
+    NFA_ID_EE,          /* NFCEE sub-system                    */
+    NFA_ID_P2P,         /* Peer-to-Peer sub-system             */
+    NFA_ID_CHO,         /* Connection Handover sub-system      */
+    NFA_ID_SNEP,        /* SNEP sub-system                     */
+    NFA_ID_RW,          /* Reader/writer sub-system            */
+    NFA_ID_CE,          /* Card-emulation sub-system           */
+    NFA_ID_HCI,         /* Host controller interface sub-system*/
+    NFA_ID_DTA,         /* Device Test Application sub-system  */
+    NFA_ID_MAX
+};
+
+#define NFA_SYS_EVT_START(id)       ((id) << 8)
+
+/* CE events */
+enum
+{
+    /* device manager local device API events */
+    NFA_CE_API_CFG_LOCAL_TAG_EVT    = NFA_SYS_EVT_START (NFA_ID_CE),
+    NFA_CE_API_REG_LISTEN_EVT,
+    NFA_CE_API_DEREG_LISTEN_EVT,
+    NFA_CE_API_CFG_ISODEP_TECH_EVT,
+    NFA_CE_ACTIVATE_NTF_EVT,
+    NFA_CE_DEACTIVATE_NTF_EVT,
+
+    NFA_CE_MAX_EVT
+};

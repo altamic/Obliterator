@@ -22,7 +22,7 @@ NFC_SetConfig *nci_orig_NfcSetConfig;
 tCE_CB *ce_cb;
 tNFA_CE_CB *nfa_ce_cb;
 
-tNFC_SendData *orig_NFC_SendData;
+//tNFC_SendData *orig_NFC_SendData;
 tnfc_stop_quick_timer *orig_nfc_stop_quick_timer;
 
 tCE_SetActivatedTagType *orig_ce_set_activated_tag_type;
@@ -42,12 +42,12 @@ tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
     return r;
 }
 
-tNFC_STATUS nci_NFC_SendData(UINT8 conn_id, BT_HDR *p_data) {
-    hook_precall(&hook_send_data);
-    tNFC_STATUS r = orig_NFC_SendData(conn_id, p_data);
-    hook_postcall(&hook_send_data);
-    return r;
-}
+//tNFC_STATUS nci_NFC_SendData(UINT8 conn_id, BT_HDR *p_data) {
+//    hook_precall(&hook_send_data);
+//    tNFC_STATUS r = orig_NFC_SendData(conn_id, p_data);
+//    hook_postcall(&hook_send_data);
+//    return r;
+//}
 
 void nci_nfc_stop_quick_timer(TIMER_LIST_ENT *p_tle) {
     hook_precall(&hook_stop_quick_timer);
@@ -102,7 +102,7 @@ BOOLEAN hook_nfa_ce_api_cfg_isodep_tech(tNFA_CE_MSG *p_ce_msg) {
     BOOLEAN result = nci_nfa_ce_api_cfg_isodep_tech(p_ce_msg);
 
     if (patchEnabled) {
-        nfa_ce_cb->isodep_disc_mask  = 0;
+        nfa_ce_cb->isodep_disc_mask  = 0; //???
         if (p_ce_msg->hdr.layer_specific & NFA_TECHNOLOGY_MASK_A) {
             nfa_ce_cb->isodep_disc_mask = NFA_DM_DISC_MASK_LA_ISO_DEP;
             nfa_ce_cb->isodep_disc_mask |= NFA_DM_DISC_MASK_LA_T2T;
@@ -111,46 +111,50 @@ BOOLEAN hook_nfa_ce_api_cfg_isodep_tech(tNFA_CE_MSG *p_ce_msg) {
         if (p_ce_msg->hdr.layer_specific & NFA_TECHNOLOGY_MASK_B)
             nfa_ce_cb->isodep_disc_mask |= NFA_DM_DISC_MASK_LB_ISO_DEP;
 
+        p_ce_msg->activate_ntf.hdr.event = NFA_CE_ACTIVATE_NTF_EVT;
+
         result = TRUE;
     }
+//    else {
+//       result = nci_nfa_ce_api_cfg_isodep_tech(p_ce_msg);
+//    }
 
     return result;
 }
 
 BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *p_ce_msg) {
-    LOGD("nfa_ce_activate_ntf");
-    BOOLEAN result = nci_nfa_ce_activate_ntf(p_ce_msg);
+//    BOOLEAN result;
+    BOOLEAN result = nci_nfa_ce_activate_ntf(p_ce_msg);;
 
-//    tNFC_ACTIVATE_DEVT *p_activation_params = p_ce_msg->activate_ntf.p_activation_params;
-    tNFA_CE_CB *p_cb = nfa_ce_cb;
-//    tNFA_CONN_EVT_DATA conn_evt;
-    tCE_CBACK *p_ce_cback = NULL;
-//    UINT16 t3t_system_code = 0xFFFF;
-    UINT8 listen_info_idx = NFA_CE_LISTEN_INFO_IDX_INVALID;
-//    UINT8 *p_nfcid2 = NULL;
-    UINT8 i;
-    BOOLEAN t4t_activate_pending = FALSE;
+    if (patchEnabled) {
+        LOGD("nfa_ce_activate_ntf");
+        tNFA_CE_CB *p_cb = nfa_ce_cb;
+        tCE_CBACK *p_ce_cback = NULL;
+        UINT8 i;
 
-    if (p_cb->activation_params.protocol == NFA_PROTOCOL_T2T) {
-        /* For all T2T entries in listen_info, set T4T_ACTIVATE_NOTIFY_PENDING flag */
-        for (i = 0; i < NFA_CE_LISTEN_INFO_IDX_INVALID; i++) {
-            if (p_cb->listen_info[i].flags & NFA_CE_LISTEN_INFO_IN_USE) {
-                if ((p_cb->listen_info[i].protocol_mask & NFA_PROTOCOL_MASK_T2T) ||
-                    (p_cb->listen_info[i].protocol_mask & NFA_PROTOCOL_MASK_ISO_DEP)) {
-                    /* Found listen_info table entry for T2T raw listen */
-                    p_cb->listen_info[i].flags |= NFA_CE_LISTEN_INFO_T4T_ACTIVATE_PND;
+        if (p_cb->activation_params.protocol == NFA_PROTOCOL_T2T) {
+            /* For all T2T entries in listen_info, set NFA_ACTIVATED_EVT flag */
+            for (i = 0; i < NFA_CE_LISTEN_INFO_IDX_INVALID; i++) {
+                if (p_cb->listen_info[i].flags & NFA_CE_LISTEN_INFO_IN_USE) {
+                    if ((p_cb->listen_info[i].protocol_mask & NFA_PROTOCOL_MASK_T2T) ||
+                        (p_cb->listen_info[i].protocol_mask & NFA_PROTOCOL_MASK_ISO_DEP)) {
+                        /* Found listen_info table entry for T2T raw listen */
+                        p_cb->listen_info[i].flags &= ~(NFA_CE_LISTEN_INFO_T4T_ACTIVATE_PND);
+                        p_cb->listen_info[i].flags |= NFA_ACTIVATED_EVT;
 
-                    t4t_activate_pending = TRUE;
+                        p_ce_msg->activate_ntf.hdr.event = NFA_CE_ACTIVATE_NTF_EVT;
+                    }
                 }
             }
-        }
-        /* If listening for T2T, then notify CE module now and */
-        if (t4t_activate_pending && (listen_info_idx == NFA_CE_LISTEN_INFO_IDX_INVALID))
-        {
-            hook_ce_set_activated_tag_type (&p_cb->activation_params, 0, p_ce_cback);
+
+            /* If listening for T2T, then notify CE module now and */
+            hook_ce_set_activated_tag_type(&p_cb->activation_params, 0, p_ce_cback);
             result = TRUE;
         }
     }
+//    else {
+//        result = nci_nfa_ce_activate_ntf(p_ce_msg);
+//    }
 
     return result;
 }
@@ -160,13 +164,13 @@ BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *p_ce_msg) {
  * call the original function, but modify the control structure if the patch is enabled
  */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
-    LOGD("hook_SetRfCback");
     if(patchEnabled) {
+        LOGD("patching hook_SetRfCback");
         // fake that the default aid is selected
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_CC_FILE_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_NDEF_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_WILDCARD_AID_SELECTED);
-        ce_cb->mem.t4t.status &= ~ (CE_T4T_STATUS_REG_AID_SELECTED);
+        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_CC_FILE_SELECTED);
+        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_NDEF_SELECTED);
+        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_WILDCARD_AID_SELECTED);
+        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_REG_AID_SELECTED);
         ce_cb->mem.t4t.status |= CE_T4T_STATUS_T4T_APP_SELECTED;
 
         nci_SetRfCback(ce_t2t_data_cback);
@@ -304,19 +308,16 @@ void uploadOriginalConfig() {
 ** Returns          TRUE if success
 **
 *******************************************************************************/
-static BOOLEAN ce_t2t_send_to_lower (BT_HDR *p_r_apdu)
-{
-//#if (BT_TRACE_PROTOCOL == TRUE)
-//    DispCET4Tags (p_r_apdu, FALSE);
-//#endif
-
-    if (nci_NFC_SendData (NFC_RF_CONN_ID, p_r_apdu) != NFC_STATUS_OK)
-    {
-//        CE_TRACE_ERROR0 ("ce_t2t_send_to_lower (): NFC_SendData () failed");
-        return FALSE;
-    }
-    return TRUE;
-}
+//static BOOLEAN ce_t2t_send_to_lower (BT_HDR *p_r_apdu)
+//{
+//
+//    if (nci_NFC_SendData (NFC_RF_CONN_ID, p_r_apdu) != NFC_STATUS_OK)
+//    {
+//        LOGE ("ce_t2t_send_to_lower (): NFC_SendData () failed");
+//        return FALSE;
+//    }
+//    return TRUE;
+//}
 
 /*******************************************************************************
 **
@@ -329,7 +330,7 @@ static BOOLEAN ce_t2t_send_to_lower (BT_HDR *p_r_apdu)
 *******************************************************************************/
 void ce_t2t_process_timeout (TIMER_LIST_ENT *p_tle)
 {
-//    CE_TRACE_DEBUG1 ("ce_t2t_process_timeout () event=%d", p_tle->event);
+    LOGD("ce_t2t_process_timeout () event=%d", p_tle->event);
 }
 
 /*******************************************************************************
@@ -347,6 +348,8 @@ static void ce_t2t_data_cback (UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_
     UINT8   *p_cmd;
     tCE_DATA ce_data;
 
+    LOGD ("ce_t2t_data_cback (): event = 0x%02X", event);
+
     if (event == NFC_DEACTIVATE_CEVT)
     {
         nci_orig_SetRfCback (NULL);
@@ -360,26 +363,19 @@ static void ce_t2t_data_cback (UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_
 
     p_c_apdu = (BT_HDR *) p_data->data.p_data;
 
-//#if (BT_TRACE_PROTOCOL == TRUE)
-//    DispCET4Tags (p_c_apdu, TRUE);
-//#endif
-
-//    CE_TRACE_DEBUG1 ("ce_t2t_data_cback (): conn_id = 0x%02X", conn_id);
+    LOGD ("ce_t2t_data_cback (): conn_id = 0x%02X", conn_id);
 
     p_cmd = (UINT8 *) (p_c_apdu + 1) + p_c_apdu->offset;
 
-//    CE_TRACE_DEBUG0 ("CET2T: Forward raw frame to wildcard AID handler");
 
     /* forward raw frame to upper layer */
     ce_data.raw_frame.status = p_data->data.status;
     ce_data.raw_frame.p_data = p_c_apdu;
     ce_data.raw_frame.aid_handle = CE_T4T_WILDCARD_AID_HANDLE;
-    p_c_apdu = NULL;
 
+    LOGD ("CET2T: Forward raw frame to wildcard AID handler");
     (*(ce_cb->mem.t4t.p_wildcard_aid_cback)) (CE_T4T_RAW_FRAME_EVT, &ce_data);
 
-//    if (p_c_apdu)
-//        GKI_freebuf (p_c_apdu);
 }
 
 /*******************************************************************************
@@ -395,11 +391,11 @@ tNFC_STATUS ce_select_t2t (void)
 {
     tCE_T4T_MEM *p_t4t = &ce_cb->mem.t4t;
 
-//    CE_TRACE_DEBUG0 ("ce_select_t2t ()");
+    LOGD ("ce_select_t2t ()");
 
     nci_nfc_stop_quick_timer (&p_t4t->timer);
 
-//    p_t4t->status = 0;
+    p_t4t->status = CE_T4T_STATUS_WILDCARD_AID_SELECTED;
 
     hook_SetRfCback (ce_t2t_data_cback);
 
