@@ -12,6 +12,8 @@ struct hook_t hook_stop_quick_timer;
 struct hook_t hook_set_activated_tag_type;
 struct hook_t hook_ce_api_cfg_isodep_tech;
 struct hook_t hook_ce_activate_ntf;
+//struct hook_t hook_StopRfDiscovery;
+//struct hook_t hook_CeConfigureLocalTag;
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -54,6 +56,8 @@ static void hookNative() {
     findAndHook(&hook_set_activated_tag_type, handle, "CE_SetActivatedTagType", (void*)&hook_ce_set_activated_tag_type,   (void**)&orig_ce_set_activated_tag_type);
     findAndHook(&hook_ce_api_cfg_isodep_tech, handle, "nfa_ce_api_cfg_isodep_tech", (void*)&hook_nfa_ce_api_cfg_isodep_tech,   (void**)&orig_ce_api_cfg_isodep_tech);
     findAndHook(&hook_ce_activate_ntf, handle, "nfa_ce_activate_ntf", (void*)&hook_nfa_ce_activate_ntf,   (void**)&orig_ce_activate_ntf);
+//    findAndHook(&hook_StopRfDiscovery, handle, "NFA_StopRfDiscovery", (void*)&hook_NFA_StopRfDiscovery,   (void**)&orig_NFA_StopRfDiscovery);
+//    findAndHook(&hook_CeConfigureLocalTag, handle, "NFA_CeConfigureLocalTag", (void*)&hook_NFA_CeConfigureLocalTag,   (void**)&orig_CeConfigureLocalTag);
 
     if (nci_orig_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
 

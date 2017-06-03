@@ -42,6 +42,14 @@ void nci_nfc_stop_quick_timer(TIMER_LIST_ENT *p_tle);
 tNFC_STATUS hook_ce_set_activated_tag_type(tNFC_ACTIVATE_DEVT*, UINT16, tCE_CBACK*);
 BOOLEAN hook_nfa_ce_api_cfg_isodep_tech(tNFA_CE_MSG *);
 BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *);
+//tNFA_STATUS hook_NFA_StopRfDiscovery (void);
+//tNFA_STATUS hook_NFA_CeConfigureLocalTag(tNFA_PROTOCOL_MASK,
+//                                         UINT8*,
+//                                         UINT16,
+//                                         UINT16,
+//                                         BOOLEAN,
+//                                         UINT8,
+//                                         UINT8*);
 
 extern NFC_SetStaticRfCback *nci_orig_SetRfCback;
 extern NFC_SetConfig *nci_orig_NfcSetConfig;
@@ -64,6 +72,18 @@ extern tNfa_ce_api_cfg_isodep_tech *orig_ce_api_cfg_isodep_tech;
 typedef BOOLEAN tnfa_ce_activate_ntf (tNFA_CE_MSG *);
 extern tnfa_ce_activate_ntf *orig_ce_activate_ntf;
 
+//typedef tNFA_STATUS tNFA_StopRfDiscovery (void);
+//extern tNFA_StopRfDiscovery *orig_NFA_StopRfDiscovery;
+
+//typedef tNFA_STATUS tNFA_CeConfigureLocalTag (tNFA_PROTOCOL_MASK,
+//                                      UINT8 *,
+//                                      UINT16,
+//                                      UINT16,
+//                                      BOOLEAN,
+//                                      UINT8,
+//                                      UINT8 *);
+//extern tNFA_CeConfigureLocalTag *orig_CeConfigureLocalTag;
+
 extern struct s_chip_config patchValues;
 extern struct hook_t hook_config;
 extern struct hook_t hook_rfcback;
@@ -73,7 +93,8 @@ extern struct hook_t hook_stop_quick_timer;
 extern struct hook_t hook_set_activated_tag_type;
 extern struct hook_t hook_ce_api_cfg_isodep_tech;
 extern struct hook_t hook_ce_activate_ntf;
-
+//extern struct hook_t hook_StopRfDiscovery;
+//extern struct hook_t hook_CeConfigureLocalTag;
 
 // ipc.cpp
 void ipc_prepare();

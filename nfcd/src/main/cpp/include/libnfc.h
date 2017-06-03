@@ -13,6 +13,14 @@
 
 #define NCI_STATUS_OK                   0x00
 #define NFC_STATUS_OK                   NCI_STATUS_OK                   /* Command succeeded    */
+#define NFA_STATUS_OK                   NCI_STATUS_OK                   /* Command succeeded    */
+
+#define NFA_STATUS_FAILED               NCI_STATUS_FAILED               /* failed               */
+#define NCI_STATUS_FAILED               0x03
+
+#define NCI_STATUS_INVALID_PARAM        0x09
+#define NFA_STATUS_INVALID_PARAM        NCI_STATUS_INVALID_PARAM        /* Invalid Parameter    */
+
 
 #define NFA_DM_DISC_MASK_LA_T2T                 0x00020000
 
@@ -758,6 +766,7 @@ typedef struct
 #define NFA_PROTOCOL_T2T                        0x02    /* MIFARE/Type2Tag  - NFC-A             */
 
 #define NFA_CE_LISTEN_INFO_IN_USE         0x00000001    /* LISTEN_INFO entry is in use */
+#define NFA_PROTOCOL_MASK_T1T                   0x01    /* Type 1 tag          */
 #define NFA_PROTOCOL_MASK_T2T                   0x02    /* MIFARE / Type 2 tag */
 #define NFA_PROTOCOL_MASK_ISO_DEP               0x08    /* ISODEP/4A,4B        */
 #define NFA_CE_LISTEN_INFO_T4T_ACTIVATE_PND 0x00000040  /* App has not been notified of ACTIVATE_EVT yet for this T4T AID   */
@@ -793,4 +802,37 @@ enum
     NFA_CE_DEACTIVATE_NTF_EVT,
 
     NFA_CE_MAX_EVT
+};
+
+/* DM events */
+enum
+{
+    /* device manager local device API events */
+    NFA_DM_API_ENABLE_EVT           = NFA_SYS_EVT_START (NFA_ID_DM),
+    NFA_DM_API_DISABLE_EVT,
+    NFA_DM_API_SET_CONFIG_EVT,
+    NFA_DM_API_GET_CONFIG_EVT,
+    NFA_DM_API_REQUEST_EXCL_RF_CTRL_EVT,
+    NFA_DM_API_RELEASE_EXCL_RF_CTRL_EVT,
+    NFA_DM_API_ENABLE_POLLING_EVT,
+    NFA_DM_API_DISABLE_POLLING_EVT,
+    NFA_DM_API_ENABLE_LISTENING_EVT,
+    NFA_DM_API_DISABLE_LISTENING_EVT,
+    NFA_DM_API_PAUSE_P2P_EVT,
+    NFA_DM_API_RESUME_P2P_EVT,
+    NFA_DM_API_RAW_FRAME_EVT,
+    NFA_DM_API_SET_P2P_LISTEN_TECH_EVT,
+    NFA_DM_API_START_RF_DISCOVERY_EVT,
+    NFA_DM_API_STOP_RF_DISCOVERY_EVT,       // to be used by NFA_StopRfDiscovery()
+    NFA_DM_API_SET_RF_DISC_DURATION_EVT,
+    NFA_DM_API_SELECT_EVT,
+    NFA_DM_API_UPDATE_RF_PARAMS_EVT,
+    NFA_DM_API_DEACTIVATE_EVT,
+    NFA_DM_API_POWER_OFF_SLEEP_EVT,
+    NFA_DM_API_REG_NDEF_HDLR_EVT,
+    NFA_DM_API_DEREG_NDEF_HDLR_EVT,
+    NFA_DM_API_REG_VSC_EVT,
+    NFA_DM_API_SEND_VSC_EVT,
+    NFA_DM_TIMEOUT_DISABLE_EVT,
+    NFA_DM_MAX_EVT
 };
