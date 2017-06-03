@@ -326,87 +326,89 @@ void *hook_GKI_getbuf(UINT16 size) {
  * call the original function, but modify the control structure if the patch is enabled
  */
 void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
-    if (patchEnabled) {
-        // fake that the default aid is selected
-        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_CC_FILE_SELECTED);
-        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_NDEF_SELECTED);
-        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_T4T_APP_SELECTED);
-        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_REG_AID_SELECTED);
-        ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED; // or CE_T4T_STATUS_T4T_APP_SELECTED
+//    if (patchEnabled) {
+//        // fake that the default aid is selected
+//        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_CC_FILE_SELECTED);
+//        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_NDEF_SELECTED);
+//        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_T4T_APP_SELECTED);
+//        ce_cb->mem.t4t.status &= ~(CE_T4T_STATUS_REG_AID_SELECTED);
+//        ce_cb->mem.t4t.status |= CE_T4T_STATUS_WILDCARD_AID_SELECTED; // or CE_T4T_STATUS_T4T_APP_SELECTED
+//
+//        if (p_cback != NULL) {
+//            LOGD("invoke hook_nci_SetRfCback with not null ce_t2t_data_cback");
+//            nci_SetRfCback(ce_t2t_data_cback);
+//        }
+//    } else {
+//        LOGD("original nci_SetRfCback with not NULL p_cback");
+//        nci_SetRfCback(p_cback);
+//    }
 
-        if (p_cback != NULL) {
-            LOGD("invoke hook_nci_SetRfCback with not null ce_t2t_data_cback");
-            nci_SetRfCback(ce_t2t_data_cback);
-        }
-    } else {
-        LOGD("original nci_SetRfCback with not NULL p_cback");
-        nci_SetRfCback(p_cback);
-    }
+    LOGD("original nci_SetRfCback");
+    nci_SetRfCback(p_cback);
 }
 
 /**
  * hooked NfcSetConfig implementation
  */
 tNFC_STATUS hook_NfcSetConfig(uint8_t size, uint8_t *tlv) {
-
     loghex("NfcSetConfig", tlv, size);
-    uint8_t i = 0;
-    bool needUpload = false;
-    // read the configuration bytestream and extract the values that we intend to override
-    // if we are in an active mode and the value gets overridden, then upload our configuration afterwards
-    // in any case: save the values to allow re-uploading when the patch is deactivated
-    while (size > i + 2) {
-        // first byte: type
-        // second byte: len (if len = 0, then val = 0)
-        // following bytes: value (length: len)
-        uint8_t type = *(tlv + i);
-        uint8_t len = *(tlv + i + 1);
-        uint8_t *valbp = tlv + i + 2;
-        uint8_t firstval = len ? *valbp : 0;
-        i += 2 + len;
-
-        switch (type) {
-            case CFG_TYPE_ATQA:
-                needUpload = true;
-                origValues.atqa = firstval;
-                LOGD("NfcSetConfig Read: ATQA 0x%02x", firstval);
-                break;
-            case CFG_TYPE_SAK:
-                needUpload = true;
-                origValues.sak = firstval;
-                LOGD("NfcSetConfig Read: SAK  0x%02x", firstval);
-                break;
-            case CFG_TYPE_HIST:
-                needUpload = true;
-                if (len > sizeof(origValues.hist)) {
-                    LOGE("cannot handle an hist with len=0x%02x", len);
-                } else {
-                    memcpy(origValues.hist, valbp, len);
-                    origValues.uid_len = len;
-                    loghex("NfcSetConfig Read: HIST", valbp, len);
-                }
-                break;
-            case CFG_TYPE_UID:
-                needUpload = true;
-                if (len > sizeof(origValues.uid)) {
-                    LOGE("cannot handle an uid with len=0x%02x", len);
-                } else {
-                    memcpy(origValues.uid, valbp, len);
-                    origValues.uid_len = len;
-                    loghex("NfcSetConfig Read: UID", valbp, len);
-                }
-                break;
-        }
-    }
-
+//    uint8_t i = 0;
+//    bool needUpload = false;
+//    // read the configuration bytestream and extract the values that we intend to override
+//    // if we are in an active mode and the value gets overridden, then upload our configuration afterwards
+//    // in any case: save the values to allow re-uploading when the patch is deactivated
+//    while (size > i + 2) {
+//        // first byte: type
+//        // second byte: len (if len = 0, then val = 0)
+//        // following bytes: value (length: len)
+//        uint8_t type = *(tlv + i);
+//        uint8_t len = *(tlv + i + 1);
+//        uint8_t *valbp = tlv + i + 2;
+//        uint8_t firstval = len ? *valbp : 0;
+//        i += 2 + len;
+//
+//        switch (type) {
+//            case CFG_TYPE_ATQA:
+//                needUpload = true;
+//                origValues.atqa = firstval;
+//                LOGD("NfcSetConfig Read: ATQA 0x%02x", firstval);
+//                break;
+//            case CFG_TYPE_SAK:
+//                needUpload = true;
+//                origValues.sak = firstval;
+//                LOGD("NfcSetConfig Read: SAK  0x%02x", firstval);
+//                break;
+//            case CFG_TYPE_HIST:
+//                needUpload = true;
+//                if (len > sizeof(origValues.hist)) {
+//                    LOGE("cannot handle an hist with len=0x%02x", len);
+//                } else {
+//                    memcpy(origValues.hist, valbp, len);
+//                    origValues.uid_len = len;
+//                    loghex("NfcSetConfig Read: HIST", valbp, len);
+//                }
+//                break;
+//            case CFG_TYPE_UID:
+//                needUpload = true;
+//                if (len > sizeof(origValues.uid)) {
+//                    LOGE("cannot handle an uid with len=0x%02x", len);
+//                } else {
+//                    memcpy(origValues.uid, valbp, len);
+//                    origValues.uid_len = len;
+//                    loghex("NfcSetConfig Read: UID", valbp, len);
+//                }
+//                break;
+//        }
+//    }
+//
     tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
 
-    if (needUpload && patchEnabled) {
-        // any of our values got modified and we are active -> re-upload
-        uploadPatchConfig();
-//                hook_NFA_CeConfigureLocalTag();
-
-    }
+//    if (needUpload && patchEnabled) {
+//        // any of our values got modified and we are active -> re-upload
+//        uploadPatchConfig();
+////                hook_NFA_CeConfigureLocalTag();
+//
+//    }
     return r;
 }
 
@@ -523,6 +525,42 @@ tNFA_STATUS registerAidOnDH() {
         /* Listen info */
         memcpy (p_msg->reg_listen.aid, aid, aid_len);
         p_msg->reg_listen.aid_len = aid_len;
+
+        sys_sendmsg (p_msg);
+
+        return (NFA_STATUS_OK);
+    }
+
+    return (NFA_STATUS_FAILED);
+}
+
+tNFA_STATUS enableListening (void)
+{
+    BT_HDR *p_msg;
+
+    LOGD ("enableListening ()");
+
+    if ((p_msg = (BT_HDR *) getbuf (sizeof (BT_HDR))) != NULL)
+    {
+        p_msg->event = NFA_DM_API_ENABLE_LISTENING_EVT;
+
+        sys_sendmsg (p_msg);
+
+        return (NFA_STATUS_OK);
+    }
+
+    return (NFA_STATUS_FAILED);
+}
+
+tNFA_STATUS disableListening (void)
+{
+    BT_HDR *p_msg;
+
+    LOGD ("disableListening ()");
+
+    if ((p_msg = (BT_HDR *) getbuf (sizeof (BT_HDR))) != NULL)
+    {
+        p_msg->event = NFA_DM_API_DISABLE_LISTENING_EVT;
 
         sys_sendmsg (p_msg);
 
