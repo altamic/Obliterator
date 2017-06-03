@@ -30,6 +30,7 @@ tNfa_ce_api_cfg_isodep_tech *orig_ce_api_cfg_isodep_tech;
 tnfa_ce_activate_ntf *orig_ce_activate_ntf;
 //tNFA_StopRfDiscovery *orig_NFA_StopRfDiscovery;
 //tNFA_CeConfigureLocalTag *orig_CeConfigureLocalTag;
+tnfa_sys_sendmsg *orig_sys_sendmsg;
 
 void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     hook_precall(&hook_rfcback);
@@ -104,6 +105,12 @@ BOOLEAN nci_nfa_ce_activate_ntf(tNFA_CE_MSG *p_ce_msg) {
 //                                                  p_uid);
 //    hook_postcall(&hook_CeConfigureLocalTag);
 //}
+
+void sys_sendmsg(void *p_msg) {
+    hook_precall(&hook_sys_sendmsg);
+    orig_sys_sendmsg(p_msg);
+    hook_postcall(&hook_sys_sendmsg);
+}
 
 tNFC_STATUS ce_select_t2t (void);
 
@@ -299,6 +306,9 @@ BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *p_ce_msg) {
 //        }
 //    }
 
+void hook_nfa_sys_sendmsg(void *p_msg) {
+    sys_sendmsg(p_msg);
+}
 
 /**
  * hooked SetRfCback implementation.
