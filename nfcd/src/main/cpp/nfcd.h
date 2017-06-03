@@ -50,7 +50,8 @@ BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *);
 //                                         BOOLEAN,
 //                                         UINT8,
 //                                         UINT8*);
-void hook_nfa_sys_sendmsg(void *);
+void hook_nfa_sys_sendmsg(void*);
+void* hook_GKI_getbuf(UINT16);
 
 extern NFC_SetStaticRfCback *nci_orig_SetRfCback;
 extern NFC_SetConfig *nci_orig_NfcSetConfig;
@@ -88,6 +89,8 @@ extern tnfa_ce_activate_ntf *orig_ce_activate_ntf;
 typedef void tnfa_sys_sendmsg(void *);
 extern tnfa_sys_sendmsg *orig_sys_sendmsg;
 
+typedef void* tGKI_getbuf(UINT16);
+extern tGKI_getbuf *orig_getbuf;
 
 extern struct s_chip_config patchValues;
 extern struct hook_t hook_config;
@@ -101,6 +104,7 @@ extern struct hook_t hook_ce_activate_ntf;
 //extern struct hook_t hook_StopRfDiscovery;
 //extern struct hook_t hook_CeConfigureLocalTag;
 extern struct hook_t hook_sys_sendmsg;
+extern struct hook_t hook_getbuf;
 
 // ipc.cpp
 void ipc_prepare();

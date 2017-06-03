@@ -836,3 +836,12 @@ enum
     NFA_DM_TIMEOUT_DISABLE_EVT,
     NFA_DM_MAX_EVT
 };
+
+/* Listen registration types */
+enum
+{
+    NFA_CE_REG_TYPE_NDEF,
+    NFA_CE_REG_TYPE_ISO_DEP,
+    NFA_CE_REG_TYPE_FELICA,
+    NFA_CE_REG_TYPE_UICC
+};

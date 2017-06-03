@@ -12,10 +12,10 @@
 
 static void uploadConfig(const s_chip_config config);
 
-struct s_chip_config origValues = { 0 };
-struct s_chip_config patchValues = { 0 };
+struct s_chip_config origValues = {0};
+struct s_chip_config patchValues = {0};
 
-static void ce_t2t_data_cback (UINT8, tNFC_CONN_EVT, tNFC_CONN *);
+static void ce_t2t_data_cback(UINT8, tNFC_CONN_EVT, tNFC_CONN *);
 
 NFC_SetStaticRfCback *nci_orig_SetRfCback;
 NFC_SetConfig *nci_orig_NfcSetConfig;
@@ -31,6 +31,7 @@ tnfa_ce_activate_ntf *orig_ce_activate_ntf;
 //tNFA_StopRfDiscovery *orig_NFA_StopRfDiscovery;
 //tNFA_CeConfigureLocalTag *orig_CeConfigureLocalTag;
 tnfa_sys_sendmsg *orig_sys_sendmsg;
+tGKI_getbuf *orig_getbuf;
 
 void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     hook_precall(&hook_rfcback);
@@ -38,7 +39,7 @@ void nci_SetRfCback(tNFC_CONN_CBACK *p_cback) {
     hook_postcall(&hook_rfcback);
 }
 
-tNFC_STATUS nci_NfcSetConfig (uint8_t size, uint8_t *tlv) {
+tNFC_STATUS nci_NfcSetConfig(uint8_t size, uint8_t *tlv) {
     hook_precall(&hook_config);
     tNFC_STATUS r = nci_orig_NfcSetConfig(size, tlv);
     hook_postcall(&hook_config);
@@ -59,10 +60,10 @@ void nci_nfc_stop_quick_timer(TIMER_LIST_ENT *p_tle) {
 }
 
 tNFC_STATUS nci_ce_set_activated_tag_type(tNFC_ACTIVATE_DEVT *p_activate_params,
-                                           UINT16 t3t_system_code, tCE_CBACK *p_cback) {
+                                          UINT16 t3t_system_code, tCE_CBACK *p_cback) {
     hook_precall(&hook_set_activated_tag_type);
     tNFC_STATUS status = orig_ce_set_activated_tag_type(p_activate_params,
-                                                   t3t_system_code, p_cback);
+                                                        t3t_system_code, p_cback);
     hook_postcall(&hook_set_activated_tag_type);
     return status;
 }
@@ -112,10 +113,17 @@ void sys_sendmsg(void *p_msg) {
     hook_postcall(&hook_sys_sendmsg);
 }
 
-tNFC_STATUS ce_select_t2t (void);
+void *getbuf(UINT16 size) {
+    hook_precall(&hook_getbuf);
+    void *result = orig_getbuf(size);
+    hook_postcall(&hook_getbuf);
+    return result;
+}
+
+tNFC_STATUS ce_select_t2t(void);
 
 tNFC_STATUS hook_ce_set_activated_tag_type(tNFC_ACTIVATE_DEVT *p_activate_params,
-                                          UINT16 t3t_system_code, tCE_CBACK *p_cback) {
+                                           UINT16 t3t_system_code, tCE_CBACK *p_cback) {
     tNFC_STATUS status;
 
     if (patchEnabled) {
@@ -130,7 +138,7 @@ tNFC_STATUS hook_ce_set_activated_tag_type(tNFC_ACTIVATE_DEVT *p_activate_params
         LOGD("patchEnabled hook_CE_SetActivatedTagType tNFC_STATUS: 0x%02x", status);
     } else {
         status = nci_ce_set_activated_tag_type(p_activate_params,
-                                      t3t_system_code, p_cback);
+                                               t3t_system_code, p_cback);
     }
     return status;
 }
@@ -140,7 +148,7 @@ BOOLEAN hook_nfa_ce_api_cfg_isodep_tech(tNFA_CE_MSG *p_ce_msg) {
     BOOLEAN result = nci_nfa_ce_api_cfg_isodep_tech(p_ce_msg);
 
     if (patchEnabled) {
-        nfa_ce_cb->isodep_disc_mask  = 0; //???
+        nfa_ce_cb->isodep_disc_mask = 0; //???
         if (p_ce_msg->hdr.layer_specific & NFA_TECHNOLOGY_MASK_A) {
             nfa_ce_cb->isodep_disc_mask = NFA_DM_DISC_MASK_LA_ISO_DEP;
             nfa_ce_cb->isodep_disc_mask |= NFA_DM_DISC_MASK_LA_T2T;
@@ -189,7 +197,6 @@ BOOLEAN hook_nfa_ce_activate_ntf(tNFA_CE_MSG *p_ce_msg) {
             if (t4t_activate_pending && (listen_info_idx == NFA_CE_LISTEN_INFO_IDX_INVALID)) {
                 hook_ce_set_activated_tag_type(&p_cb->activation_params, 0, p_ce_cback);
             }
-
             result = TRUE;
 
             // the following instead will not notificate the upper layer of a pending activation
@@ -310,6 +317,10 @@ void hook_nfa_sys_sendmsg(void *p_msg) {
     sys_sendmsg(p_msg);
 }
 
+void *hook_GKI_getbuf(UINT16 size) {
+    return getbuf(size);
+}
+
 /**
  * hooked SetRfCback implementation.
  * call the original function, but modify the control structure if the patch is enabled
@@ -336,7 +347,7 @@ void hook_SetRfCback(tNFC_CONN_CBACK *p_cback) {
 /**
  * hooked NfcSetConfig implementation
  */
-tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
+tNFC_STATUS hook_NfcSetConfig(uint8_t size, uint8_t *tlv) {
 
     loghex("NfcSetConfig", tlv, size);
     uint8_t i = 0;
@@ -349,48 +360,48 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
         // second byte: len (if len = 0, then val = 0)
         // following bytes: value (length: len)
         uint8_t type = *(tlv + i);
-        uint8_t len  = *(tlv + i + 1);
+        uint8_t len = *(tlv + i + 1);
         uint8_t *valbp = tlv + i + 2;
         uint8_t firstval = len ? *valbp : 0;
         i += 2 + len;
 
-        switch(type) {
+        switch (type) {
             case CFG_TYPE_ATQA:
                 needUpload = true;
                 origValues.atqa = firstval;
                 LOGD("NfcSetConfig Read: ATQA 0x%02x", firstval);
-            break;
+                break;
             case CFG_TYPE_SAK:
                 needUpload = true;
                 origValues.sak = firstval;
                 LOGD("NfcSetConfig Read: SAK  0x%02x", firstval);
-            break;
+                break;
             case CFG_TYPE_HIST:
                 needUpload = true;
-                if(len > sizeof(origValues.hist)) {
+                if (len > sizeof(origValues.hist)) {
                     LOGE("cannot handle an hist with len=0x%02x", len);
                 } else {
                     memcpy(origValues.hist, valbp, len);
                     origValues.uid_len = len;
                     loghex("NfcSetConfig Read: HIST", valbp, len);
                 }
-            break;
+                break;
             case CFG_TYPE_UID:
                 needUpload = true;
-                if(len > sizeof(origValues.uid)) {
+                if (len > sizeof(origValues.uid)) {
                     LOGE("cannot handle an uid with len=0x%02x", len);
                 } else {
                     memcpy(origValues.uid, valbp, len);
                     origValues.uid_len = len;
                     loghex("NfcSetConfig Read: UID", valbp, len);
                 }
-            break;
+                break;
         }
     }
 
     tNFC_STATUS r = nci_NfcSetConfig(size, tlv);
 
-    if(needUpload && patchEnabled) {
+    if (needUpload && patchEnabled) {
         // any of our values got modified and we are active -> re-upload
         uploadPatchConfig();
 //                hook_NFA_CeConfigureLocalTag();
@@ -405,11 +416,11 @@ tNFC_STATUS hook_NfcSetConfig (uint8_t size, uint8_t *tlv) {
  */
 static void pushcfg(uint8_t *cfg, uint8_t &i, uint8_t type, uint8_t value) {
     cfg[i++] = type;
-    if(value) {
-      cfg[i++] = 1; // len
-      cfg[i++] = value;
+    if (value) {
+        cfg[i++] = 1; // len
+        cfg[i++] = value;
     } else {
-      cfg[i++] = 0;
+        cfg[i++] = 0;
     }
 }
 
@@ -419,20 +430,20 @@ static void pushcfg(uint8_t *cfg, uint8_t &i, uint8_t type, uint8_t value) {
 static void uploadConfig(const struct s_chip_config config) {
     // cfg: type1, paramlen1, param1, type2, paramlen2....
     uint8_t cfg[80];
-    uint8_t i=0;
-    pushcfg(cfg, i, CFG_TYPE_SAK,  config.sak);
+    uint8_t i = 0;
+    pushcfg(cfg, i, CFG_TYPE_SAK, config.sak);
     //pushcfg(cfg, i, CFG_TYPE_HIST, config.hist);
     pushcfg(cfg, i, CFG_TYPE_ATQA, config.atqa);
 
     cfg[i++] = CFG_TYPE_UID;
     cfg[i++] = config.uid_len;
 
-    memcpy(cfg+i, config.uid, config.uid_len);
+    memcpy(cfg + i, config.uid, config.uid_len);
     i += config.uid_len;
 
     cfg[i++] = CFG_TYPE_HIST;
     cfg[i++] = config.hist_len;
-    memcpy(cfg+i, config.hist, config.hist_len);
+    memcpy(cfg + i, config.hist, config.hist_len);
     i += config.hist_len;
 
     nci_NfcSetConfig(i, cfg);
@@ -453,6 +464,73 @@ void uploadOriginalConfig() {
     uploadConfig(origValues);
 }
 
+tNFA_STATUS stopRfDiscovery(void) {
+    BT_HDR *p_msg;
+    LOGD("stopRfDiscovery ()");
+    if ((p_msg = (BT_HDR *) getbuf (sizeof (BT_HDR))) != NULL)
+    {
+        p_msg->event = NFA_DM_API_STOP_RF_DISCOVERY_EVT;
+        sys_sendmsg (p_msg);
+        return (NFA_STATUS_OK);
+    }
+    return (NFA_STATUS_FAILED);
+}
+
+tNFA_STATUS configureLocalTag(s_chip_config config) {
+    tNFA_CE_MSG *p_msg;
+    LOGD("configureLocalTag ()");
+    tNFA_PROTOCOL_MASK protocol_mask = NFA_PROTOCOL_MASK_T2T | NFA_PROTOCOL_MASK_ISO_DEP;
+    UINT8 uid_len = config.uid_len;
+    UINT8 *p_uid = config.uid;
+
+    if ((p_msg = (tNFA_CE_MSG *) getbuf ((UINT16) sizeof(tNFA_CE_MSG))) != NULL) {
+        p_msg->local_tag.hdr.event = NFA_CE_API_CFG_LOCAL_TAG_EVT;
+
+        p_msg->local_tag.protocol_mask = protocol_mask;
+        p_msg->local_tag.p_ndef_data = NULL;
+        p_msg->local_tag.ndef_cur_size = 0;
+        p_msg->local_tag.ndef_max_size = 0;
+        p_msg->local_tag.read_only = FALSE;
+        p_msg->local_tag.uid_len = uid_len;
+
+        if (uid_len)
+            memcpy (p_msg->local_tag.uid, p_uid, uid_len);
+
+        sys_sendmsg (p_msg); // hook nfa_sys_sendmsg
+
+        return (NFA_STATUS_OK);
+    }
+
+    return (NFA_STATUS_FAILED);
+}
+
+tNFA_STATUS registerAidOnDH() {
+    tNFA_CE_MSG *p_msg;
+
+    tNFA_CONN_CBACK *p_conn_cback = nfa_ce_cb->p_active_conn_cback;
+//    If no AID is specified (aid_len=0), then p_conn_cback will
+//    will get notifications for any AIDs routed to the DH. This
+//    over-rides callbacks registered for specific AIDs.
+    UINT8 aid_len = 0;
+    UINT8 aid[NFC_MAX_AID_LEN];
+
+    if ((p_msg = (tNFA_CE_MSG *) getbuf ((UINT16) sizeof(tNFA_CE_MSG))) != NULL)
+    {
+        p_msg->reg_listen.hdr.event = NFA_CE_API_REG_LISTEN_EVT;
+        p_msg->reg_listen.p_conn_cback = p_conn_cback;
+        p_msg->reg_listen.listen_type = NFA_CE_REG_TYPE_ISO_DEP;
+
+        /* Listen info */
+        memcpy (p_msg->reg_listen.aid, aid, aid_len);
+        p_msg->reg_listen.aid_len = aid_len;
+
+        sys_sendmsg (p_msg);
+
+        return (NFA_STATUS_OK);
+    }
+
+    return (NFA_STATUS_FAILED);
+}
 
 /*******************************************************************************
 **
@@ -483,8 +561,7 @@ void uploadOriginalConfig() {
 ** Returns          none
 **
 *******************************************************************************/
-void ce_t2t_process_timeout (TIMER_LIST_ENT *p_tle)
-{
+void ce_t2t_process_timeout(TIMER_LIST_ENT *p_tle) {
     LOGD("ce_t2t_process_timeout () event=%d", p_tle->event);
 }
 
@@ -497,22 +574,19 @@ void ce_t2t_process_timeout (TIMER_LIST_ENT *p_tle)
 ** Returns          none
 **
 *******************************************************************************/
-static void ce_t2t_data_cback (UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_data)
-{
-    BT_HDR  *p_c_apdu;
-    UINT8   *p_cmd;
+static void ce_t2t_data_cback(UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_data) {
+    BT_HDR *p_c_apdu;
+    UINT8 *p_cmd;
     tCE_DATA ce_data;
 
     LOGD ("ce_t2t_data_cback (): event=0x%02X", event);
 
-    if (event == NFC_DEACTIVATE_CEVT)
-    {
-        nci_orig_SetRfCback (NULL);
+    if (event == NFC_DEACTIVATE_CEVT) {
+        nci_orig_SetRfCback(NULL);
         return;
     }
 
-    if (event != NFC_DATA_CEVT)
-    {
+    if (event != NFC_DATA_CEVT) {
         return;
     }
 
@@ -528,7 +602,7 @@ static void ce_t2t_data_cback (UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_
     ce_data.raw_frame.aid_handle = CE_T4T_WILDCARD_AID_HANDLE;
 
     LOGD ("CET2T: Forward raw frame to wildcard AID handler");
-    (*(ce_cb->mem.t4t.p_wildcard_aid_cback)) (CE_T4T_RAW_FRAME_EVT, &ce_data);
+    (*(ce_cb->mem.t4t.p_wildcard_aid_cback))(CE_T4T_RAW_FRAME_EVT, &ce_data);
 
 }
 
@@ -541,17 +615,16 @@ static void ce_t2t_data_cback (UINT8 conn_id, tNFC_CONN_EVT event, tNFC_CONN *p_
 ** Returns          NFC_STATUS_OK if success
 **
 *******************************************************************************/
-tNFC_STATUS ce_select_t2t (void)
-{
+tNFC_STATUS ce_select_t2t(void) {
     tCE_T4T_MEM *p_t4t = &ce_cb->mem.t4t;
 
     LOGD ("ce_select_t2t ()");
 
-    nci_nfc_stop_quick_timer (&p_t4t->timer);
+    nci_nfc_stop_quick_timer(&p_t4t->timer);
 
     p_t4t->status = CE_T4T_STATUS_WILDCARD_AID_SELECTED; // or CE_T4T_STATUS_T4T_APP_SELECTED
 
-    hook_SetRfCback (ce_t2t_data_cback);
+    hook_SetRfCback(ce_t2t_data_cback);
 
     return NFC_STATUS_OK;
 }

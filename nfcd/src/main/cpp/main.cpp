@@ -15,6 +15,7 @@ struct hook_t hook_ce_activate_ntf;
 //struct hook_t hook_StopRfDiscovery;
 //struct hook_t hook_CeConfigureLocalTag;
 struct hook_t hook_sys_sendmsg;
+struct hook_t hook_getbuf;
 
 static void onHostEmulationLoad(JNIEnv *jni, jclass _class, void *data);
 static void hookNative();
@@ -60,6 +61,7 @@ static void hookNative() {
 //    findAndHook(&hook_StopRfDiscovery, handle, "NFA_StopRfDiscovery", (void*)&hook_NFA_StopRfDiscovery,   (void**)&orig_NFA_StopRfDiscovery);
 //    findAndHook(&hook_CeConfigureLocalTag, handle, "NFA_CeConfigureLocalTag", (void*)&hook_NFA_CeConfigureLocalTag,   (void**)&orig_CeConfigureLocalTag);
     findAndHook(&hook_sys_sendmsg, handle, "nfa_sys_sendmsg", (void*)&hook_nfa_sys_sendmsg,   (void**)&orig_sys_sendmsg);
+    findAndHook(&hook_getbuf, handle, "GKI_getbuf", (void*)&hook_GKI_getbuf,   (void**)&orig_getbuf);
 
     if (nci_orig_NfcSetConfig == hook_NfcSetConfig) LOGI("original missing");
 
@@ -68,7 +70,6 @@ static void hookNative() {
 
     // NFA_CE control structure
     nfa_ce_cb = (tNFA_CE_CB*)dlsym(handle, "nfa_ce_cb");
-
 }
 
 /**
