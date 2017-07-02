@@ -455,8 +455,36 @@ static void uploadConfig(const struct s_chip_config config) {
 /**
  * upload the values we got from the ipc
  */
+
+tNFA_STATUS stopRfDiscovery(void);
+tNFA_STATUS configureLocalTag(const struct s_chip_config config);
+tNFA_STATUS registerAidOnDH();
+tNFA_STATUS startRfDiscovery (void);
+//tNFA_STATUS enableListening (void);
+
 void uploadPatchConfig() {
-    uploadConfig(patchValues);
+    // here we are s_chip_config config ready to be emulated
+    if (NFA_STATUS_FAILED == stopRfDiscovery()) {
+        LOGD("stopRfDiscovery failed");
+        return;
+    }
+
+    if (NFA_STATUS_FAILED == configureLocalTag(patchValues)) {
+        LOGD("configureLocalTag failed");
+        return;
+    }
+
+//    if (NFA_STATUS_FAILED == registerAidOnDH()) {
+//        LOGD("registerAidOnDH failed");
+//        return;
+//    }
+
+    if (NFA_STATUS_FAILED == startRfDiscovery()) {
+        LOGD("startRfDiscovery failed");
+        return;
+    }
+
+    LOGD("uploadPatchConfig success");
 }
 
 /**
@@ -464,6 +492,24 @@ void uploadPatchConfig() {
  */
 void uploadOriginalConfig() {
     uploadConfig(origValues);
+}
+
+tNFA_STATUS startRfDiscovery (void)
+{
+    BT_HDR *p_msg;
+
+    LOGD ("startRfDiscovery ()");
+
+    if ((p_msg = (BT_HDR *) getbuf (sizeof (BT_HDR))) != NULL)
+    {
+        p_msg->event = NFA_DM_API_START_RF_DISCOVERY_EVT;
+
+        sys_sendmsg (p_msg);
+
+        return (NFA_STATUS_OK);
+    }
+
+    return (NFA_STATUS_FAILED);
 }
 
 tNFA_STATUS stopRfDiscovery(void) {
@@ -478,12 +524,12 @@ tNFA_STATUS stopRfDiscovery(void) {
     return (NFA_STATUS_FAILED);
 }
 
-tNFA_STATUS configureLocalTag(s_chip_config config) {
+tNFA_STATUS configureLocalTag(const struct s_chip_config config) {
     tNFA_CE_MSG *p_msg;
     LOGD("configureLocalTag ()");
     tNFA_PROTOCOL_MASK protocol_mask = NFA_PROTOCOL_MASK_T2T | NFA_PROTOCOL_MASK_ISO_DEP;
     UINT8 uid_len = config.uid_len;
-    UINT8 *p_uid = config.uid;
+    UINT8 *p_uid = (UINT8 *) config.uid;
 
     if ((p_msg = (tNFA_CE_MSG *) getbuf ((UINT16) sizeof(tNFA_CE_MSG))) != NULL) {
         p_msg->local_tag.hdr.event = NFA_CE_API_CFG_LOCAL_TAG_EVT;

@@ -16,14 +16,14 @@
  * all values we override in one struct
  */
 struct s_chip_config {
-    uint8_t atqa;
-    uint8_t sak;
-    uint8_t hist[64];
-    uint8_t hist_len;
-    uint8_t uid[64];
-    uint8_t uid_len;
-    uint8_t data[128];
-    uint8_t data_len;
+    UINT8 atqa;
+    UINT8 sak;
+    UINT8 hist[64];
+    UINT8 hist_len;
+    UINT8 uid[64];
+    UINT8 uid_len;
+    UINT8 data[128];
+    UINT8 data_len;
 };
 
 // main.cpp
