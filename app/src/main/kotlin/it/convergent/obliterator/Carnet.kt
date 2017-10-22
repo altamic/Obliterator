@@ -16,7 +16,7 @@ class Carnet(val data: ByteArray) {
     /*   Carnet Structure
      *   ================
      *
-     *   Page 0x00: 0x04XXYYZZ    checksum: 0xZZ = 0x88 ⊕ 0x04 ⊕ 0xXX ⊕ 0xYY
+     *   Page 0x00: 0x0KXXYYZZ    checksum: 0xZZ = 0x88 ⊕ 0x0K ⊕ 0xXX ⊕ 0xYY
      *   Page 0x01: 0xGGHHIIJJ    UID: CoP = 0x04XXYYGGHHIIJJ in decimal
      *   Page 0x02: 0xLL          checksum: 0xLL = 0xGG ⊕ 0xHH ⊕ 0xII ⊕ 0xJJ
      *                  KK        internal: 0xKK i.e. chip vendor identifier
