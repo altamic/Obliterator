@@ -74,14 +74,14 @@ open class MainActivity: Activity() {
     var previousCarnet: Maybe<Carnet> = None
 
     //  UI
-    val gttTimeHex by lazy { findViewById(R.id.gttTimeHex) as TextView }
-    val gttTimeBinary by lazy { findViewById(R.id.gttTimeBinary) as TextView }
-    val dateTime by lazy { findViewById(R.id.dateTime) as TextView }
-    val toggleChangeDateTime by lazy { findViewById(R.id.toggleChangeDateTime) as ToggleButton }
-    val decrementDateTime by lazy { findViewById(R.id.decrementDateTime) as Button }
-    val incrementDateTime by lazy { findViewById(R.id.incrementDateTime) as Button }
-    val carnetRead  by lazy { findViewById(R.id.carnetRead) as TextView }
-    val progressBar by lazy { findViewById(R.id.progressBar) as ProgressBar }
+    val gttTimeHex by lazy { findViewById<TextView>(R.id.gttTimeHex) }
+    val gttTimeBinary by lazy { findViewById<TextView>(R.id.gttTimeBinary) }
+    val dateTime by lazy { findViewById<TextView>(R.id.dateTime)  }
+    val toggleChangeDateTime by lazy { findViewById<ToggleButton>(R.id.toggleChangeDateTime) }
+    val decrementDateTime by lazy { findViewById<Button>(R.id.decrementDateTime) }
+    val incrementDateTime by lazy { findViewById<Button>(R.id.incrementDateTime) }
+    val carnetRead  by lazy { findViewById<TextView>(R.id.carnetRead) }
+    val progressBar by lazy { findViewById<ProgressBar>(R.id.progressBar) }
 
     val dateTimeFormatter by lazy { SimpleDateFormat("dd MMM yyyy HH:mm", Locale.ITALIAN) }
 
@@ -185,7 +185,7 @@ open class MainActivity: Activity() {
         flow.generateFrom(currentCalendar)
                 .subscribe(calendarSubscriber)
 
-        toggleChangeDateTime.setOnCheckedChangeListener { button, isChecked ->
+        toggleChangeDateTime.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 decrementDateTime.isEnabled = true
                 incrementDateTime.isEnabled = true
@@ -262,10 +262,10 @@ open class MainActivity: Activity() {
     }
 
     private fun goToNfcSettings() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            intent = Intent(Settings.ACTION_NFC_SETTINGS)
+        intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Intent(Settings.ACTION_NFC_SETTINGS)
         } else {
-            intent = Intent(Settings.ACTION_WIRELESS_SETTINGS)
+            Intent(Settings.ACTION_WIRELESS_SETTINGS)
         }
 
         startActivity(intent)
