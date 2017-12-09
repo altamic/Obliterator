@@ -28,7 +28,7 @@ object flow {
         return Observable
                 .just(calendar)
                 .flatMap { timer }
-                .map { tick ->
+                .map { _ ->
                     calendar.add(Calendar.MINUTE, 1)
                     calendar
                 }

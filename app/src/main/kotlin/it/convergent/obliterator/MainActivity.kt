@@ -239,7 +239,7 @@ open class MainActivity: Activity() {
 
         if (techList.any { tech -> tech.equals(nfcA) }) {
             val nfcA = NfcA.get(tag)
-            val atqa = nfcA.atqa.asList()
+            val atqa = nfcA.atqa
             if (atqa.first().equals(0x44.toByte()) &&
                     atqa.last().equals(0x00.toByte()) &&
                     nfcA.sak == 0x00.toShort())
